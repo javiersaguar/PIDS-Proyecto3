@@ -69,7 +69,7 @@ def orden_celdas(od: pd.DataFrame) -> pd.DataFrame:
     return t
 
 
-def mapa_calor(od: pd.DataFrame, celdas: pd.DataFrame) -> None:
+def mapa_calor(od: pd.DataFrame, celdas: pd.DataFrame) -> float:
     n = PARAMETROS["celdas_mapa_calor"]
     top = celdas.head(n)
     guardar_tabla(top, f"T20_celdas_top{n}")
@@ -97,6 +97,7 @@ def mapa_calor(od: pd.DataFrame, celdas: pd.DataFrame) -> None:
                  f"({pct_cubierto:.0f} % de los viajes),\n{TITULO_AJUSTE}. Rangos en T20_celdas_top{n}",
                  fontsize=9)
     guardar_figura(fig, TEMA, f"T20_od_top{n}")
+    return pct_cubierto
 
 
 def asimetria(od: pd.DataFrame, celdas: pd.DataFrame) -> dict:
@@ -149,7 +150,7 @@ def main() -> None:
     od = matriz_larga(viajes, res)
     guardar_tabla(od, f"T20_od_res{res}")
     celdas = orden_celdas(od)
-    mapa_calor(od, celdas)
+    pct_top = mapa_calor(od, celdas)
 
     intra = od["h3_o"] == od["h3_d"]
     rango = celdas.set_index("h3")["rango"]
@@ -171,6 +172,7 @@ def main() -> None:
         "viajes_intrazonales": int(od.loc[intra, "viajes"].sum()),
         "pct_viajes_intrazonales": 100 * od.loc[intra, "viajes"].sum() / len(viajes),
         "pct_viajes_top20_pares": 100 * od.head(PARAMETROS["pares_top"])["viajes"].sum() / len(viajes),
+        f"pct_viajes_entre_top{PARAMETROS['celdas_mapa_calor']}_celdas": pct_top,
         **asimetria(od, celdas),
     }
     guardar_tabla(tabla_resumen(resumen), "T20_resumen")

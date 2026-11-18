@@ -8,6 +8,7 @@ pares_posibles,11433
 viajes_intrazonales,3668
 pct_viajes_intrazonales,21.7569
 pct_viajes_top20_pares,14.8882
+pct_viajes_entre_top30_celdas,51.0173
 pares_entre_celdas_con_viajes,1305
 suma_abs_asimetria_pares,2943
 indice_asimetria,0.2231

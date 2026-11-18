@@ -268,9 +268,9 @@ def t13_puntos_aislados(todos: pd.DataFrame) -> None:
     res = p["res_mapas"]
     extremos = pd.concat([
         pd.DataFrame({"trip_id": todos["trip_id"], "extremo": "origen", "lat": todos["latO"], "lon": todos["lonO"],
-                      "elegible": todos["elegible"], "periodo": todos["periodo"]}),
+                      "elegible": todos["elegible"], "periodo": todos["periodo"], "motivo": todos["motivo"]}),
         pd.DataFrame({"trip_id": todos["trip_id"], "extremo": "destino", "lat": todos["latD"], "lon": todos["lonD"],
-                      "elegible": todos["elegible"], "periodo": todos["periodo"]}),
+                      "elegible": todos["elegible"], "periodo": todos["periodo"], "motivo": todos["motivo"]}),
     ], ignore_index=True)
     extremos["h3"] = celda(extremos["lat"], extremos["lon"], res)
     por_celda = extremos["h3"].value_counts().rename("extremos_celda_mes")
@@ -287,7 +287,7 @@ def t13_puntos_aislados(todos: pd.DataFrame) -> None:
     sel = sel.sort_values(["trip_id", "extremo"], ignore_index=True)
     sel[["lat", "lon"]] = sel[["lat", "lon"]].round(6)
     guardar_tabla(sel[["trip_id", "extremo", "h3", "lat", "lon", "extremos_celda_mes", "dist_celda_densa_m",
-                       "elegible", "periodo"]], "T13_puntos_aislados")
+                       "elegible", "periodo", "motivo"]], "T13_puntos_aislados")
 
     viajes = sel.drop_duplicates("trip_id")
     resumen = pd.DataFrame([{
