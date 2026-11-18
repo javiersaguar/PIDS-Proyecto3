@@ -22,6 +22,7 @@ datos:
 limpieza:
   tt_min_s: 60
   dis_min_m: 100
+  vel_min_kmh: 2
   vel_max_kmh: 25
   tt_max_s: 7200
   tolerancia_tt_s: 1
@@ -36,6 +37,15 @@ limpieza:
     lon: [12.2, 12.8]
     lat: [41.7, 42.1]
 
+# Variante menos restrictiva para comprobar que las conclusiones no dependen de
+# los umbrales (T10). Solo se indican los valores que cambian respecto a `limpieza`.
+limpieza_permisiva:
+  tt_min_s: 30
+  dis_min_m: 50
+  vel_min_kmh: 0
+  vel_max_kmh: 30
+  tt_max_s: 10800
+
 exploracion:
   # Franjas provisionales hasta que T12 las fije. Intervalos [inicio, fin) en horas.
   franjas_horarias:
@@ -45,6 +55,10 @@ exploracion:
     punta_tarde: [16, 20]
     noche: [20, 24]
   resoluciones_h3: [8, 9]
+  # Salto mínimo entre el final de un viaje y el inicio del siguiente del mismo
+  # patinete para considerarlo recolocación (T11), y valores de la sensibilidad.
+  umbral_recolocacion_m: 200
+  umbrales_recolocacion_m: [100, 200, 300, 500, 1000, 2000]
 
 # Lime Gen 3.0, especificaciones del enunciado.
 patinete:

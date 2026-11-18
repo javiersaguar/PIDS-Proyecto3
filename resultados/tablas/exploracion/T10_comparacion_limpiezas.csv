@@ -1,0 +1,5 @@
+limpieza,periodo,viajes_elegibles,porcentaje_elegibles,dis_m_mediana,tt_s_mediana,vel_kmh_mediana,km_totales,energia_kwh_13_5,celdas_h3_res8,extremos_en_20pc_celdas_pc
+principal,ajuste,16710,92.81,1618.6,489.0,12.48,34314.4,463.2,111,55.49
+principal,reservada,6582,91.65,1671.8,499.0,12.5,14013.4,189.2,108,54.99
+permisiva,ajuste,17183,95.44,1576.2,481.0,12.35,34533.0,466.2,111,55.52
+permisiva,reservada,6782,94.43,1628.6,491.0,12.34,14151.4,191.0,109,54.94
