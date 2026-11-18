@@ -24,8 +24,8 @@ responde a una pregunta y deja una tabla o figura que se cita en `docs/conclusio
 | T05 | Elegir líder del proyecto 3 | R | Los dos | hecha | Javier Saguar |
 | T06 | Documentar el trabajo y el contenido de cada carpeta | E | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/6d3792bed4354859f778948b0baaab96a7993a2b) |
 | T07 | Ampliar el plan de análisis, simulación y demo 3D | E | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/bb6054ed01008b6fbb8b2d6d10854c597a06d5ca) |
-| T08 | Análisis en notebooks: una celda por análisis, con objetivo antes y conclusiones después | E | Javier | en curso | |
-| T09 | Web de resultados en GitHub Pages: gráficas interactivas, explicación y conclusiones por fase | E | Javier | en curso | |
+| T08 | Análisis en notebooks: una celda por análisis, con objetivo antes y conclusiones después | E | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/3fb407a73b3cbbf773290c64d3bf06e34df2b9a4) |
+| T09 | Web de resultados en GitHub Pages: gráficas interactivas, explicación y conclusiones por fase | E | Javier | hecha | [Web](https://javiersaguar.github.io/PIDS-Proyecto3/) · [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/0e8ecce68a0ba4d9a3288a80734ddc9a42bb26b7) |
 | T10 | Limpieza: `viajes_limpios.parquet`, marcas en `motivo`, umbrales justificados y tabla de embudo | R | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/81e54e25872b346e51243c4f6962adfdf5c89c14) |
 | T11 | Solapes por patinete y recolocaciones del operador | R | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/81e54e25872b346e51243c4f6962adfdf5c89c14) |
 | T12 | Patrones temporales y viajes simultáneos | R | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/81e54e25872b346e51243c4f6962adfdf5c89c14) |
