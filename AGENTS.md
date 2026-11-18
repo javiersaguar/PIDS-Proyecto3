@@ -53,3 +53,7 @@ No debe quedar ningún rastro de herramientas de IA en el repositorio.
 | `resultados/figuras/` | Gráficas y mapas generados |
 | `memoria/` | Memoria y conclusiones (10 %) |
 | `presentacion/` | Presentación final en PDF |
+| `docs/` | Enunciado resumido, datos, plan y lista de tareas |
+
+`datos/brutos/rome_u_journeys.csv` no se modifica nunca. Antes de empezar una tarea se
+consulta `docs/TAREAS.md` y se actualiza su estado.
