@@ -17,14 +17,14 @@ responde a una pregunta y deja una tabla o figura que se cita en `docs/conclusio
 
 | ID | Tarea | Tipo | Responsable | Estado | Entrega |
 |---|---|---|---|---|---|
-| T01 | Entorno Python con dependencias fijadas | R | Javier | pendiente | |
-| T02 | Paquete `comun/` (carga de viajes) y `config.yaml` con todos los parámetros | R | Javier | pendiente | |
-| T03 | Script maestro que regenere resultados desde el CSV | R | Javier | pendiente | |
-| T04 | `.gitignore` y carpeta `datos/externos/` | R | Javier | pendiente | |
+| T01 | Entorno Python con dependencias fijadas | R | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/a6cc17b7d749d21379e503a619b487a25fc2da83) |
+| T02 | Paquete `comun/` (carga de viajes) y `config.yaml` con todos los parámetros | R | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/a6cc17b7d749d21379e503a619b487a25fc2da83) |
+| T03 | Script maestro que regenere resultados desde el CSV | R | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/a6cc17b7d749d21379e503a619b487a25fc2da83) |
+| T04 | `.gitignore` y carpeta `datos/externos/` | R | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/a6cc17b7d749d21379e503a619b487a25fc2da83) |
 | T05 | Elegir líder del proyecto 3 | R | Los dos | hecha | Javier Saguar |
 | T06 | Documentar el trabajo y el contenido de cada carpeta | E | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/6d3792bed4354859f778948b0baaab96a7993a2b) |
 | T07 | Ampliar el plan de análisis, simulación y demo 3D | E | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/bb6054ed01008b6fbb8b2d6d10854c597a06d5ca) |
-| T10 | Limpieza: `viajes_limpios.parquet`, marcas en `motivo`, umbrales justificados y tabla de embudo | R | Javier | pendiente | |
+| T10 | Limpieza: `viajes_limpios.parquet`, marcas en `motivo`, umbrales justificados y tabla de embudo | R | Javier | en curso | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/a6cc17b7d749d21379e503a619b487a25fc2da83) |
 | T11 | Solapes por patinete y recolocaciones del operador | R | Javier | pendiente | |
 | T12 | Patrones temporales y viajes simultáneos | R | Javier | pendiente | |
 | T13 | Densidad de orígenes y destinos en H3 y concentración de la demanda | R | Alejandro | pendiente | |
