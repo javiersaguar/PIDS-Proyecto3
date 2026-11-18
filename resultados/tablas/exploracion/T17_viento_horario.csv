@@ -1,0 +1,9 @@
+tipo_dia,modelo,horas,efecto,pct,pct_inf,pct_sup
+laborable,entre_dias,320,hora con lluvia,-10.1,-19.0,-0.3
+laborable,entre_dias,320,+10 km/h de viento,-7.2,-11.9,-2.3
+laborable,dentro_del_dia,320,hora con lluvia,1.4,-8.8,12.9
+laborable,dentro_del_dia,320,+10 km/h de viento,-4.4,-10.4,2.0
+fin_de_semana,entre_dias,128,hora con lluvia,-52.7,-60.4,-43.5
+fin_de_semana,entre_dias,128,+10 km/h de viento,-14.1,-22.6,-4.7
+fin_de_semana,dentro_del_dia,128,hora con lluvia,-39.6,-58.6,-11.9
+fin_de_semana,dentro_del_dia,128,+10 km/h de viento,-15.5,-25.7,-3.8

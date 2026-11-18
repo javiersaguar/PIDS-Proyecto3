@@ -1,7 +1,8 @@
 import type { Data, Shape } from "plotly.js-dist-min";
+import { useState } from "react";
 import { Bloque } from "../../componentes/Bloque";
 import { Cifras } from "../../componentes/Cifras";
-import { Cargando, TablaDesplegable } from "../../componentes/Controles";
+import { Cargando, Segmentado, TablaDesplegable } from "../../componentes/Controles";
 import { Grafica } from "../../componentes/Grafica";
 import { Seccion } from "../../componentes/Seccion";
 import { useDatos } from "../../datos";
@@ -33,6 +34,25 @@ type Tendencia = {
   semana: { dia_semana: string; viajes_media_ajuste: number; viajes_reservada: number; cociente_reservada_ajuste: number }[];
 };
 type Indicadores = { indicador: string; valor: number | string }[];
+type Viento = {
+  diario: {
+    variable: string;
+    grupo: string;
+    n: number;
+    rho_viajes: number;
+    rho_con_lluvia: number;
+    rho_parcial_sin_lluvia: number;
+    rho_parcial_sin_horas_lluvia: number;
+    rho_lluvia_parcial_sin_viento: number;
+    rho_quitando_un_dia_min: number;
+    rho_quitando_un_dia_max: number;
+  }[];
+  fines_de_semana: { fecha: string; dia_semana: string; viajes: number; precipitacion_mm: number; horas_lluvia: number; viento_max_kmh: number; racha_max_kmh: number; temp_media_c: number }[];
+  horario: { tipo_dia: string; modelo: string; horas: number; efecto: string; pct: number; pct_inf: number; pct_sup: number }[];
+  horas_secas: { tipo_dia: string; horas: number; dias: number; viajes: number; viajes_esperados: number; cociente: number }[];
+  dias_ventosos: { fecha: string; tipo_dia: string; horas: number }[];
+  umbrales: { viento_kmh: number; calma_kmh: number };
+};
 
 const FASE = "fase0";
 const COLOR_DIA: Record<string, string> = { laborable: COLOR.serie1, fin_de_semana: COLOR.serie2 };
@@ -79,6 +99,7 @@ export function T17() {
       <BloqueHorasLluvia />
       <BloqueAnomalos />
       <BloqueSemana />
+      <BloqueViento />
     </Seccion>
   );
 }
@@ -381,7 +402,7 @@ function BloqueSemana() {
           añadir lluvia y temperatura baja a {num(m[3].pendiente_viajes_dia_por_dia, 1)} (e. t. {num(m[3].pendiente_ee, 1)}).{" "}
           <strong>El tiempo explica parte del crecimiento, no todo.</strong>
         </>,
-        `Todos los días de la semana tienen más viajes en la reservada (cociente de ${num(Math.min(...cocientes), 2)} a ${num(Math.max(...cocientes), 2)}; ${num(media.cociente_reservada_ajuste, 3)} de media). La semana reservada fue además seca y más cálida (10,9 °C frente a 9,3 °C): es más exigente que el ajuste.`,
+        `Todos los días de la semana tienen más viajes en la reservada (cociente de ${num(Math.min(...cocientes), 2)} a ${num(Math.max(...cocientes), 2)}; ${num(media.cociente_reservada_ajuste, 3)} de media). La semana reservada fue además seca, más cálida (10,9 °C frente a 9,3 °C) y con menos viento: es más exigente que el ajuste.`,
         "No hemos podido leer el texto oficial de las restricciones por COVID en Lacio en febrero de 2021, así que no se afirma nada sobre ellas.",
       ]}
       fuente="tablas/exploracion/T17_tendencia.csv y T17_cociente_semana.csv"
@@ -411,6 +432,153 @@ function BloqueSemana() {
           num(x.pendiente_ee, 2),
           pc(x.pendiente_pct_media_por_semana),
           num(x.r2, 3),
+        ])}
+      />
+    </Bloque>
+  );
+}
+
+const MODELOS_VIENTO: Record<string, string> = { entre_dias: "entre días", dentro_del_dia: "mismo día" };
+const POSICION_ETIQUETA: Record<string, string> = { "2021-02-13": "bottom center", "2021-02-14": "top left", "2021-02-27": "bottom right" };
+
+function BloqueViento() {
+  const { datos: v, error } = useDatos<Viento>(`${FASE}/t17_viento`);
+  const [vista, setVista] = useState<"dias" | "horas">("dias");
+  if (!v) return <Cargando error={error} />;
+  const f = v.diario.find((x) => x.variable === "viento_max_kmh" && x.grupo === "fin_de_semana")!;
+  const r = v.diario.find((x) => x.variable === "racha_max_kmh" && x.grupo === "fin_de_semana")!;
+  const lab = v.diario.find((x) => x.variable === "viento_max_kmh" && x.grupo === "laborable")!;
+  const efecto = (tipo: string, modelo: string, que = "+10 km/h de viento") =>
+    v.horario.find((x) => x.tipo_dia === tipo && x.modelo === modelo && x.efecto === que)!;
+  const fe = efecto("fin_de_semana", "entre_dias");
+  const fd = efecto("fin_de_semana", "dentro_del_dia");
+  const le = efecto("laborable", "entre_dias");
+  const ld = efecto("laborable", "dentro_del_dia");
+  const lluvias = [efecto("fin_de_semana", "entre_dias", "hora con lluvia"), efecto("fin_de_semana", "dentro_del_dia", "hora con lluvia")];
+  const secas = v.horas_secas.find((x) => x.tipo_dia === "fin_de_semana")!;
+  const diasSecas = v.dias_ventosos.filter((x) => x.tipo_dia === "fin_de_semana").map((x) => fecha(x.fecha));
+  const d14 = v.fines_de_semana.find((x) => x.fecha === "2021-02-14")!;
+  const calmos = v.fines_de_semana.filter((x) => x.precipitacion_mm <= 1 && x.viento_max_kmh < 15).map((x) => x.viajes);
+
+  const puntos = (seco: boolean): Data => {
+    const g = v.fines_de_semana.filter((x) => (x.precipitacion_mm <= 1) === seco);
+    return {
+      type: "scatter",
+      mode: "text+markers",
+      name: seco ? "Seco (≤ 1 mm)" : "Con lluvia",
+      x: g.map((x) => x.viento_max_kmh),
+      y: g.map((x) => x.viajes),
+      text: g.map((x) => fecha(x.fecha)),
+      textposition: g.map((x) => POSICION_ETIQUETA[x.fecha] ?? "middle right"),
+      textfont: { size: 11, color: COLOR.tenue },
+      customdata: g.map((x) => [x.dia_semana, num(x.precipitacion_mm, 1), num(x.racha_max_kmh, 1), num(x.temp_media_c, 1)]),
+      marker: seco
+        ? { color: COLOR.serie2, size: 11, line: { color: "#ffffff", width: 1.5 } }
+        : { color: "#ffffff", size: 11, line: { color: COLOR.serie2, width: 2.5 } },
+      hovertemplate:
+        "%{customdata[0]} %{text}: %{y} viajes<br>viento máximo %{x:.1f} km/h, racha %{customdata[2]} km/h<br>%{customdata[1]} mm de lluvia, %{customdata[3]} °C de media<extra></extra>",
+    } as unknown as Data;
+  };
+  const viento = v.horario.filter((x) => x.efecto === "+10 km/h de viento");
+  const etiqueta = (x: { tipo_dia: string; modelo: string }) => `${TIPO_DIA[x.tipo_dia]}, ${MODELOS_VIENTO[x.modelo]}`;
+  const efectos: Data[] = ["laborable", "fin_de_semana"].map((tipo) => {
+    const g = viento.filter((x) => x.tipo_dia === tipo);
+    return {
+      type: "scatter",
+      mode: "markers",
+      name: TIPO_DIA[tipo],
+      x: g.map((x) => x.pct),
+      y: g.map(etiqueta),
+      error_x: {
+        type: "data",
+        symmetric: false,
+        array: g.map((x) => x.pct_sup - x.pct),
+        arrayminus: g.map((x) => x.pct - x.pct_inf),
+        color: COLOR_DIA[tipo],
+        thickness: 2,
+        width: 5,
+      },
+      customdata: g.map((x) => [num(x.pct_inf, 1), num(x.pct_sup, 1), x.horas]),
+      marker: { color: COLOR_DIA[tipo], size: 11 },
+      hovertemplate: "%{y}: %{x:.1f} % por cada 10 km/h<br>IC 95 %: %{customdata[0]} a %{customdata[1]} %<br>%{customdata[2]} horas de 7 a 23 h<extra></extra>",
+    } as unknown as Data;
+  });
+  return (
+    <Bloque
+      titulo="6. Viento frente a lluvia"
+      queMuestra="Si el viento reduce los viajes por sí mismo o solo porque llega con la lluvia: los viajes de los 8 días de fin de semana frente al viento máximo, y el efecto de 10 km/h más de viento en los viajes de cada hora descontando la lluvia."
+      porQue="En el fin de semana el viento máximo se asocia con los viajes más que la lluvia, pero son 8 días. Decide si el viento entra en el simulador o en la elección de los días de diseño."
+      comoLeer="En la vista por días, los puntos huecos son días con lluvia. En la vista por horas, cada punto es el cambio de los viajes por hora con 10 km/h más de viento y la barra, su intervalo al 95 %. «Entre días» compara la misma hora en días distintos; «mismo día» solo compara horas de un mismo día."
+      conclusiones={[
+        <>
+          <strong>El viento no es un reflejo de la lluvia.</strong> En fin de semana el viento máximo y la lluvia apenas van juntos (Spearman de{" "}
+          {num(f.rho_con_lluvia, 2)}). Descontando la lluvia, la correlación del viento con los viajes sigue en {num(f.rho_parcial_sin_lluvia, 2)}, y
+          quitando cualquier día queda entre {num(f.rho_quitando_un_dia_max, 2)} y {num(f.rho_quitando_un_dia_min, 2)}. La lluvia, descontando el viento,
+          baja a {num(f.rho_lluvia_parcial_sin_viento, 2)}. Con la racha máxima sale lo mismo, algo más débil ({num(r.rho_parcial_sin_lluvia, 2)}).
+        </>,
+        <>
+          <strong>Por horas se confirma con los dos efectos a la vez.</strong> En fin de semana, 10 km/h más de viento quitan un {pc(-fe.pct, 0)} de los
+          viajes entre días (IC 95 % de {pc(fe.pct_inf, 0)} a {pc(fe.pct_sup, 0)}) y un {pc(-fd.pct, 0)} dentro del mismo día. La lluvia, en el mismo
+          modelo, quita entre un {pc(-lluvias[1].pct, 0)} y un {pc(-lluvias[0].pct, 0)}. En laborables el viento quita un {pc(-le.pct, 0)} entre días y un{" "}
+          {pc(-ld.pct, 0)} dentro del día, sin diferencia clara con cero (la correlación diaria parcial es {num(lab.rho_parcial_sin_lluvia, 2)}).
+        </>,
+        `En fin de semana, las ${secas.horas} horas secas con al menos ${v.umbrales.viento_kmh} km/h tuvieron el ${pc(100 * secas.cociente, 0)} de los viajes de las horas secas en calma (menos de ${v.umbrales.calma_kmh} km/h) a la misma hora. Todas son del ${diasSecas.join(" y el ")}.`,
+        `El límite es que la prueba descansa en un episodio: el fin de semana del 13–14/02, frío y con rachas de casi 70 km/h. El 14/02 no llovió y tuvo ${d14.viajes} viajes, frente a ${Math.min(...calmos)}–${Math.max(...calmos)} de los fines de semana secos y en calma. El modelo por horas descuenta la temperatura y el efecto se mantiene.`,
+        <>
+          <strong>Conclusión.</strong> El viento fuerte reduce por sí mismo la demanda de ocio del fin de semana, menos que la lluvia pero claramente, y
+          casi no afecta a los laborables. No entra en el simulador: con un episodio no se puede ajustar y el dimensionado se hace con días normales. El
+          13 y el 14/02 se tratan como el 07/02: se quedan en los datos, se marcan como tiempo adverso y no se usan como días de diseño.
+        </>,
+      ]}
+      fuente="tablas/exploracion/T17_viento_diario.csv, T17_viento_horario.csv y T17_viento_horas_secas.csv"
+    >
+      <div className="controles">
+        <Segmentado
+          etiqueta="Vista"
+          valor={vista}
+          cambiar={setVista}
+          opciones={[
+            { valor: "dias", texto: "Fines de semana por días" },
+            { valor: "horas", texto: "Efecto por horas" },
+          ]}
+        />
+      </div>
+      {vista === "dias" ? (
+        <Grafica
+          descripcion="Dispersión de los viajes de los 8 días de fin de semana frente al viento máximo del día, con los días de lluvia huecos"
+          trazas={[puntos(true), puntos(false)]}
+          alto={360}
+          capa={{
+            margin: { t: 8 },
+            xaxis: { title: { text: "Viento máximo del día (km/h)" }, range: [7, 41] },
+            yaxis: { title: { text: "Viajes elegibles/día" }, rangemode: "tozero" },
+          }}
+        />
+      ) : (
+        <Grafica
+          descripcion="Efecto en % de 10 km/h más de viento en los viajes por hora, con su intervalo al 95 %, por tipo de día y modelo"
+          trazas={efectos}
+          alto={320}
+          capa={{
+            margin: { t: 8 },
+            shapes: [{ type: "line", xref: "x", yref: "paper", x0: 0, x1: 0, y0: 0, y1: 1, line: { color: COLOR.tenue, width: 1.3 } }] as Shape[],
+            xaxis: { title: { text: "Cambio en viajes por hora con +10 km/h (%)" }, ticksuffix: " %" },
+            yaxis: { type: "category", autorange: "reversed" },
+          }}
+        />
+      )}
+      <TablaDesplegable
+        titulo="Ver los 8 días de fin de semana"
+        cabeceras={["Día", "Viajes", "Lluvia (mm)", "Horas con lluvia", "Viento máximo (km/h)", "Racha máxima (km/h)", "Temperatura media (°C)"]}
+        numericas={[1, 2, 3, 4, 5, 6]}
+        filas={v.fines_de_semana.map((x) => [
+          `${x.dia_semana} ${fecha(x.fecha)}`,
+          x.viajes,
+          num(x.precipitacion_mm, 1),
+          x.horas_lluvia,
+          num(x.viento_max_kmh, 1),
+          num(x.racha_max_kmh, 1),
+          num(x.temp_media_c, 1),
         ])}
       />
     </Bloque>

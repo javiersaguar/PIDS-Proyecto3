@@ -9,6 +9,9 @@ build/
 # Datos que se regeneran con el código (comun.datos.cargar_viajes los crea si faltan)
 datos/procesados/*.parquet
 
+# Memoria: ficheros intermedios de LaTeX (los deja latexmk en memoria/build/)
+memoria/build/
+
 # Web: dependencias y compilación (la publica el flujo de GitHub Actions)
 frontend/node_modules/
 frontend/dist/

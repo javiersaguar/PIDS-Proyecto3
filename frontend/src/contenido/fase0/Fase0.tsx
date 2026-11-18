@@ -29,7 +29,7 @@ const DECISIONES = [
   ["Tipos de día", "Laborable y fin de semana por separado en las matrices OD y en el simulador", "T12"],
   ["Cota inferior de la flota", "41 patinetes; la flota la fijará la simulación de inventario por estación", "T12"],
   ["Rejilla de candidatos", "H3 de resolución 9 (201 m de arista); la resolución 8 queda para mapas, saldos y matrices OD", "T13"],
-  ["Rango de estaciones del barrido", "230–387 con 200 m, 102–172 con 300 m y 58–97 con 400 m", "T13"],
+  ["Rango de estaciones del barrido", "230–387 con 200 m, 147–248 con 250 m, 102–172 con 300 m y 58–97 con 400 m", "T13"],
   ["Marca fuera_de_zona", "No hace falta: el único extremo aislado ya no era elegible", "T13"],
   ["Rebalanceo", "Hace falta: el saldo es estructural y el piloto ya lo compensaba. Cota inferior de unos 100 patinetes/día en resolución 8 y 220 en resolución 9", "T14"],
   ["Franjas del desequilibrio", "Sobre todo la punta de mañana, que se invierte por la tarde: el simulador trabaja por franjas o en continuo", "T14"],
@@ -38,8 +38,9 @@ const DECISIONES = [
   ["Viajes circulares", "3,58 %: el simulador admite origen y destino en la misma estación", "T15"],
   ["Frecuencia de recarga", "Cada varios días con el uso observado (autonomía mediana de 45,6 días); se repite con la flota simulada", "T16"],
   ["Energía por estación", "De décimas de kWh a 1 kWh al día; más de la mitad llega de 16 a 24 h", "T16"],
-  ["Días excluidos", "Ninguno: el 07/02 es un día real de lluvia; se marca y no se usa como día de diseño", "T17"],
-  ["Semana reservada", "18 % más de viajes, sin lluvia y más cálida: la validación es más exigente que el ajuste", "T17"],
+  ["Días excluidos", "Ninguno: el 07/02 (lluvia) y el 13–14/02 (viento fuerte y frío) son días reales de tiempo adverso; se marcan y no se usan como días de diseño", "T17"],
+  ["Viento", "Reduce por sí mismo los viajes del fin de semana (−14 % por cada 10 km/h), casi nada los laborables; no entra en el simulador porque la prueba es un solo episodio", "T17"],
+  ["Semana reservada", "18 % más de viajes, sin lluvia, más cálida y con menos viento: la validación es más exigente que el ajuste", "T17"],
 ];
 
 export function Fase0() {

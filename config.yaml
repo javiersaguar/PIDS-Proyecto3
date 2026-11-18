@@ -72,7 +72,29 @@ patinete:
   bateria_ah: 16
   tiempo_recarga_h: 7
 
+# Decisiones de la fase 0 para la movilidad (docs/conclusiones_eda.md).
 movilidad:
-  radios_acceso_m: [200, 300, 400]
+  # Rejilla H3 de los mapas, saldos y matrices OD (T13, T14, T20) y de los
+  # candidatos a estación (T13: 201 m de arista).
+  resolucion_mapas: 8
+  resolucion_candidatos: 9
+  # Radios de acceso a pie del barrido (T15); 400 m solo como sensibilidad.
+  radios_acceso_m: [200, 250, 300, 400]
+  # Velocidad a pie (hipótesis). Bohannon y Andrews (2011), «Normal walking speed:
+  # a descriptive meta-analysis», Physiotherapy 97(3), 182-189, recogen de 1,24 a
+  # 1,43 m/s en adultos de 20 a 69 años; se toma 1,3 m/s, dentro de ese rango.
+  velocidad_pie_ms: 1.3
+  # Distancia de ruta / distancia en línea recta: mediana medida en T15. Si cambia
+  # la limpieza, se vuelve a copiar aquí desde T15_indicadores.
+  factor_rodeo: 1.328
+  # Rebalanceo nocturno del escenario base (T14: cota inferior de unos 100
+  # patinetes/día en resolución 8); 0 y 220 (cota en resolución 9) como sensibilidad.
+  rebalanceo_base_patinetes_dia: 100
+  rebalanceo_sensibilidad_patinetes_dia: [0, 100, 220]
 
 semilla: 2021
+
+# Entrega (enunciado): GZZ-P3.zip con GZZ-P3.pdf y GZZ-P3_code/. Poner el número de
+# grupo de la asignatura cuando se conozca; la memoria lo lee de aquí.
+entrega:
+  grupo: "ZZ"

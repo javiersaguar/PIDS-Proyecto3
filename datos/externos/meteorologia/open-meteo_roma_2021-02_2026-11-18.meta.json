@@ -1,16 +1,16 @@
 {
   "url": "https://archive-api.open-meteo.com/v1/archive",
-  "url_completa": "https://archive-api.open-meteo.com/v1/archive?latitude=41.8967&longitude=12.4822&start_date=2021-02-01&end_date=2021-02-28&daily=precipitation_sum%2Crain_sum%2Ctemperature_2m_mean%2Ctemperature_2m_max%2Ctemperature_2m_min%2Cwind_speed_10m_max&hourly=precipitation%2Ctemperature_2m&timezone=Europe%2FRome",
+  "url_completa": "https://archive-api.open-meteo.com/v1/archive?latitude=41.8967&longitude=12.4822&start_date=2021-02-01&end_date=2021-02-28&daily=precipitation_sum%2Crain_sum%2Ctemperature_2m_mean%2Ctemperature_2m_max%2Ctemperature_2m_min%2Cwind_speed_10m_max%2Cwind_gusts_10m_max&hourly=precipitation%2Ctemperature_2m%2Cwind_speed_10m%2Cwind_gusts_10m&timezone=Europe%2FRome",
   "parametros": {
     "latitude": 41.8967,
     "longitude": 12.4822,
     "start_date": "2021-02-01",
     "end_date": "2021-02-28",
-    "daily": "precipitation_sum,rain_sum,temperature_2m_mean,temperature_2m_max,temperature_2m_min,wind_speed_10m_max",
-    "hourly": "precipitation,temperature_2m",
+    "daily": "precipitation_sum,rain_sum,temperature_2m_mean,temperature_2m_max,temperature_2m_min,wind_speed_10m_max,wind_gusts_10m_max",
+    "hourly": "precipitation,temperature_2m,wind_speed_10m,wind_gusts_10m",
     "timezone": "Europe/Rome"
   },
-  "fecha_descarga_utc": "2026-11-18T17:20:38+00:00",
+  "fecha_descarga_utc": "2026-11-18T18:26:00+00:00",
   "fuente": "Open-Meteo, Historical Weather API (https://open-meteo.com/en/docs/historical-weather-api)",
   "modelo": "models=best_match (valor por defecto). Según la documentación, combina ECMWF IFS HRES (9 km, desde 2017), ERA5 (0,25°) y ERA5-Land (0,1°).",
   "licencia": "CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/)",
@@ -28,17 +28,20 @@
     "temperature_2m_mean": "°C",
     "temperature_2m_max": "°C",
     "temperature_2m_min": "°C",
-    "wind_speed_10m_max": "km/h"
+    "wind_speed_10m_max": "km/h",
+    "wind_gusts_10m_max": "km/h"
   },
   "unidades_horarias": {
     "time": "iso8601",
     "precipitation": "mm",
-    "temperature_2m": "°C"
+    "temperature_2m": "°C",
+    "wind_speed_10m": "km/h",
+    "wind_gusts_10m": "km/h"
   },
   "coordenadas_celda": {
     "latitude": 41.933216,
     "longitude": 12.427326,
     "elevation": 31.0
   },
-  "sha256": "9239473fe8bbca64892e2c0e34dce285cb1ba2e38fd5dd79939022e964b84b2e"
+  "sha256": "3719a441dce23bf41581084ce9e5180aec920ecd513ce77227d0f822624e95c0"
 }

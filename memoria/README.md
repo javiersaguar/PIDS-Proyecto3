@@ -11,6 +11,43 @@
 - Los archivos fuente de la memoria, según el plan en LaTeX, y el PDF final `GZZ-P3.pdf`, donde `ZZ` es el número de grupo.
 - Las referencias a los datos, los métodos y los programas utilizados. El comprimido de entrega reúne la memoria y la carpeta `GZZ-P3_code/` con los programas reproducibles, según el [enunciado](../docs/enunciado.md#entregable).
 
+## Cómo se compila
+
+La memoria está en LaTeX y se compila a PDF con un solo comando, desde la raíz del
+repositorio y con el `.venv` activado:
+
+```
+python memoria/compilar.py
+```
+
+El script hace dos cosas:
+
+1. `memoria/generar_cifras.py` lee las tablas de `resultados/tablas/` y escribe
+   `memoria/generado/`: `cifras.tex` (cada número del texto como `\cifra{clave}`) y las
+   tablas generadas. **En la memoria no se escribe ningún número a mano**: si cambia un
+   resultado, se vuelve a ejecutar `python ejecutar_todo.py` y después este script, y la
+   memoria cuenta lo mismo que los notebooks.
+2. `latexmk -pdf` compila `memoria.tex` con pdflatex y biber (bibliografía en
+   `referencias.bib`, estilo IEEE). Los ficheros intermedios van a `memoria/build/`, que no
+   se versiona, y el PDF se copia a `memoria/G<grupo>-P3.pdf`. El número de grupo está en
+   `config.yaml` (`entrega.grupo`); mientras no se sepa, el PDF se llama `GZZ-P3.pdf`.
+
+Hace falta una distribución de LaTeX con `latexmk`, `pdflatex` y `biber` (MiKTeX o TeX Live)
+y los paquetes `carlito`, `babel-spanish`, `biblatex-ieee`, `booktabs`, `makecell`,
+`placeins` y `float`. Las figuras se toman en PDF de `resultados/figuras/`.
+
+| Fichero | Contenido |
+|---|---|
+| `memoria.tex` | Texto de la memoria |
+| `referencias.bib` | Bibliografía: código del repositorio, datos, Open-Meteo, ERA5, programas y artículos |
+| `generar_cifras.py` | Cifras y tablas desde `resultados/tablas/` |
+| `compilar.py` | Genera las cifras y compila el PDF |
+| `generado/` | Salida de `generar_cifras.py` (versionada para poder compilar sin Python) |
+| `GZZ-P3.pdf` | Última versión compilada |
+
+Formato: el de la plantilla de la asignatura (Calibri 11, aquí Carlito, que tiene las mismas
+medidas; interlineado 1,15 y márgenes de 2,5 cm), con portada, reparto del trabajo e índice.
+
 ## Material de la fase 0 para la memoria
 
 Propuesta de figuras y tablas de la exploración que entran en la memoria. Como dice el
@@ -25,6 +62,7 @@ a `resultados/` y las cifras están en [conclusiones_eda.md](../docs/conclusione
 | Datos y método | `figuras/exploracion/T10_umbrales` | Umbrales de 60 s, 100 m, 2 km/h, 25 km/h y 2 h |
 | Datos y método | `figuras/exploracion/T12_calor_dia_hora` | Franjas horarias y tipos de día |
 | Datos y método | `figuras/exploracion/T17_viajes_lluvia` | Periodos de ajuste y reservada; el 07/02 no se excluye |
+| Datos y método | `figuras/exploracion/T17_viento` | El viento reduce los viajes del fin de semana por sí mismo; el 13–14/02 no son días de diseño |
 | Movilidad | `figuras/exploracion/T13_densidad_res8` | Zona de candidatos y rejilla H3 de resolución 9 |
 | Movilidad | `tablas/exploracion/T13_estaciones_orden_magnitud.csv` | Rango de número de estaciones del barrido |
 | Movilidad | `figuras/exploracion/T15_radios_acceso` | Radios de 200, 250 y 300 m; 400 m como sensibilidad |

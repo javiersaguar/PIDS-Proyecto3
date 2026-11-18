@@ -41,7 +41,7 @@ llevan sus marcas en `motivo`.
 | Velocidad mínima | 2 km/h (regla nueva `vel_baja`) | Histograma de velocidad: valle entre el pico de desbloqueos y la distribución principal | Ajuste | Sus orígenes y destinos son reales; se pierde el 1 % de la demanda | Se añade al contrato de limpieza |
 | Velocidad máxima | 25 km/h | `T10_sensibilidad_umbrales` | Ajuste | Solo 2 viajes; límite del patinete | Ninguno |
 | Duración máxima | 2 h | `T10_sensibilidad_umbrales` | Ajuste | La curva se aplana a partir de 2 h (0,29 % por encima) | Ninguno |
-| ¿Dependen las conclusiones de los umbrales? | No: se usa la limpieza principal | `tablas/exploracion/T10_comparacion_limpiezas.csv`, `figuras/exploracion/T10_comparacion_limpiezas` | Ajuste y reservada | La variante permisiva (30 s, 50 m, sin velocidad mínima, 30 km/h, 3 h) deja un 2,9 % más de viajes; las medianas cambian menos del 3 %, los km un 0,6 % y la concentración espacial (55,5 % de los extremos en el 20 % de celdas H3 de resolución 8) es la misma | Repetir esta comparación con los indicadores de la red elegida |
+| ¿Dependen las conclusiones de los umbrales? | No: se usa la limpieza principal | `tablas/exploracion/T10_comparacion_limpiezas.csv`, `figuras/exploracion/T10_comparacion_limpiezas` | Ajuste y reservada | La variante permisiva (30 s, 50 m, sin velocidad mínima, 30 km/h, 3 h) deja un 2,9 % más de viajes; las medianas cambian menos del 3 %, los km un 0,6 % y la concentración espacial (56,9 % de los extremos en el 20 % de celdas H3 de resolución 8) es la misma | Repetir esta comparación con los indicadores de la red elegida |
 
 ## T11. Solapes y recolocaciones (Javier)
 
@@ -120,7 +120,7 @@ Fuentes: `tablas/exploracion/T13_resoluciones_h3.csv`, `T13_concentracion.csv` y
 | Decisión | Valor propuesto | Evidencia | Periodo | Limitaciones | Qué cambia en el plan |
 |---|---|---|---|---|---|
 | Resolución de los candidatos a estación | Resolución 9 (arista de 201 m, del orden del radio de acceso). La 8 se queda para mapas, saldos y matrices O-D | `T13_resoluciones_h3.csv` | Ajuste | La arista es un valor medio de H3 | Añade la resolución 9 para los candidatos de T24 |
-| Rango de estaciones del barrido | Área de las celdas de resolución 9 que reúnen del 80 al 95 % de los extremos, cubierta con círculos de radio R en malla hexagonal: **230–387 estaciones con 200 m, 102–172 con 300 m y 58–97 con 400 m** | `T13_estaciones_orden_magnitud.csv` | Ajuste | Es una cuenta de área, no una localización: supone demanda uniforme dentro de cada celda | Fija el rango de k de T25–T28 para cada radio |
+| Rango de estaciones del barrido | Área de las celdas de resolución 9 que reúnen del 80 al 95 % de los extremos, cubierta con círculos de radio R en malla hexagonal: **230–387 estaciones con 200 m, 147–248 con 250 m, 102–172 con 300 m y 58–97 con 400 m** | `T13_estaciones_orden_magnitud.csv` | Ajuste | Es una cuenta de área, no una localización: supone demanda uniforme dentro de cada celda | Fija el rango de k de T25–T28 para cada radio |
 | ¿Es estable la demanda en el espacio? | Sí | `T13_estabilidad.csv` | Ajuste y reservada | Una sola semana de validación | Los candidatos del ajuste sirven para validar en T30 |
 | Marca `fuera_de_zona` | No hace falta otra regla: el único extremo aislado ya no es elegible | `T13_puntos_aislados.csv` | Mes, todos los viajes | Umbrales de la tarea, sin calibrar | Ninguno |
 
@@ -244,9 +244,23 @@ Lluvia, temperatura y viento de Roma centro según la API histórica de Open-Met
 | Pendiente de los viajes diarios en el ajuste | 9,4 viajes/día cada día (error típico 4,9), un 8,3 % de la media por semana | `T17_tendencia.csv` |
 | Pendiente en el mes, con fin de semana / añadiendo lluvia y temperatura | 10,5 (e. t. 3,0) / 7,5 (e. t. 2,4) viajes/día cada día | ídem |
 | Cociente reservada / ajuste por día de la semana | 1,12–1,25; 1,182 en la semana | `T17_cociente_semana.csv` |
+| Viento máximo diario medio en el ajuste / en la reservada | 18,3 / 13,5 km/h; racha máxima de la reservada 34,2 km/h | `T17_resumen.csv` |
+| Spearman viajes–viento máximo en fin de semana (n = 8): simple / descontando la lluvia / quitando un día | −0,88 / −0,86 / de −0,82 a −0,93; viento y lluvia solo se asocian en 0,38 | `T17_viento_diario.csv`, figura `T17_viento` |
+| Efecto de +10 km/h de viento en los viajes por hora, con la lluvia en el mismo modelo | Fin de semana −14 % entre días (IC 95 %: −23 a −5) y −16 % dentro del día; laborables −7 % y −4 %, sin diferencia clara con cero | `T17_viento_horario.csv` |
+| Horas secas con ≥ 20 km/h frente a horas secas en calma (< 10 km/h) | Fin de semana 0,76 en 22 horas, todas del 13 y el 14/02 | `T17_viento_horas_secas.csv` |
 
 Con 28 días, las correlaciones son orientativas. La celda del reanálisis está a 6,1 km del punto
 pedido (`T17_resumen.csv`).
+
+**Viento frente a lluvia (apartado 6 del notebook).** En el fin de semana el viento máximo se
+asocia con los viajes más que la lluvia (−0,88 frente a −0,46). No es un reflejo de la lluvia:
+los dos apenas van juntos, la correlación del viento casi no cambia al descontar la lluvia y
+el modelo por horas, con lluvia, viento, temperatura y tendencia a la vez, da un efecto propio
+del viento en el fin de semana y casi ninguno en laborables. La prueba descansa en un solo
+episodio: el fin de semana frío y ventoso del 13–14/02 (el 14/02, sin lluvia, tuvo 717
+viajes, frente a 889–1 048 en los fines de semana secos y en calma). **Conclusión: el viento
+fuerte reduce por sí mismo la demanda de ocio del fin de semana, menos que la lluvia, y casi
+no afecta a los laborables.** No entra en el simulador; el 13 y el 14/02 se tratan como el 07/02.
 
 **Respuesta a la pregunta abierta sobre el 07/02 y el crecimiento.** La lluvia explica el 07/02 y parte del crecimiento: al
 añadir lluvia y temperatura, la pendiente del mes baja de 10,5 a 7,5 viajes/día cada día, pero
@@ -254,8 +268,9 @@ no desaparece.
 
 | Decisión | Valor propuesto | Evidencia | Periodo | Limitaciones | Qué cambia en el plan |
 |---|---|---|---|---|---|
-| ¿Excluir algún día? | **No excluir el 07/02** de la localización ni de las matrices, porque es demanda real con lluvia; no usarlo como día de diseño ni como día tipo | `T17_dias_anomalos.csv` | Mes | Solo un día anómalo con el umbral del 70 % | Marcarlo como día de lluvia en el simulador |
-| ¿Es comparable la semana reservada? | **Con cautela.** Tiene un 18,2 % más de viajes, no llovió y fue más cálida (10,9 °C frente a 9,3 °C). El tiempo explica parte de la diferencia, no toda | `T17_resumen.csv`, `T17_tendencia.csv`, `T17_cociente_semana.csv` | Mes | n = 28 con cuatro variables | La validación de T30 es más exigente que el ajuste; hay que decirlo al presentarla |
+| ¿Excluir algún día? | **No excluir ninguno** de la localización ni de las matrices. El 07/02 (lluvia) y el 13–14/02 (viento fuerte y frío) son demanda real de tiempo adverso: se marcan y no se usan como días de diseño ni como días tipo | `T17_dias_anomalos.csv`, `T17_viento_fines_de_semana.csv` | Mes | Solo el 07/02 baja del 70 % de la mediana; el 13 y el 14/02 se quedan en el 82–83 % | Marcarlos como días de tiempo adverso en el simulador |
+| ¿Entra el viento en el simulador? | **No.** Reduce la demanda del fin de semana por sí mismo (−14 % por cada 10 km/h), pero la prueba es un solo episodio y el dimensionado se hace con días normales | `T17_viento_diario.csv`, `T17_viento_horario.csv`, `T17_viento_horas_secas.csv` | Mes | Un episodio; los errores típicos suponen horas independientes | Ninguno: se cita como limitación en la memoria |
+| ¿Es comparable la semana reservada? | **Con cautela.** Tiene un 18,2 % más de viajes, no llovió, fue más cálida (10,9 °C frente a 9,3 °C) y con menos viento. El tiempo explica parte de la diferencia, no toda | `T17_resumen.csv`, `T17_tendencia.csv`, `T17_cociente_semana.csv` | Mes | n = 28 con cuatro variables | La validación de T30 es más exigente que el ajuste; hay que decirlo al presentarla |
 | Restricciones por COVID en Lacio | No se afirma nada: no hemos podido leer el texto oficial de las medidas de febrero de 2021 | — | — | — | Pregunta abierta |
 
 ## T20. Primera matriz O-D en H3 (Alejandro)
@@ -285,23 +300,33 @@ Viajes elegibles del ajuste agregados por celda de origen y de destino de resolu
   crecimiento solo en parte** (T17): el 07/02 tuvo 24,6 mm y 21 horas de lluvia, y la
   pendiente del mes baja de 10,5 a 7,5 viajes/día por día al añadir lluvia y temperatura.
 
-## Preguntas abiertas para Javier (Alejandro)
+## Preguntas de Alejandro: respuestas de Javier
 
-1. **Parámetros para `config.yaml`.** Ahora están en el diccionario `PARAMETROS` de cada
-   script: `movilidad.radios_acceso_m: [200, 250, 300, 400]`, resolución 9 para candidatos,
-   velocidad a pie de 1,3 m/s, rodeo de 1,328, mínimo de 30 extremos para el saldo, umbral de
-   lluvia de 0,1 mm/h y horas de sol de referencia de 10 a 16 h. ¿Los pasamos?
-2. **Rango de estaciones.** ¿Barremos k con `T13_estaciones_orden_magnitud.csv` (por ejemplo,
-   de 102 a 172 estaciones con 300 m)?
-3. **Rebalanceo en la simulación.** El operador ya compensaba el 62,1 % del saldo, y con
-   estaciones de recarga desaparecen las recogidas para cargar. ¿Ponemos un rebalanceo
-   nocturno de unos 100 patinetes/día en el escenario base?
-4. **Día 07/02.** Propongo no excluirlo y no usarlo como día de diseño. ¿De acuerdo?
-5. **Semana reservada.** Tiene un 18,2 % más de demanda y no llovió. ¿La comparamos tal cual o
-   normalizamos la demanda antes?
-6. **COVID en Lacio.** No he podido leer el texto oficial de las medidas de febrero de 2021.
-   Si no encontramos una fuente oficial, no decimos nada.
-7. **Energía por patinete.** Con la flota observada la batería no limita. ¿Recalculamos T16 con
-   la flota simulada de T34 antes de la fase 3?
-8. **Concentración.** En T10 el 20 % de celdas son `round(0,2 · n)` = 22 celdas (55,49 %) y en
-   T13 son `ceil(0,2 · n)` = 23 (56,9 %). ¿Unificamos la definición?
+1. **Parámetros en `config.yaml`.** Sí para los que usan varias tareas o las fases siguientes:
+   `movilidad.resolucion_mapas` (8), `resolucion_candidatos` (9), `radios_acceso_m`
+   ([200, 250, 300, 400], con 400 m solo como sensibilidad), `velocidad_pie_ms` (1,3, con su
+   referencia), `factor_rodeo` (1,328, copiado de T15) y el rebalanceo de la pregunta 3. T13,
+   T14, T15 y T20 ya los leen de ahí. El mínimo de 30 extremos del saldo, el umbral de lluvia de
+   0,1 mm/h y las horas de sol de 10 a 16 h se quedan en los `PARAMETROS` de su notebook: solo
+   los usa esa tarea, y en la fase 3 la producción fotovoltaica sale de PVWatts hora a hora.
+2. **Rango de estaciones.** Sí. T25–T28 barren k dentro del rango de
+   `T13_estaciones_orden_magnitud.csv` para cada radio (cuotas del 80 al 95 %): 230–387 con
+   200 m, 147–248 con 250 m, 102–172 con 300 m y 58–97 con 400 m. Se amplía un 20 % por cada lado
+   para que el óptimo no quede en el borde; si queda, se amplía más.
+3. **Rebalanceo.** Sí: rebalanceo nocturno de 100 patinetes/día en el escenario base
+   (`movilidad.rebalanceo_base_patinetes_dia`), que es la cota inferior de T14 en resolución 8.
+   T33 lo compara con 0 y con 220 (la cota en resolución 9, `rebalanceo_sensibilidad_patinetes_dia`).
+4. **07/02.** De acuerdo: no se excluye y no es día de diseño. El análisis del viento añade el 13 y
+   el 14/02 con el mismo trato (ver T17).
+5. **Semana reservada.** Las dos cosas, para cosas distintas. La localización y las matrices se
+   validan con cuotas (reparto de viajes entre estaciones, pares y franjas), que no dependen del
+   volumen. El volumen se compara tal cual y la diferencia (+18,2 %, sin lluvia, más cálida y con
+   menos viento) se presenta como resultado: la validación es más exigente que el ajuste.
+6. **COVID en Lacio.** De acuerdo: sin fuente oficial leída no se dice nada. En la memoria va
+   como limitación (no se ha podido controlar el contexto sanitario del mes).
+7. **Energía con la flota simulada.** Sí, pero no se rehace T16: T16 se queda como referencia
+   con la flota observada. La energía con la flota y la ocupación simuladas sale de T34 y T35
+   y la calculan T44–T45 (fase 2) antes de dimensionar la estación en la fase 3.
+8. **Concentración.** Se unifica con la definición de T13: el 20 % de celdas es el menor número
+   entero de celdas que llega al 20 %, `ceil(0,2 · n)`. T10 ya la usa: 23 de 111 celdas y
+   56,9 % de los extremos (56,94 % con la limpieza permisiva).

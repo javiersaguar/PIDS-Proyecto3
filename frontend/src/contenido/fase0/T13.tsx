@@ -216,7 +216,8 @@ function BloqueEstaciones() {
   const { datos: c, error } = useDatos<Concentracion>(`${FASE}/t13_concentracion`);
   if (!c) return <Cargando error={error} />;
   const radios = [...new Set(c.estaciones.map((x) => x.radio_m))];
-  const colores = [COLOR.serie1, COLOR.serie2, COLOR.serie3];
+  // Los radios están ordenados: un solo tono, de claro a oscuro.
+  const colores = ["#86b6ef", "#3987e5", "#256abf", "#0d366b"];
   const trazas: Data[] = radios.map(
     (r, i) =>
       ({
@@ -241,8 +242,9 @@ function BloqueEstaciones() {
       comoLeer="Cada grupo de barras es una cuota de demanda; cada color, un radio de acceso."
       conclusiones={[
         <>
-          Cubrir del 80 al 95 % de los extremos pide <strong>{rango(200)} estaciones con 200 m</strong>, {rango(300)} con
-          300 m y {rango(400)} con 400 m. Es el rango del barrido de k de la fase 1.
+          Cubrir del 80 al 95 % de los extremos pide <strong>{rango(200)} estaciones con 200 m</strong>, {rango(250)} con
+          250 m, {rango(300)} con 300 m y {rango(400)} con 400 m. Es el rango del barrido de k de la fase 1, ampliado un 20 % por
+          cada lado.
         </>,
         "Es una cuenta de área: supone demanda uniforme dentro de cada celda y no sustituye a la localización.",
       ]}
