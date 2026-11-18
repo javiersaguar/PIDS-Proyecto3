@@ -2,6 +2,8 @@
 
 T13: densidad de orígenes y destinos, concentración, puntos aislados y estabilidad
 entre periodos.
+T14: saldo neto orígenes − destinos por celda, franja horaria y día, persistencia y
+cota inferior del rebalanceo diario.
 
 Uso: python exploracion/espacial.py
 """
@@ -11,7 +13,8 @@ import numpy as np
 import pandas as pd
 from matplotlib import patheffects
 from matplotlib.collections import PolyCollection
-from matplotlib.colors import LinearSegmentedColormap, LogNorm
+from matplotlib.colors import LinearSegmentedColormap, LogNorm, Normalize
+from matplotlib.dates import DateFormatter
 from matplotlib.ticker import FormatStrFormatter, FuncFormatter, MaxNLocator
 from scipy.stats import spearmanr
 
@@ -23,6 +26,9 @@ from comun.geo import haversine_m
 TEMA = "exploracion"
 CFG = cargar_config()
 RESOLUCIONES = CFG["exploracion"]["resoluciones_h3"]
+FRANJAS = CFG["exploracion"]["franjas_horarias"]  # provisionales hasta T12
+NOMBRES_FRANJA = {"madrugada": "Madrugada", "punta_manana": "Punta de mañana", "mediodia": "Mediodía",
+                  "punta_tarde": "Punta de tarde", "noche": "Noche"}
 
 PARAMETROS = {
     # Resolución de los mapas (punto de partida del plan).
@@ -42,6 +48,13 @@ PARAMETROS = {
         "Coliseo": (41.8903, 12.4922),
         "San Pedro": (41.9022, 12.4536),
     },
+    # Saldo (T14): mínimo de orígenes + destinos para que una celda cuente. Si una
+    # celda estuviera equilibrada, cada extremo sería origen o destino con p = 0,5 y
+    # la desviación típica de saldo_rel sería 1/sqrt(n): con n = 30, 0,18. Por debajo
+    # de 30 extremos el ruido domina cualquier desequilibrio moderado.
+    "saldo_min_extremos": 30,
+    # Número de celdas con mayor saldo absoluto en la figura del saldo acumulado.
+    "saldo_top_celdas": 10,
 }
 
 TITULO_AJUSTE = "periodo de ajuste (1–21/02/2021)"
@@ -51,6 +64,11 @@ CMAP_SECUENCIAL = LinearSegmentedColormap.from_list(
     "azules", ["#cde2fb", "#9ec5f4", "#6da7ec", "#3987e5", "#256abf", "#184f95", "#0d366b"])
 CMAP_SECUENCIAL.set_bad("#e4e3df")
 COLOR_TEXTO = "#3d3c39"
+# Escala divergente: receptoras (D > O) en azul, emisoras (O > D) en rojo, centro gris.
+CMAP_DIVERGENTE = LinearSegmentedColormap.from_list(
+    "saldo", ["#0d366b", "#2a78d6", "#9ec5f4", "#f0efec", "#f3b1a9", "#e34948", "#8f1d1d"])
+CMAP_DIVERGENTE.set_bad("#d5d4cf")
+COLOR_EMISORA, COLOR_RECEPTORA = "#e34948", "#2a78d6"
 HALO = [patheffects.withStroke(linewidth=2.2, foreground="white")]
 
 
@@ -102,7 +120,7 @@ def extension(celdas, margen: float = 0.004) -> tuple[float, float, float, float
             puntos[:, 1].min() - margen, puntos[:, 1].max() + margen)
 
 
-def preparar_mapa(ax, ext, referencias: bool = True, ejes: bool = True) -> None:
+def preparar_mapa(ax, ext, referencias: bool = True, ejes: bool = True, escala: bool = True) -> None:
     """Límites, proporción local, puntos de referencia y barra de escala de 1 km."""
     lon0, lon1, lat0, lat1 = ext
     ax.set_xlim(lon0, lon1)
@@ -127,6 +145,8 @@ def preparar_mapa(ax, ext, referencias: bool = True, ejes: bool = True) -> None:
                 ax.plot(lon, lat, marker="o", ms=3.5, mfc="white", mec="black", mew=0.8, zorder=5)
                 ax.annotate(nombre, (lon, lat), xytext=(3, 3), textcoords="offset points",
                             fontsize=8, color="black", zorder=5, path_effects=HALO)
+    if not escala:
+        return
     # Barra de escala de 1 km en la esquina inferior izquierda.
     lat_b = lat0 + 0.05 * (lat1 - lat0)
     grados_km = 1000 / haversine_m(lat_b, 0.0, lat_b, 1.0)
@@ -299,6 +319,238 @@ def t13_estabilidad(ajuste: pd.DataFrame, reservada: pd.DataFrame) -> None:
     guardar_tabla(pd.DataFrame(filas), "T13_estabilidad")
 
 
+# ---------------------------------------------------------------------- T14
+
+def franja(hora: pd.Series) -> pd.Series:
+    """Nombre de la franja horaria provisional de cada hora."""
+    etiqueta = pd.Series(pd.NA, index=hora.index, dtype="string")
+    for nombre, (inicio, fin) in FRANJAS.items():
+        etiqueta[(hora >= inicio) & (hora < fin)] = nombre
+    assert etiqueta.notna().all()
+    return etiqueta
+
+
+def dias_periodo(nombre: str) -> pd.Index:
+    inicio, fin = CFG["datos"]["periodos"][nombre]
+    return pd.Index(pd.date_range(inicio, fin, freq="D").strftime("%Y-%m-%d"), dtype="string")
+
+
+def extremos_t14(viajes: pd.DataFrame, res: int) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """Salidas (por tsO) y llegadas (por tsD) con su celda, día y franja."""
+    o = pd.DataFrame({"h3": celda(viajes["latO"], viajes["lonO"], res),
+                      "fecha": viajes["tsO"].dt.strftime("%Y-%m-%d").astype("string"),
+                      "franja": franja(viajes["tsO"].dt.hour)})
+    d = pd.DataFrame({"h3": celda(viajes["latD"], viajes["lonD"], res),
+                      "fecha": viajes["tsD"].dt.strftime("%Y-%m-%d").astype("string"),
+                      "franja": franja(viajes["tsD"].dt.hour)})
+    return o, d
+
+
+def saldo(o: pd.DataFrame, d: pd.DataFrame, claves: list[str]) -> pd.DataFrame:
+    """Orígenes, destinos, saldo O − D y saldo relativo agrupados por `claves`."""
+    t = pd.concat([o.groupby(claves).size().rename("origenes"),
+                   d.groupby(claves).size().rename("destinos")], axis=1).fillna(0).astype("int64")
+    t["extremos"] = t["origenes"] + t["destinos"]
+    t["saldo"] = t["origenes"] - t["destinos"]
+    t["saldo_rel"] = (t["saldo"] / t["extremos"]).round(4)
+    t["incluida"] = t["extremos"] >= PARAMETROS["saldo_min_extremos"]
+    return t.reset_index()
+
+
+def mapa_saldo(ax, t: pd.DataFrame, columna: str, norm, ext, **kw):
+    """Celdas incluidas con escala divergente y el resto en gris."""
+    valores = t[columna].where(t["incluida"], np.nan)
+    pc = dibujar_celdas(ax, t["h3"], valores, CMAP_DIVERGENTE, norm)
+    preparar_mapa(ax, ext, **kw)
+    return pc
+
+
+def t14_saldo_total(o, d, n_dias: int) -> pd.DataFrame:
+    t = saldo(o, d, ["h3"])
+    t["saldo_dia"] = (t["saldo"] / n_dias).round(3)
+    # Desequilibrio mayor que dos desviaciones típicas del caso equilibrado.
+    t["signif_2sigma"] = t["saldo_rel"].abs() > 2 / np.sqrt(t["extremos"])
+    t["tipo"] = np.select([~t["incluida"], t["saldo"] > 0, t["saldo"] < 0],
+                          ["poco_uso", "emisora", "receptora"], "equilibrada")
+    t["lat"], t["lon"] = centros(t["h3"])
+    t[["lat", "lon"]] = t[["lat", "lon"]].round(6)
+    t = t.sort_values(["saldo", "h3"], ascending=[False, True], ignore_index=True)
+    guardar_tabla(t, "T14_saldo_celdas")
+
+    ext = extension(t["h3"])
+    fig, ejes = plt.subplots(1, 2, figsize=(6.5, 4.8), sharey=True)
+    lim = t.loc[t["incluida"], "saldo_dia"].abs().max()
+    pc = mapa_saldo(ejes[0], t, "saldo_dia", Normalize(-lim, lim), ext)
+    fig.colorbar(pc, ax=ejes[0], shrink=0.8, pad=0.12, location="bottom").set_label("Saldo O − D (patinetes/día)")
+    ejes[0].set_title("Saldo medio diario")
+    pc = mapa_saldo(ejes[1], t, "saldo_rel", Normalize(-1, 1), ext)
+    fig.colorbar(pc, ax=ejes[1], shrink=0.8, pad=0.12, location="bottom").set_label("Saldo relativo (O − D)/(O + D)")
+    ejes[1].set_title("Saldo relativo")
+    ejes[1].set_ylabel("")
+    fig.suptitle(f"Saldo neto por celda H3 de res. {PARAMETROS['res_mapas']}, {TITULO_AJUSTE}\n"
+                 "Rojo: emisora (más salidas). Azul: receptora (más llegadas). "
+                 f"Gris: menos de {PARAMETROS['saldo_min_extremos']} extremos", fontsize=9)
+    guardar_figura(fig, TEMA, "T14_saldo")
+    return t
+
+
+def t14_saldo_franjas(o, d, n_dias: int, ext) -> None:
+    t = saldo(o, d, ["h3", "franja"])
+    t["saldo_dia"] = (t["saldo"] / n_dias).round(3)
+    orden = {nombre: i for i, nombre in enumerate(FRANJAS)}
+    t["_orden"] = t["franja"].map(orden)
+    t = t.sort_values(["_orden", "saldo", "h3"], ascending=[True, False, True], ignore_index=True)
+    t = t.drop(columns="_orden")
+    guardar_tabla(t, "T14_saldo_franjas")
+
+    lim = t.loc[t["incluida"], "saldo_dia"].abs().max()
+    norm = Normalize(-lim, lim)
+    fig, ejes = plt.subplots(1, len(FRANJAS), figsize=(6.5, 3.4))
+    for i, (ax, (nombre, (inicio, fin))) in enumerate(zip(ejes, FRANJAS.items())):
+        sub = t[t["franja"] == nombre]
+        pc = mapa_saldo(ax, sub, "saldo_dia", norm, ext, ejes=False, referencias=False, escala=(i == 0))
+        ax.set_title(f"{NOMBRES_FRANJA.get(nombre, nombre)}\n{inicio}–{fin} h\n"
+                     f"{int(sub['incluida'].sum())} celdas", fontsize=9)
+    barra = fig.colorbar(pc, ax=ejes, orientation="horizontal", shrink=0.6, pad=0.04, aspect=40)
+    barra.set_label("Saldo O − D en la franja (patinetes/día). Rojo: emisora; azul: receptora")
+    fig.suptitle(f"Saldo neto por franja horaria provisional, res. {PARAMETROS['res_mapas']}, {TITULO_AJUSTE}\n"
+                 f"Gris: menos de {PARAMETROS['saldo_min_extremos']} extremos en la franja", fontsize=9)
+    guardar_figura(fig, TEMA, "T14_saldo_franjas")
+
+    # Desequilibrio por franja: patinetes que el flujo neto desplaza entre celdas.
+    dias = saldo(o, d, ["h3", "franja", "fecha"])
+    filas = []
+    for nombre, (inicio, fin) in FRANJAS.items():
+        estructural = t.loc[t["franja"] == nombre, "saldo"].abs().sum() / 2 / n_dias
+        diario = (dias[dias["franja"] == nombre].groupby("fecha")["saldo"].apply(lambda s: s.abs().sum() / 2)
+                  .reindex(dias_periodo("ajuste"), fill_value=0).mean())
+        salidas = int(t.loc[t["franja"] == nombre, "origenes"].sum())
+        filas.append({"franja": nombre, "inicio_h": inicio, "fin_h": fin,
+                      "salidas_dia": round(salidas / n_dias, 1),
+                      "desplazamiento_estructural_patinetes_dia": round(estructural, 1),
+                      "desplazamiento_diario_medio_patinetes_dia": round(diario, 1),
+                      "desplazamiento_estructural_patinetes_hora": round(estructural / (fin - inicio), 1),
+                      "pct_salidas_desplazadas_estructural": round(100 * estructural * n_dias / salidas, 1)})
+    guardar_tabla(pd.DataFrame(filas), "T14_desequilibrio_franjas")
+
+
+def t14_persistencia(o, d, total: pd.DataFrame) -> None:
+    dias = dias_periodo("ajuste")
+    incluidas = total.loc[total["incluida"], "h3"]
+    diario = saldo(o[o["h3"].isin(incluidas)], d[d["h3"].isin(incluidas)], ["h3", "fecha"])
+    rejilla = pd.MultiIndex.from_product([incluidas.sort_values(), dias], names=["h3", "fecha"])
+    diario = (diario.set_index(["h3", "fecha"])[["origenes", "destinos", "saldo"]]
+              .reindex(rejilla, fill_value=0).reset_index())
+    diario["saldo_acumulado"] = diario.groupby("h3")["saldo"].cumsum()
+    guardar_tabla(diario, "T14_saldo_diario")
+
+    signo_total = np.sign(total.set_index("h3")["saldo"])
+    s = diario.assign(signo=np.sign(diario["saldo"]), signo_acum=np.sign(diario["saldo_acumulado"]),
+                      signo_total=diario["h3"].map(signo_total))
+    s["mismo"] = s["signo"] == s["signo_total"]
+    s["contrario"] = s["signo"] == -s["signo_total"]
+    s["cero"] = s["signo"] == 0
+    s["acum_mismo"] = s["signo_acum"] == s["signo_total"]
+    pers = s.groupby("h3")[["mismo", "contrario", "cero", "acum_mismo"]].sum().astype("int64")
+    pers.columns = ["dias_mismo_signo", "dias_signo_contrario", "dias_saldo_cero", "dias_acumulado_mismo_signo"]
+    pers["pct_dias_mismo_signo"] = (100 * pers["dias_mismo_signo"] / len(dias)).round(1)
+    pers["pct_dias_acumulado_mismo_signo"] = (100 * pers["dias_acumulado_mismo_signo"] / len(dias)).round(1)
+    pers = total.set_index("h3")[["origenes", "destinos", "saldo", "saldo_dia", "tipo", "signif_2sigma",
+                                  "lat", "lon"]].join(pers, how="inner").reset_index()
+    pers["_abs"] = pers["saldo"].abs()
+    pers = pers.sort_values(["_abs", "h3"], ascending=[False, True], ignore_index=True).drop(columns="_abs")
+    pers.insert(0, "rango_abs_saldo", np.arange(1, len(pers) + 1))
+    guardar_tabla(pers, "T14_persistencia")
+
+    # Saldo acumulado de las celdas con mayor saldo absoluto.
+    top = pers.head(PARAMETROS["saldo_top_celdas"])
+    fig, ax = plt.subplots(figsize=(6.5, 4.0))
+    x = pd.to_datetime(pd.Series(dias)).to_numpy()
+    finales = []
+    for _, fila in top.iterrows():
+        serie = diario.loc[diario["h3"] == fila["h3"], "saldo_acumulado"].to_numpy()
+        color = COLOR_EMISORA if fila["saldo"] > 0 else COLOR_RECEPTORA
+        ax.plot(x, serie, color=color, lw=1.6, alpha=0.9)
+        finales.append((int(serie[-1]), int(fila["rango_abs_saldo"])))
+    # Etiquetas al final de cada línea, separadas para que no se pisen.
+    finales.sort()
+    separacion = 0.05 * (finales[-1][0] - finales[0][0])
+    posiciones = []
+    for valor, _ in finales:
+        posiciones.append(max(valor, posiciones[-1] + separacion) if posiciones else valor)
+    fin = pd.Timestamp(x[-1])
+    for (valor, rango), y in zip(finales, posiciones):
+        ax.annotate(f"{rango}", (fin, valor), xytext=(fin + pd.Timedelta(hours=14), y),
+                    fontsize=8, color=COLOR_TEXTO, va="center",
+                    arrowprops={"arrowstyle": "-", "color": "#b5b4ae", "lw": 0.5})
+    ax.axhline(0, color="#52514e", lw=0.8)
+    ax.plot([], [], color=COLOR_EMISORA, lw=1.6, label="Emisora (O > D): pierde patinetes")
+    ax.plot([], [], color=COLOR_RECEPTORA, lw=1.6, label="Receptora (D > O): acumula patinetes")
+    ax.legend(loc="upper left")
+    ax.set_xlim(pd.Timestamp(x[0]) - pd.Timedelta(hours=12), fin + pd.Timedelta(days=1.8))
+    ax.xaxis.set_major_formatter(DateFormatter("%d/%m"))
+    ax.set_xlabel("Día")
+    ax.set_ylabel("Saldo O − D acumulado (patinetes)")
+    ax.set_title(f"Saldo acumulado de las {len(top)} celdas de res. {PARAMETROS['res_mapas']} con mayor saldo "
+                 f"absoluto,\n{TITULO_AJUSTE}. El número es el rango en T14_persistencia")
+    guardar_figura(fig, TEMA, "T14_saldo_acumulado")
+
+
+def t14_rebalanceo(ajuste: pd.DataFrame, n_dias: int) -> dict:
+    """Cota inferior diaria: suma de |saldo| de las celdas entre 2, con todas las celdas."""
+    dias = dias_periodo("ajuste")
+    tabla = pd.DataFrame({"fecha": dias})
+    tabla["viajes"] = (ajuste["tsO"].dt.strftime("%Y-%m-%d").value_counts()
+                       .reindex(dias, fill_value=0).to_numpy())
+    resumen = {}
+    for res in RESOLUCIONES:
+        o, d = extremos_t14(ajuste, res)
+        diario = saldo(o, d, ["h3", "fecha"])
+        cota = (diario.groupby("fecha")["saldo"].apply(lambda s: s.abs().sum() / 2)
+                .reindex(dias, fill_value=0))
+        tabla[f"cota_res{res}_patinetes"] = cota.to_numpy()
+        tabla[f"pct_viajes_res{res}"] = (100 * tabla[f"cota_res{res}_patinetes"] / tabla["viajes"]).round(1)
+        estructural = saldo(o, d, ["h3"])["saldo"].abs().sum() / 2 / n_dias
+        resumen.update({
+            f"cota_rebalanceo_res{res}_media_patinetes_dia": round(float(cota.mean()), 1),
+            f"cota_rebalanceo_res{res}_max_patinetes_dia": float(cota.max()),
+            f"cota_rebalanceo_res{res}_media_pct_viajes": round(float(tabla[f"pct_viajes_res{res}"].mean()), 1),
+            f"desplazamiento_estructural_res{res}_patinetes_dia": round(float(estructural), 1),
+        })
+    guardar_tabla(tabla, "T14_rebalanceo_diario")
+    return resumen
+
+
+def t14(ajuste: pd.DataFrame) -> None:
+    res = PARAMETROS["res_mapas"]
+    n_dias = len(dias_periodo("ajuste"))
+    o, d = extremos_t14(ajuste, res)
+    total = t14_saldo_total(o, d, n_dias)
+    t14_saldo_franjas(o, d, n_dias, extension(total["h3"]))
+    t14_persistencia(o, d, total)
+    rebalanceo = t14_rebalanceo(ajuste, n_dias)
+
+    inc = total[total["incluida"]]
+    pers = pd.read_csv(carpeta_tablas(TEMA) / "T14_persistencia.csv")
+    resumen = {
+        "viajes": len(ajuste),
+        "dias": n_dias,
+        "llegadas_fuera_del_periodo": int((~d["fecha"].isin(dias_periodo("ajuste"))).sum()),
+        "celdas_res8": len(total),
+        "celdas_incluidas": len(inc),
+        "pct_extremos_en_celdas_incluidas": round(100 * inc["extremos"].sum() / total["extremos"].sum(), 2),
+        "celdas_emisoras": int((inc["saldo"] > 0).sum()),
+        "celdas_receptoras": int((inc["saldo"] < 0).sum()),
+        "celdas_equilibradas": int((inc["saldo"] == 0).sum()),
+        "celdas_desequilibrio_signif_2sigma": int(inc["signif_2sigma"].sum()),
+        "celdas_pct_dias_mismo_signo_ge_70": int((pers["pct_dias_mismo_signo"] >= 70).sum()),
+        "pct_dias_mismo_signo_mediana": float(pers["pct_dias_mismo_signo"].median()),
+        **rebalanceo,
+    }
+    guardar_tabla(pd.DataFrame({"indicador": list(resumen),
+                                "valor": pd.Series(list(resumen.values()), dtype=object)}), "T14_resumen")
+
+
 def main() -> None:
     ajuste = cargar_viajes(periodo="ajuste")
     reservada = cargar_viajes(periodo="reservada")
@@ -313,9 +565,11 @@ def main() -> None:
     t13_mapa_densidad(conteos[PARAMETROS["res_mapas"]])
     t13_puntos_aislados(todos)
     t13_estabilidad(ajuste, reservada)
+    t14(ajuste)
 
     tablas = carpeta_tablas(TEMA)
-    for nombre in ["T13_resoluciones_h3", "T13_concentracion", "T13_puntos_aislados_resumen", "T13_estabilidad"]:
+    for nombre in ["T13_resoluciones_h3", "T13_concentracion", "T13_puntos_aislados_resumen", "T13_estabilidad",
+                   "T14_resumen", "T14_desequilibrio_franjas"]:
         print(f"\n{nombre}\n" + pd.read_csv(tablas / f"{nombre}.csv").to_string(index=False))
 
 
