@@ -166,7 +166,7 @@ export function trazaZona(x0: number, x1: number, alto: number): Data {
 }
 
 // Etiqueta de texto suelta en coordenadas de datos.
-export function trazaTexto(x: number, y: number, texto: string, posicion = "top center"): Data {
+export function trazaTexto(x: number | string, y: number, texto: string, posicion = "top center"): Data {
   return {
     type: "scatter",
     mode: "text",
@@ -179,4 +179,119 @@ export function trazaTexto(x: number, y: number, texto: string, posicion = "top 
     showlegend: false,
     cliponaxis: false,
   } as Data;
+}
+
+// Escala divergente para saldos: azul (negativo), gris neutro en 0 y rojo (positivo).
+export const ESCALA_DIVERGENTE: [number, string][] = [
+  [0, "#1c5cab"],
+  [0.25, "#86b6ef"],
+  [0.5, "#f0efec"],
+  [0.75, "#f0a09a"],
+  [1, "#c23b3a"],
+];
+
+// Celda H3 con su contorno exportado por el notebook ([lon, lat] de cada vértice).
+export type Celda = { h3: string; contorno: [number, number][] };
+
+function geojsonCeldas(celdas: Celda[]) {
+  return {
+    type: "FeatureCollection",
+    features: celdas.map((c) => ({
+      type: "Feature",
+      id: c.h3,
+      properties: {},
+      geometry: { type: "Polygon", coordinates: [[...c.contorno, c.contorno[0]]] },
+    })),
+  };
+}
+
+// Celdas H3 coloreadas por un valor sobre el mapa base.
+export function trazaCeldas(o: {
+  celdas: Celda[];
+  z: number[];
+  escala: [number, string][];
+  zmin: number;
+  zmax: number;
+  plantilla: string;
+  customdata?: unknown[];
+  titulo?: string;
+  nombre?: string;
+  opacidad?: number;
+  conEscala?: boolean;
+  enLeyenda?: boolean;
+}): Data {
+  return {
+    type: "choroplethmap",
+    geojson: geojsonCeldas(o.celdas),
+    featureidkey: "id",
+    locations: o.celdas.map((c) => c.h3),
+    z: o.z,
+    zmin: o.zmin,
+    zmax: o.zmax,
+    colorscale: o.escala,
+    customdata: o.customdata,
+    marker: { opacity: o.opacidad ?? 0.82, line: { color: "#ffffff", width: 0.8 } },
+    showscale: o.conEscala ?? true,
+    showlegend: o.enLeyenda ?? false,
+    colorbar: {
+      title: { text: o.titulo ?? "", side: "right", font: { size: 12, color: COLOR.tenue } },
+      thickness: 12,
+      len: 0.8,
+      outlinewidth: 0,
+      tickfont: { size: 11, color: COLOR.tenue },
+    },
+    name: o.nombre,
+    hovertemplate: o.plantilla,
+  } as unknown as Data;
+}
+
+// Celdas de un solo color (para categorías: con leyenda y sin escala).
+export function trazaCeldasColor(celdas: Celda[], color: string, nombre: string, plantilla: string, customdata?: unknown[]): Data {
+  return trazaCeldas({
+    celdas,
+    z: celdas.map(() => 1),
+    escala: [
+      [0, color],
+      [1, color],
+    ],
+    zmin: 0,
+    zmax: 1,
+    plantilla,
+    customdata,
+    nombre,
+    conEscala: false,
+    enLeyenda: true,
+  });
+}
+
+// Lugares de referencia (Termini, Coliseo, San Pedro) para orientarse en los mapas.
+export function trazaReferencias(ref: Record<string, [number, number]>): Data {
+  const nombres = Object.keys(ref);
+  return {
+    type: "scattermap",
+    mode: "markers+text",
+    lat: nombres.map((n) => ref[n][0]),
+    lon: nombres.map((n) => ref[n][1]),
+    text: nombres,
+    textposition: "top center",
+    textfont: { size: 12, color: COLOR.texto },
+    marker: { size: 7, color: COLOR.texto },
+    hovertemplate: "%{text}<extra></extra>",
+    showlegend: false,
+  } as Data;
+}
+
+export const REFERENCIAS_ROMA: Record<string, [number, number]> = {
+  Termini: [41.9009, 12.5019],
+  Coliseo: [41.8903, 12.4922],
+  "San Pedro": [41.9022, 12.4536],
+};
+
+// Encuadre por defecto: todas las celdas con demanda (41,81–41,96 N y 12,43–12,54 E).
+export function capaMapa(zoom = 10.6, lat = 41.884): Partial<Layout> {
+  return {
+    margin: { l: 0, r: 0, t: 0, b: 0 },
+    legend: { x: 0.01, y: 0.99, yanchor: "top", bgcolor: "rgba(255,255,255,0.85)" },
+    map: { style: "carto-positron", center: { lat, lon: 12.484 }, zoom },
+  } as Partial<Layout>;
 }

@@ -1,48 +1,22 @@
 import { T10 } from "./T10";
 import { T11 } from "./T11";
 import { T12 } from "./T12";
+import { T13 } from "./T13";
+import { T14 } from "./T14";
+import { T15 } from "./T15";
+import { T16 } from "./T16";
+import { T17 } from "./T17";
 
 const SECCIONES = [
   { id: "t10", tarea: "T10", titulo: "Limpieza" },
   { id: "t11", tarea: "T11", titulo: "Recolocaciones" },
   { id: "t12", tarea: "T12", titulo: "Patrones temporales" },
-  { id: "pendientes", tarea: "T13–T17", titulo: "Espacio, recorridos, energía y meteorología" },
+  { id: "t13", tarea: "T13", titulo: "Densidad en H3" },
+  { id: "t14", tarea: "T14", titulo: "Saldo por celda" },
+  { id: "t15", tarea: "T15", titulo: "Recorridos y radios" },
+  { id: "t16", tarea: "T16", titulo: "Energía de referencia" },
+  { id: "t17", tarea: "T17", titulo: "Meteorología" },
   { id: "decisiones", tarea: "", titulo: "Decisiones de la fase" },
-];
-
-// Tareas de exploración que faltan, con la pregunta que responden y la decisión que alimentan
-// (docs/PLAN.md, "Exploración orientada a decisiones").
-const PENDIENTES = [
-  {
-    tarea: "T13",
-    titulo: "Densidad de orígenes y destinos en H3",
-    pregunta: "¿Dónde empiezan y acaban los viajes y cuántas celdas reúnen el 50, 80, 90 y 95 % de los extremos?",
-    decision: "Resolución de la rejilla, zona donde buscar candidatos y rango de número de estaciones del barrido.",
-  },
-  {
-    tarea: "T14",
-    titulo: "Saldo neto por celda, franja y día",
-    pregunta: "¿Dónde se acumula la flota a lo largo del día?",
-    decision: "Necesidad de rebalanceo y estaciones que piden más anclajes.",
-  },
-  {
-    tarea: "T15",
-    titulo: "Recorridos y radios de acceso",
-    pregunta: "¿Cómo son los recorridos: distancia, duración, velocidad, rodeo y viajes circulares?",
-    decision: "Radios de acceso del barrido y demanda que dejaría de tener sentido con estaciones.",
-  },
-  {
-    tarea: "T16",
-    titulo: "Kilómetros y energía de referencia",
-    pregunta: "¿Cuánta energía mueve cada patinete al día con 13,5 Wh/km?",
-    decision: "Frecuencia de recarga y orden de magnitud de la demanda por estación.",
-  },
-  {
-    tarea: "T17",
-    titulo: "Meteorología y días anómalos",
-    pregunta: "¿Explican la lluvia o la temperatura los días con poca demanda?",
-    decision: "Si se excluye algún día y si la semana reservada es comparable.",
-  },
 ];
 
 const DECISIONES = [
@@ -50,11 +24,22 @@ const DECISIONES = [
   ["Viajes elegibles", "23 292: 16 710 en el ajuste y 6 582 en la semana reservada", "T10"],
   ["Robustez de la limpieza", "La limpieza permisiva no cambia los indicadores clave; se usa la principal", "T10"],
   ["Umbral de recolocación", "200 m, en el valle entre el ruido de GPS y los saltos de kilómetros", "T11"],
-  ["Rebalanceo", "El piloto hacía recogidas de varios días, no rebalanceo dentro del día; el escenario de la fase 1 será nocturno", "T11"],
+  ["Recolocaciones del piloto", "Recogidas de varios días, no rebalanceo dentro del día; el escenario de la fase 1 será nocturno", "T11"],
   ["Franjas horarias", "Madrugada 0–7, punta de mañana 7–10, mediodía 10–16, punta de tarde 16–20 y noche 20–24", "T12"],
   ["Tipos de día", "Laborable y fin de semana por separado en las matrices OD y en el simulador", "T12"],
   ["Cota inferior de la flota", "41 patinetes; la flota la fijará la simulación de inventario por estación", "T12"],
-  ["Semana reservada", "Tiene un 18 % más de demanda: la validación es más exigente que el ajuste", "T12"],
+  ["Rejilla de candidatos", "H3 de resolución 9 (201 m de arista); la resolución 8 queda para mapas, saldos y matrices OD", "T13"],
+  ["Rango de estaciones del barrido", "230–387 con 200 m, 102–172 con 300 m y 58–97 con 400 m", "T13"],
+  ["Marca fuera_de_zona", "No hace falta: el único extremo aislado ya no era elegible", "T13"],
+  ["Rebalanceo", "Hace falta: el saldo es estructural y el piloto ya lo compensaba. Cota inferior de unos 100 patinetes/día en resolución 8 y 220 en resolución 9", "T14"],
+  ["Franjas del desequilibrio", "Sobre todo la punta de mañana, que se invierte por la tarde: el simulador trabaja por franjas o en continuo", "T14"],
+  ["Radios del barrido", "200, 250 y 300 m; 400 m como sensibilidad", "T15"],
+  ["Rodeo y velocidad a pie (hipótesis)", "1,328 y 1,3 m/s", "T15"],
+  ["Viajes circulares", "3,58 %: el simulador admite origen y destino en la misma estación", "T15"],
+  ["Frecuencia de recarga", "Cada varios días con el uso observado (autonomía mediana de 45,6 días); se repite con la flota simulada", "T16"],
+  ["Energía por estación", "De décimas de kWh a 1 kWh al día; más de la mitad llega de 16 a 24 h", "T16"],
+  ["Días excluidos", "Ninguno: el 07/02 es un día real de lluvia; se marca y no se usa como día de diseño", "T17"],
+  ["Semana reservada", "18 % más de viajes, sin lluvia y más cálida: la validación es más exigente que el ajuste", "T17"],
 ];
 
 export function Fase0() {
@@ -71,37 +56,11 @@ export function Fase0() {
       <T10 />
       <T11 />
       <T12 />
-      <section id="pendientes" className="seccion">
-        <header>
-          <div>
-            <div className="etiqueta">T13–T17 · Alejandro Cuevas</div>
-            <h2>Espacio, recorridos, energía y meteorología</h2>
-          </div>
-          <div>
-            <p>
-              Estas tareas están en curso. Cada una tendrá aquí sus gráficas, con la misma estructura que las anteriores,
-              en cuanto su notebook exporte los datos.
-            </p>
-          </div>
-        </header>
-        <div className="tarjetas">
-          {PENDIENTES.map((p) => (
-            <div key={p.tarea} className="tarjeta">
-              <div className="arriba">
-                <span>{p.tarea} · Alejandro Cuevas</span>
-                <span className="chapa">pendiente</span>
-              </div>
-              <h3>{p.titulo}</h3>
-              <p>
-                <strong>Pregunta.</strong> {p.pregunta}
-              </p>
-              <p>
-                <strong>Decisión.</strong> {p.decision}
-              </p>
-            </div>
-          ))}
-        </div>
-      </section>
+      <T13 />
+      <T14 />
+      <T15 />
+      <T16 />
+      <T17 />
       <section id="decisiones" className="seccion">
         <header>
           <div>

@@ -33,7 +33,7 @@ export function TablaDesplegable({ titulo, cabeceras, filas, numericas = [] }: {
           <thead>
             <tr>
               {cabeceras.map((c, i) => (
-                <th key={c} className={numericas.includes(i) ? "num" : undefined}>
+                <th key={`${i}-${c}`} className={numericas.includes(i) ? "num" : undefined}>
                   {c}
                 </th>
               ))}

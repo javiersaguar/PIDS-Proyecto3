@@ -16,7 +16,7 @@ export const FASES: Fase[] = [
     pestana: "Fase 0 · Datos",
     titulo: "Datos: limpieza y exploración",
     descripcion:
-      "Deja los viajes limpios y fija los parámetros que usan las demás fases. Cada análisis responde a una pregunta y alimenta una decisión: umbrales de limpieza, franjas horarias, tipos de día, rebalanceo y cota de flota.",
+      "Deja los viajes limpios y fija los parámetros que usan las demás fases. Cada análisis responde a una pregunta y alimenta una decisión: umbrales de limpieza, franjas horarias, tipos de día, rejilla de candidatos, radios de acceso, rebalanceo y energía de referencia.",
     fechas: "18–23/11",
     estado: "en curso",
     tareas: "T10–T19",
@@ -30,7 +30,7 @@ export const FASES: Fase[] = [
       "Matrices origen–destino, redes candidatas de estaciones y la recomendación de cuántas estaciones, dónde, con cuántos anclajes y con qué flota. Muestra cuánto acceso se gana con cada incremento de infraestructura.",
     fechas: "23/11–4/12",
     peso: "60 %",
-    estado: "pendiente",
+    estado: "en curso",
     tareas: "T20–T38",
     previsto: [
       "Matrices origen–destino por celda H3, franja horaria y tipo de día, con mapa de líneas de deseo.",

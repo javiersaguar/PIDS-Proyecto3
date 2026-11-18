@@ -1,9 +1,11 @@
 import type { ReactNode } from "react";
 import { Fase0 } from "../contenido/fase0/Fase0";
+import { Fase1 } from "../contenido/fase1/Fase1";
 import type { Fase } from "../fases";
 
 const CONTENIDO: Record<string, () => ReactNode> = {
   fase0: () => <Fase0 />,
+  fase1: () => <Fase1 />,
 };
 
 export function PaginaFase({ fase }: { fase: Fase }) {

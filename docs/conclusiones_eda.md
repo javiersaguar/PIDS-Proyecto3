@@ -276,12 +276,14 @@ Viajes elegibles del ajuste agregados por celda de origen y de destino de resolu
 | ¿Hay corredores asimétricos? | No: cada par es casi simétrico (1,10 veces lo esperable por azar). El saldo de T14 es la suma de muchos pares pequeños | `T20_resumen.csv` | Ajuste | Resolución 8 | El rebalanceo se plantea por zonas, no por corredores |
 | Viajes intrazonales | El 21,4 % no sale de su celda de resolución 8 | ídem | Ajuste | Depende de la resolución | Con radios de 300 m o más, parte de ellos empezarían y acabarían en la misma estación |
 
-## Preguntas abiertas
+## Preguntas de la exploración ya respondidas
 
-- ¿Coincide el saldo de T14 con las entregas netas del operador de T11? Si es así, las
-  recolocaciones compensan la acumulación de patinetes y el rebalanceo nocturno es
-  imprescindible en la simulación.
-- ¿Explica la meteorología el 07/02 y el crecimiento del mes (T17)?
+- ¿Coincide el saldo de T14 con las entregas netas del operador de T11? **Sí** (T14):
+  Spearman de 0,89 y pendiente de 0,75; las recolocaciones compensan el 62,1 % del saldo.
+  El rebalanceo nocturno es imprescindible en la simulación.
+- ¿Explica la meteorología el 07/02 y el crecimiento del mes? **El 07/02 sí y el
+  crecimiento solo en parte** (T17): el 07/02 tuvo 24,6 mm y 21 horas de lluvia, y la
+  pendiente del mes baja de 10,5 a 7,5 viajes/día por día al añadir lluvia y temperatura.
 
 ## Preguntas abiertas para Javier (Alejandro)
 
