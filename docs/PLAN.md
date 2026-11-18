@@ -6,7 +6,7 @@
 | --- | --- |
 | [1. Objetivo y alcance](#1-objetivo-y-alcance) | Qué preguntas responde el proyecto y qué entregamos |
 | [2. Arquitectura y reproducción](#2-arquitectura-y-reproducción) | Cómo se regeneran y conectan los resultados |
-| [3. Datos y exploración](#3-datos-y-exploración) | Qué viajes entran en el análisis y cómo se valida la red |
+| [3. Datos y exploración](#3-datos-y-exploración) | Qué viajes entran en el análisis, qué parámetros fija la exploración (fase 0) y cómo se valida la red |
 | [4. Movilidad y flota](#4-movilidad-y-flota) | Dónde ubicar estaciones y cuántos anclajes y patinetes instalar |
 | [5. Consumo](#5-consumo) | Cuánta energía necesita cada viaje y dónde se repone |
 | [6. Estaciones de recarga](#6-estaciones-de-recarga) | Qué potencia, superficie solar y almacenamiento necesita una estación |
@@ -55,6 +55,7 @@ flowchart LR
 | `datos/externos/` (prevista) | Respuestas de fuentes externas y metadatos. Registrar fuente, fecha de descarga, parámetros, cobertura, unidades, licencia cuando corresponda y hash. |
 | [datos/procesados/](../datos/procesados/README.md) | Viajes normalizados, catálogos geográficos, asignaciones y tablas intermedias compartidas. |
 | `comun/` y `config.yaml` (previstos) | Lectura, distancias, unidades, configuración de los escenarios y utilidades que usan varios módulos. |
+| [exploracion/](../exploracion/README.md) | Limpieza y exploración de la fase 0. Genera `viajes_limpios.parquet` y las tablas y figuras que fijan los parámetros de las fases siguientes. |
 | [movilidad/](../movilidad/README.md), [consumo/](../consumo/README.md) y [estacion_recarga/](../estacion_recarga/README.md) | Cálculos y simulaciones de cada fase. |
 | [resultados/](../resultados/README.md) | Indicadores, comparativas, series horarias, mapas y gráficas. |
 | `frontend/` (prevista) | Aplicación web y recursos 3D. El exportador de Python prepara los datos que consume. |
@@ -70,7 +71,7 @@ flowchart LR
 
 | Salida prevista | Campos o controles decisivos | Consumidor |
 | --- | --- | --- |
-| `viajes_limpios.parquet` | `trip_id`, `idS`, salidas y llegadas con zona horaria, puntos OD, `dis_m`, `motivo` y marca de elegibilidad | Movilidad y consumo |
+| `viajes_limpios.parquet` | `trip_id`, `idS`, `tsO` y `tsD` en `Europe/Rome`, `lonO`, `latO`, `lonD`, `latD`, `dis_m`, `tt_s`, `vel_kmh`, `price_eur`, `periodo` (`ajuste` o `reservada`), `motivo` con todas las marcas separadas por `;` y `elegible` | Exploración, movilidad y consumo |
 | Catálogo de estaciones por red | `station_id`, coordenadas, área de cobertura, capacidad en anclajes y stock inicial | Simulador y frontend |
 | Asignaciones y eventos | `scenario_id`, `trip_id`, estaciones asignadas, distancias, estado y causa primaria de rechazo, salida y llegada efectivas | Recarga, indicadores y frontend |
 | Consumo por viaje | `trip_id`, `energy_wh` por modelo, parámetros de referencia y control de valores extremos | Recarga y balance de flota |
@@ -81,7 +82,11 @@ Un viaje aceptado conserva el mismo identificador hasta su llegada y su recarga.
 
 ## 3. Datos y exploración
 
+Esta sección, junto con el entorno de la sección 2, forma la **fase 0**, que se cierra en el seguimiento del 23/11. Su objetivo es dejar los viajes limpios y fijar con datos los parámetros que usan las fases siguientes, en lugar de suponerlos.
+
 ### Limpieza auditable
+
+`trip_id` es la posición de la fila en el CSV original, empezando en 0. Ningún viaje se borra: los no válidos quedan con `elegible = False` y sus marcas en `motivo`. `periodo` se asigna por la hora de salida.
 
 1. Verificar la huella del CSV y el esquema. Parsear `tsO` y `tsD` en `Europe/Rome`, comprobar que `tsD − tsO` concuerda con `tt` y validar la identidad `vel = 3,6 × dis / tt` con la tolerancia numérica apropiada.
 2. Marcar en `motivo` las anomalías estructurales y los viajes sospechosos. Evaluar con histogramas los criterios iniciales del plan anterior, como duración inferior a 60 s, distancia inferior a 100 m, velocidad superior a 25 km/h y duración superior a 2 h. Revisar coordenadas y relaciones entre distancia, duración y precio.
@@ -94,6 +99,24 @@ Un viaje aceptado conserva el mismo identificador hasta su llegada y su recarga.
 - Usar H3 como rejilla común, con resolución 8 como punto de partida, y contrastar los patrones con límites administrativos disponibles. Documentar puntos que caen fuera de ambas zonificaciones y áreas con poco volumen.
 - Usar del 1 al 21 de febrero para seleccionar candidatos y ajustar parámetros espaciales y de demanda. Reservar del 22 al 28 para evaluar con los mismos criterios y sin retocar la red al ver el resultado. Definir la pertenencia de cada viaje por su hora de salida y documentar las llegadas que cruzan el corte. Si la simulación arrastra inventario entre periodos, registrar el estado inicial del día 22 y aplicar el mismo procedimiento a las alternativas.
 - Explorar meteorología y tarifa únicamente si aportan una comparación concreta. Presentar asociaciones por día con su tamaño muestral y supuestos. La demanda cubierta refleja los viajes registrados por Helbiz durante ese mes.
+
+### Exploración orientada a decisiones
+
+Cada pregunta de la exploración alimenta una decisión de las fases siguientes. Una figura que no responde a ninguna no entra en la memoria. Las cifras que fijan parámetros se calculan sobre el periodo de ajuste; la semana reservada solo se describe para compararla.
+
+| Pregunta | Qué se mide | Decisión que alimenta | Tarea |
+| --- | --- | --- | --- |
+| ¿Hay solapes y recolocaciones? | Viajes solapados del mismo `idS` y saltos entre viajes consecutivos | Si el piloto ya rebalanceaba y qué traslados conviene simular | T11 |
+| ¿Cuándo se viaja? | Serie diaria, hora × día de la semana, laborable frente a fin de semana | Franjas horarias y tipos de día de las matrices OD y del simulador | T12 |
+| ¿Cuántos patinetes circulan a la vez? | Viajes en curso minuto a minuto y su máximo | Cota inferior de la flota frente a los 2 331 `idS` observados | T12 |
+| ¿Dónde empiezan y acaban los viajes? | Orígenes y destinos por celda H3 en resoluciones 8 y 9 | Resolución de la rejilla y zona donde buscar candidatos | T13 |
+| ¿Está concentrada la demanda? | Celdas necesarias para reunir el 50, 80, 90 y 95 % de los extremos | Rango de número de estaciones del barrido | T13 |
+| ¿Dónde se acumula la flota? | Saldo orígenes − destinos por celda, franja y día | Necesidad de rebalanceo y estaciones que piden más anclajes | T14 |
+| ¿Cómo son los recorridos? | `dis_m`, `tt_s`, `vel_kmh`, rodeo frente a línea recta y viajes circulares | Radios de acceso del barrido y demanda que dejaría de tener sentido con estaciones | T15 |
+| ¿Cuánta energía mueve cada patinete? | km y Wh por viaje, patinete y día con 13,5 Wh/km | Frecuencia de recarga y orden de magnitud de la demanda por estación | T16 |
+| ¿Hay días anómalos? | Viajes diarios frente a lluvia y temperatura | Si se excluye algún día y si la semana reservada es comparable | T17 |
+
+**Conclusiones de la fase 0.** `docs/conclusiones_eda.md` recoge, para cada decisión, el valor propuesto, la tabla o figura que lo justifica, el periodo sobre el que se ha calculado y lo que cambia en este plan. Es el documento que se lleva al seguimiento del 23/11. Los parámetros acordados pasan a `config.yaml`.
 
 **Evidencia de cierre.** Regenerar el inventario de calidad, el número de viajes elegibles, los conteos por periodo y las figuras de exploración desde el comando principal. Fijar y conservar el conjunto utilizado en cada experimento.
 
@@ -273,23 +296,36 @@ Cada escenario apunta a una sola red y a sus propias series. Guardar en el manif
 
 | Hito | Entrega de análisis | Entrega de demo |
 | --- | --- | --- |
-| 23/11 · seguimiento | Limpieza, exploración, primeras matrices OD y parámetros de comparación. | Esquema de exportación y maqueta del flujo de navegación con datos de prueba etiquetados. |
+| 23/11 · seguimiento | Fase 0 cerrada: limpieza, exploración y parámetros de comparación en `conclusiones_eda.md`. Primera matriz OD en H3. | Esquema de exportación y maqueta del flujo de navegación con datos de prueba etiquetados. |
 | 30/11 · seguimiento | Redes candidatas comparables, primer simulador de inventario y modelo de consumo contrastado. | Mapa inclinado con estaciones y reproducción de un día exportado. |
 | 09/12 · seguimiento | Flota y anclajes, estación dimensionada, balance energético y primera comparación de incidencia. | Mapa, selección de escenario y maqueta 3D enlazados a resultados reales. |
 | 14/12 · revisión | Figuras y tablas cerradas, memoria casi final y reproducción en limpio. | Guion ensayado, compilación sin red y respaldo grabado. |
 | 14–16/12 · cierre | Memoria, código reproducible, presentación PDF y revisión del paquete. | Pasar la versión congelada al equipo que se usará en la defensa. |
 
-**Reparto propuesto**
+**Fases de trabajo.** Las fases 1 a 4 coinciden con los apartados del enunciado. El seguimiento de cada tarea está en [TAREAS.md](TAREAS.md).
+
+| Fase | Secciones del plan | Fechas |
+| --- | --- | --- |
+| 0. Datos: puesta en marcha, limpieza y exploración | 2 y 3 | 18–23/11 |
+| 1. Movilidad (60 %) | 4 y 7 | 23/11–4/12 |
+| 2. Consumo (10 %) | 5 | 25/11–2/12 |
+| 3. Estación de recarga (20 %) | 6 y 7 | 30/11–9/12 |
+| 4. Conclusiones y entrega (10 %) | 9 | 9–16/12 |
+| Demo 3D | 8 | 23/11–14/12 |
+
+**Reparto**
 
 | Bloque | Responsable | Revisión y cruce |
 | --- | --- | --- |
-| Entorno, datos, candidatos y stock de flota | Javier | Alejandro contrasta limpieza, hipótesis y recuentos. |
+| Fase 0: entorno, limpieza, recolocaciones y patrones temporales | Javier | Alejandro contrasta umbrales y recuentos. |
+| Fase 0: exploración espacial, recorridos, energía de referencia y meteorología | Alejandro | Javier comprueba que cada conclusión cita su tabla o figura. |
+| Candidatos y stock de flota | Javier | Alejandro contrasta hipótesis y recuentos. |
 | Matrices OD y contraste de zonificaciones | Alejandro | Javier conecta las matrices con la red elegida y el mapa. |
 | Consumo, estación, PVWatts y balance | Alejandro | Javier revisa unidades, capacidad física, trazas e indicadores. |
 | Simulación de incidencias, integración y frontend | Javier | Alejandro contrasta con las tablas de movilidad y energía. |
 | Exportador, escenarios, memoria y defensa | Ambos | Acordar el esquema antes de integrar y revisar la misma ejecución en la memoria y la demo. |
 
-Mantener la elección de líder como tarea del equipo según el calendario de la asignatura. Acordar en cada seguimiento qué hipótesis se cierran y qué ampliaciones entran en el siguiente hito. [Calendario de la asignatura](enunciado.md#calendario) · [Seguimiento de tareas](TAREAS.md)
+**Líder del proyecto 3: Javier Saguar.** Coordina el reparto y los seguimientos de los lunes y revisa lo que entra en `main`. Acordar en cada seguimiento qué hipótesis se cierran y qué ampliaciones entran en el siguiente hito. [Calendario de la asignatura](enunciado.md#calendario) · [Seguimiento de tareas](TAREAS.md)
 
 ## 11. Riesgos y criterios de cierre
 

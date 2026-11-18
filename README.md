@@ -4,7 +4,7 @@ Planificación y optimización de un sistema de patinetes eléctricos compartido
 estaciones de recarga fotovoltaicas, a partir de los viajes de Helbiz en Roma
 (febrero de 2021).
 
-Grupo: Javier Saguar y Alejandro Cuevas.
+Grupo: Javier Saguar (líder del proyecto 3) y Alejandro Cuevas.
 
 ## Documentación
 
@@ -22,6 +22,7 @@ Grupo: Javier Saguar y Alejandro Cuevas.
 |---|---|
 | `datos/brutos/` | Datos de partida sin modificar |
 | `datos/procesados/` | Datos limpios y derivados (generados por código) |
+| `exploracion/` | Limpieza y exploración de los datos (fase 0) |
 | `movilidad/` | Matrices origen-destino, estaciones y flota (60 %) |
 | `consumo/` | Consumo de la flota, por patinete y por estación (10 %) |
 | `estacion_recarga/` | Demanda, paneles fotovoltaicos y baterías (20 %) |

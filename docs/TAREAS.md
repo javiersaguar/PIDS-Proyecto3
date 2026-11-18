@@ -7,34 +7,39 @@ terminarla, el enlace al commit o a la PR.
 Estados: `pendiente`, `en curso`, `revisión`, `hecha`. Tipo: `R` requisito del
 enunciado, `E` extra.
 
-## Fase 0. Puesta en marcha
+Las fases 1 a 4 coinciden con los apartados del enunciado. La fase 0 deja los datos
+limpios y fija los parámetros que usan las demás. Líder del proyecto 3: Javier Saguar.
+
+## Fase 0. Datos: puesta en marcha, limpieza y exploración (hasta el 23/11)
+
+Detalle en [PLAN.md, sección 3](PLAN.md#3-datos-y-exploración). Cada tarea de exploración
+responde a una pregunta y deja una tabla o figura que se cita en `docs/conclusiones_eda.md`.
 
 | ID | Tarea | Tipo | Responsable | Estado | Entrega |
 |---|---|---|---|---|---|
-| T01 | Entorno Python con dependencias fijadas | R | | pendiente | |
-| T02 | Paquete `comun/` y `config.yaml` con todos los parámetros | R | | pendiente | |
-| T03 | Script maestro que regenere resultados desde el CSV | R | | pendiente | |
-| T04 | `.gitignore` y carpeta `datos/externos/` | R | | pendiente | |
-| T05 | Elegir líder del proyecto 3 | R | | pendiente | |
+| T01 | Entorno Python con dependencias fijadas | R | Javier | pendiente | |
+| T02 | Paquete `comun/` (carga de viajes) y `config.yaml` con todos los parámetros | R | Javier | pendiente | |
+| T03 | Script maestro que regenere resultados desde el CSV | R | Javier | pendiente | |
+| T04 | `.gitignore` y carpeta `datos/externos/` | R | Javier | pendiente | |
+| T05 | Elegir líder del proyecto 3 | R | Los dos | hecha | Javier Saguar |
 | T06 | Documentar el trabajo y el contenido de cada carpeta | E | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/6d3792bed4354859f778948b0baaab96a7993a2b) |
 | T07 | Ampliar el plan de análisis, simulación y demo 3D | E | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/bb6054ed01008b6fbb8b2d6d10854c597a06d5ca) |
+| T10 | Limpieza: `viajes_limpios.parquet`, marcas en `motivo`, umbrales justificados y tabla de embudo | R | Javier | pendiente | |
+| T11 | Solapes por patinete y recolocaciones del operador | R | Javier | pendiente | |
+| T12 | Patrones temporales y viajes simultáneos | R | Javier | pendiente | |
+| T13 | Densidad de orígenes y destinos en H3 y concentración de la demanda | R | Alejandro | pendiente | |
+| T14 | Saldo neto orígenes − destinos por celda, franja y día | R | Alejandro | pendiente | |
+| T15 | Recorridos: distancia, duración, velocidad, rodeo y radios de acceso | R | Alejandro | pendiente | |
+| T16 | Kilómetros y energía de referencia por patinete y día | R | Alejandro | pendiente | |
+| T17 | Meteorología frente a demanda y días anómalos | E | Alejandro | pendiente | |
+| T18 | Modelo de tarifa e ingresos | E | | pendiente | |
+| T19 | Conclusiones de la exploración (`docs/conclusiones_eda.md`) y seguimiento del 23/11 | R | Los dos | pendiente | |
 
-## Fase 1. Limpieza y exploración
+## Fase 1. Movilidad (60 %)
 
 | ID | Tarea | Tipo | Responsable | Estado | Entrega |
 |---|---|---|---|---|---|
-| T10 | Limpieza con columna `motivo` y tabla de embudo | R | | pendiente | |
-| T11 | Patrones temporales (hora × día, serie diaria) | R | | pendiente | |
-| T12 | Densidad espacial de orígenes y destinos (H3) | R | | pendiente | |
-| T13 | Recolocaciones del operador | E | | pendiente | |
-| T14 | Meteorología frente a demanda | E | | pendiente | |
-| T15 | Modelo de tarifa e ingresos | E | | pendiente | |
-
-## Fase 2. Movilidad (60 %)
-
-| ID | Tarea | Tipo | Responsable | Estado | Entrega |
-|---|---|---|---|---|---|
-| T20 | Matrices O-D en rejilla H3 | R | | pendiente | |
+| T20 | Matrices O-D en rejilla H3 | R | Alejandro | pendiente | |
 | T21 | Matrices O-D por zonas administrativas | R | | pendiente | |
 | T22 | Matrices por franja horaria y laborable/fin de semana | R | | pendiente | |
 | T23 | Indicadores O-D y mapa de líneas de deseo | R | | pendiente | |
@@ -55,7 +60,7 @@ enunciado, `E` extra.
 | T38 | Simular la indisponibilidad temporal de una estación y la derivación de viajes | E | | pendiente | |
 | T39 | Comparar redes finalistas con indicadores de movilidad y recarga | E | | pendiente | |
 
-## Fase 3. Consumo (10 %)
+## Fase 2. Consumo (10 %)
 
 | ID | Tarea | Tipo | Responsable | Estado | Entrega |
 |---|---|---|---|---|---|
@@ -67,7 +72,7 @@ enunciado, `E` extra.
 | T45 | Estado de carga por patinete a lo largo del mes | E | | pendiente | |
 | T46 | Sensibilidad (tornado) | E | | pendiente | |
 
-## Fase 4. Estación de recarga (20 %)
+## Fase 3. Estación de recarga (20 %)
 
 | ID | Tarea | Tipo | Responsable | Estado | Entrega |
 |---|---|---|---|---|---|
@@ -82,7 +87,7 @@ enunciado, `E` extra.
 | T58 | Extrapolación anual | E | | pendiente | |
 | T59 | Valoración económica y CO₂ | E | | pendiente | |
 
-## Fase 5 y 6. Cierre
+## Fase 4. Conclusiones y entrega (10 %)
 
 | ID | Tarea | Tipo | Responsable | Estado | Entrega |
 |---|---|---|---|---|---|
