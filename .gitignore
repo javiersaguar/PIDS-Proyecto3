@@ -8,3 +8,7 @@ build/
 
 # Datos que se regeneran con el código (comun.datos.cargar_viajes los crea si faltan)
 datos/procesados/*.parquet
+
+# Web: dependencias y compilación (la publica el flujo de GitHub Actions)
+frontend/node_modules/
+frontend/dist/
