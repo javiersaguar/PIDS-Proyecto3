@@ -1,0 +1,13 @@
+[project]
+name = "pids-proyecto3"
+version = "0.1.0"
+description = "Patinetes compartidos con estaciones de recarga fotovoltaica en Roma (PIDS, Proyecto 3)"
+authors = [{ name = "Javier Saguar" }, { name = "Alejandro Cuevas" }]
+requires-python = ">=3.12,<3.13"
+
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["comun"]

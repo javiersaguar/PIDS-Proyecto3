@@ -48,6 +48,7 @@ No debe quedar ningún rastro de herramientas de IA en el repositorio.
 | `datos/brutos/` | Datos de partida (viajes Helbiz, Roma, febrero 2021) sin modificar |
 | `datos/procesados/` | Datos limpios y derivados |
 | `exploracion/` | Limpieza y exploración de los datos (fase 0) |
+| `comun/` y `config.yaml` | Código compartido y parámetros; se acuerdan entre los dos antes de cambiarlos |
 | `movilidad/` | Matrices origen-destino y ubicación y dimensionado de las estaciones (60 %) |
 | `consumo/` | Consumo de la flota, por patinete y por estación (10 %) |
 | `estacion_recarga/` | Potencia y energía demandadas, paneles fotovoltaicos y baterías (20 %) |

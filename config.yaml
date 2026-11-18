@@ -1,0 +1,63 @@
+# Parámetros del proyecto. Los scripts los leen con comun.config.cargar_config();
+# ningún valor de esta lista se repite escrito en el código.
+
+rutas:
+  csv_bruto: datos/brutos/rome_u_journeys.csv
+  viajes_limpios: datos/procesados/viajes_limpios.parquet
+  externos: datos/externos
+  tablas: resultados/tablas
+  figuras: resultados/figuras
+
+datos:
+  sha256_csv: a2a3e147e05a6a4fc4462b991245245b3c954ac6ada3e265f0261b24cc7cf3f5
+  zona_horaria: Europe/Rome
+  formato_fecha: "%d/%m/%Y %H:%M:%S"
+  # Periodo de cada viaje según el día de salida, extremos incluidos.
+  periodos:
+    ajuste: ["2021-02-01", "2021-02-21"]
+    reservada: ["2021-02-22", "2021-02-28"]
+
+# Umbrales iniciales de la limpieza (T10). Se revisan con los histogramas de
+# resultados/figuras/exploracion/T10_umbrales.
+limpieza:
+  tt_min_s: 60
+  dis_min_m: 100
+  vel_max_kmh: 25
+  tt_max_s: 7200
+  tolerancia_tt_s: 1
+  tolerancia_vel_kmh: 0.01
+  tolerancia_precio_eur: 0.01
+  tarifa:
+    desbloqueo_eur: 1.0
+    minuto_eur: 0.15
+  # Rectángulo amplio alrededor de Roma; los puntos aislados dentro de él se
+  # estudian en T13.
+  zona_servicio:
+    lon: [12.2, 12.8]
+    lat: [41.7, 42.1]
+
+exploracion:
+  # Franjas provisionales hasta que T12 las fije. Intervalos [inicio, fin) en horas.
+  franjas_horarias:
+    madrugada: [0, 7]
+    punta_manana: [7, 10]
+    mediodia: [10, 16]
+    punta_tarde: [16, 20]
+    noche: [20, 24]
+  resoluciones_h3: [8, 9]
+
+# Lime Gen 3.0, especificaciones del enunciado.
+patinete:
+  masa_kg: 22.5
+  potencia_w: 250
+  velocidad_max_kmh: 25
+  consumo_wh_km: 13.5
+  bateria_wh: 576
+  bateria_v: 36
+  bateria_ah: 16
+  tiempo_recarga_h: 7
+
+movilidad:
+  radios_acceso_m: [200, 300, 400]
+
+semilla: 2021

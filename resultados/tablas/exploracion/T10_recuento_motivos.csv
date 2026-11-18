@@ -1,0 +1,12 @@
+motivo,viajes,unico_motivo,porcentaje
+nulos,0,0,0.0
+duplicado,0,0,0.0
+tiempos_incoherentes,0,0,0.0
+velocidad_incoherente,0,0,0.0
+precio_incoherente,0,0,0.0
+fuera_de_zona,0,0,0.0
+solape,0,0,0.0
+tt_largo,122,109,0.48
+vel_alta,2,1,0.01
+tt_corto,950,157,3.77
+dis_corta,1401,596,5.56
