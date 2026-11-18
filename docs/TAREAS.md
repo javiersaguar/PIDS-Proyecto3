@@ -17,7 +17,7 @@ enunciado, `E` extra.
 | T04 | `.gitignore` y carpeta `datos/externos/` | R | | pendiente | |
 | T05 | Elegir líder del proyecto 3 | R | | pendiente | |
 | T06 | Documentar el trabajo y el contenido de cada carpeta | E | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/6d3792bed4354859f778948b0baaab96a7993a2b) |
-| T07 | Ampliar el plan de análisis, simulación y demo 3D | E | Javier | en curso | |
+| T07 | Ampliar el plan de análisis, simulación y demo 3D | E | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/bb6054ed01008b6fbb8b2d6d10854c597a06d5ca) |
 
 ## Fase 1. Limpieza y exploración
 
