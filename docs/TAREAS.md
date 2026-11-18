@@ -27,19 +27,19 @@ responde a una pregunta y deja una tabla o figura que se cita en `docs/conclusio
 | T10 | Limpieza: `viajes_limpios.parquet`, marcas en `motivo`, umbrales justificados y tabla de embudo | R | Javier | en curso | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/a6cc17b7d749d21379e503a619b487a25fc2da83) |
 | T11 | Solapes por patinete y recolocaciones del operador | R | Javier | pendiente | |
 | T12 | Patrones temporales y viajes simultáneos | R | Javier | pendiente | |
-| T13 | Densidad de orígenes y destinos en H3 y concentración de la demanda | R | Alejandro | en curso | |
-| T14 | Saldo neto orígenes − destinos por celda, franja y día | R | Alejandro | en curso | |
-| T15 | Recorridos: distancia, duración, velocidad, rodeo y radios de acceso | R | Alejandro | en curso | |
-| T16 | Kilómetros y energía de referencia por patinete y día | R | Alejandro | en curso | |
-| T17 | Meteorología frente a demanda y días anómalos | E | Alejandro | en curso | |
+| T13 | Densidad de orígenes y destinos en H3 y concentración de la demanda | R | Alejandro | revisión | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/604599cbc4a0aceb28ce65dc9ccbebab1cfaf571) · [ampliación](https://github.com/javiersaguar/PIDS-Proyecto3/commit/8af62e11c30f50e788988a5f609bb13848cf026b) |
+| T14 | Saldo neto orígenes − destinos por celda, franja y día | R | Alejandro | revisión | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/158a9b5ef0d22a86f4d21924d2c544381111e35b) |
+| T15 | Recorridos: distancia, duración, velocidad, rodeo y radios de acceso | R | Alejandro | revisión | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/3b8f594b3f47a6516ec7ab12da9af5ae1a3ba174) |
+| T16 | Kilómetros y energía de referencia por patinete y día | R | Alejandro | revisión | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/dbb1b7911b64e8a4b35a72d83bf8bbde93495cd7) |
+| T17 | Meteorología frente a demanda y días anómalos | E | Alejandro | revisión | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/aba574d0bcaf45023cb66aaa73f23ed4b0b08dec) |
 | T18 | Modelo de tarifa e ingresos | E | | pendiente | |
-| T19 | Conclusiones de la exploración (`docs/conclusiones_eda.md`) y seguimiento del 23/11 | R | Los dos | en curso | |
+| T19 | Conclusiones de la exploración (`docs/conclusiones_eda.md`) y seguimiento del 23/11 | R | Los dos | en curso | [Parte de Alejandro](https://github.com/javiersaguar/PIDS-Proyecto3/commit/333bd897c02cd53b259f0aa919d1efcf485d2e5c) |
 
 ## Fase 1. Movilidad (60 %)
 
 | ID | Tarea | Tipo | Responsable | Estado | Entrega |
 |---|---|---|---|---|---|
-| T20 | Matrices O-D en rejilla H3 | R | Alejandro | en curso | |
+| T20 | Matrices O-D en rejilla H3 | R | Alejandro | revisión | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/2086566aff82beb1c2812f94f73c90a4f43f08cc) |
 | T21 | Matrices O-D por zonas administrativas | R | | pendiente | |
 | T22 | Matrices por franja horaria y laborable/fin de semana | R | | pendiente | |
 | T23 | Indicadores O-D y mapa de líneas de deseo | R | | pendiente | |
