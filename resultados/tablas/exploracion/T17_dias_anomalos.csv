@@ -1,0 +1,2 @@
+fecha,dia_semana,tipo_dia,periodo,viajes,mediana_tipo_dia,pct_mediana_tipo_dia,anomalo,precipitacion_mm,lluvia_mm,horas_lluvia,temp_media_c,temp_max_c,viento_max_kmh
+2021-02-07,domingo,fin_de_semana,ajuste,406,869.0,46.7,True,24.6,24.6,21,13.5,16.8,29.6
