@@ -1,0 +1,8 @@
+indicador,valor
+viajes con velocidad < 1 km/h,976
+  excluidos también por otras reglas,894
+  que solo excluye vel_baja,82
+viajes que solo excluye vel_baja (< 2 km/h),225
+  distancia mediana (m),532.7
+  duración mediana (min),35.5
+  porcentaje que dura más de 20 min,63.6

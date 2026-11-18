@@ -2,11 +2,11 @@ indicador,valor
 viajes_elegibles,23292
 viajes_dia_media_ajuste,795.7
 viajes_dia_media_reservada,940.3
-viajes_dia_laborable_ajuste,797.3
-viajes_dia_fin_de_semana_ajuste,791.7
 tendencia_ajuste_viajes_por_dia,9.42
 dia_minimo,2021-02-07
 viajes_dia_minimo,403
+viajes_dia_laborable_ajuste,797.3
+viajes_dia_fin_de_semana_ajuste,791.7
 hora_punta_laborable,18
 hora_punta_fin_de_semana,16
 diferencia_perfiles_laborable_finde_pc,12.1

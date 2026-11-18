@@ -7,6 +7,7 @@ rutas:
   externos: datos/externos
   tablas: resultados/tablas
   figuras: resultados/figuras
+  web_datos: frontend/public/datos
 
 datos:
   sha256_csv: a2a3e147e05a6a4fc4462b991245245b3c954ac6ada3e265f0261b24cc7cf3f5

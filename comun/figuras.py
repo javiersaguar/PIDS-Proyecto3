@@ -1,8 +1,17 @@
-"""Estilo común y guardado de figuras (PDF para la memoria, PNG para las diapositivas)."""
+"""Estilo común y guardado de figuras (PDF para la memoria, PNG para las diapositivas).
+
+En un notebook las figuras se muestran en la celda además de guardarse; fuera de
+él se dibujan sin pantalla.
+"""
+
+import sys
 
 import matplotlib
 
-matplotlib.use("Agg")
+EN_NOTEBOOK = "ipykernel" in sys.modules
+if not EN_NOTEBOOK:
+    matplotlib.use("Agg")
+
 import matplotlib.pyplot as plt  # noqa: E402
 
 from comun.config import carpeta_figuras  # noqa: E402
@@ -25,8 +34,13 @@ plt.rcParams.update({
 
 
 def guardar_figura(fig, tema: str, nombre: str) -> None:
-    """Guarda resultados/figuras/<tema>/<nombre>.pdf y .png y cierra la figura."""
+    """Guarda resultados/figuras/<tema>/<nombre>.pdf y .png, la muestra si se está en
+    un notebook y la cierra."""
     carpeta = carpeta_figuras(tema)
     fig.savefig(carpeta / f"{nombre}.pdf", metadata={"CreationDate": None})
     fig.savefig(carpeta / f"{nombre}.png", dpi=200)
+    if EN_NOTEBOOK:
+        from IPython.display import display
+
+        display(fig)
     plt.close(fig)
