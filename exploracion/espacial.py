@@ -221,6 +221,29 @@ def t13_concentracion(conteos: dict[int, pd.DataFrame]) -> None:
     guardar_tabla(pd.DataFrame(filas), "T13_concentracion")
 
 
+def t13_estaciones(t: pd.DataFrame) -> None:
+    """Orden de magnitud del número de estaciones para cada radio del plan.
+
+    Área de las celdas más usadas que reúnen cada cuota de extremos, dividida entre el
+    área que cubre una estación sin huecos en una malla hexagonal de círculos de radio R
+    (el hexágono inscrito, 3·√3/2·R²). No es una solución de localización: solo acota
+    el barrido.
+    """
+    res = int(t["res"].iloc[0])
+    ext = t["extremos"].to_numpy()
+    acum = np.cumsum(ext)
+    filas = []
+    for radio in CFG["movilidad"]["radios_acceso_m"]:
+        area_estacion = 3 * np.sqrt(3) / 2 * radio ** 2 / 1e6
+        for p in PARAMETROS["cuotas_pct"]:
+            k = int(np.argmax(acum * 100 >= p * acum[-1])) + 1
+            area = k * h3.average_hexagon_area(res, unit="km^2")
+            filas.append({"radio_m": radio, "cuota_pct": p, "res": res, "celdas": k,
+                          "area_km2": round(area, 2), "area_por_estacion_km2": round(area_estacion, 4),
+                          "estaciones_orden_magnitud": int(np.ceil(area / area_estacion))})
+    guardar_tabla(pd.DataFrame(filas), "T13_estaciones_orden_magnitud")
+
+
 def t13_mapa_densidad(t: pd.DataFrame) -> None:
     res = int(t["res"].iloc[0])
     ext = extension(t["h3"])
@@ -562,6 +585,7 @@ def main() -> None:
     guardar_tabla(densidad, "T13_densidad_celdas")
     t13_resoluciones(conteos, len(ajuste))
     t13_concentracion(conteos)
+    t13_estaciones(conteos[max(RESOLUCIONES)])
     t13_mapa_densidad(conteos[PARAMETROS["res_mapas"]])
     t13_puntos_aislados(todos)
     t13_estabilidad(ajuste, reservada)
