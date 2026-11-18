@@ -11,3 +11,4 @@ paso,regla,descripcion,excluidos,quedan
 9,vel_alta,Velocidad > 25 km/h,2,25062
 10,tt_corto,Duración < 60 s,949,24113
 11,dis_corta,Distancia < 100 m,596,23517
+12,vel_baja,Velocidad < 2 km/h (patinete sin cerrar o llevado a mano),225,23292

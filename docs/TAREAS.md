@@ -24,9 +24,9 @@ responde a una pregunta y deja una tabla o figura que se cita en `docs/conclusio
 | T05 | Elegir líder del proyecto 3 | R | Los dos | hecha | Javier Saguar |
 | T06 | Documentar el trabajo y el contenido de cada carpeta | E | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/6d3792bed4354859f778948b0baaab96a7993a2b) |
 | T07 | Ampliar el plan de análisis, simulación y demo 3D | E | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/bb6054ed01008b6fbb8b2d6d10854c597a06d5ca) |
-| T10 | Limpieza: `viajes_limpios.parquet`, marcas en `motivo`, umbrales justificados y tabla de embudo | R | Javier | en curso | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/a6cc17b7d749d21379e503a619b487a25fc2da83) |
-| T11 | Solapes por patinete y recolocaciones del operador | R | Javier | pendiente | |
-| T12 | Patrones temporales y viajes simultáneos | R | Javier | pendiente | |
+| T10 | Limpieza: `viajes_limpios.parquet`, marcas en `motivo`, umbrales justificados y tabla de embudo | R | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/81e54e25872b346e51243c4f6962adfdf5c89c14) |
+| T11 | Solapes por patinete y recolocaciones del operador | R | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/81e54e25872b346e51243c4f6962adfdf5c89c14) |
+| T12 | Patrones temporales y viajes simultáneos | R | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/81e54e25872b346e51243c4f6962adfdf5c89c14) |
 | T13 | Densidad de orígenes y destinos en H3 y concentración de la demanda | R | Alejandro | revisión | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/604599cbc4a0aceb28ce65dc9ccbebab1cfaf571) · [ampliación](https://github.com/javiersaguar/PIDS-Proyecto3/commit/8af62e11c30f50e788988a5f609bb13848cf026b) |
 | T14 | Saldo neto orígenes − destinos por celda, franja y día | R | Alejandro | revisión | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/158a9b5ef0d22a86f4d21924d2c544381111e35b) |
 | T15 | Recorridos: distancia, duración, velocidad, rodeo y radios de acceso | R | Alejandro | revisión | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/3b8f594b3f47a6516ec7ab12da9af5ae1a3ba174) |

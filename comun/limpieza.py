@@ -40,9 +40,20 @@ def leer_bruto(ruta: Path) -> pd.DataFrame:
     return df
 
 
-def reglas(df: pd.DataFrame) -> dict[str, tuple[str, pd.Series]]:
+def umbrales(variante: str = "principal") -> dict:
+    """Parámetros de una limpieza: la principal (`limpieza` en config.yaml) o la
+    permisiva, que solo cambia los umbrales de `limpieza_permisiva`."""
+    cfg = cargar_config()
+    if variante == "principal":
+        return dict(cfg["limpieza"])
+    if variante == "permisiva":
+        return {**cfg["limpieza"], **cfg["limpieza_permisiva"]}
+    raise ValueError(f"Variante de limpieza desconocida: {variante}")
+
+
+def reglas(df: pd.DataFrame, c: dict | None = None) -> dict[str, tuple[str, pd.Series]]:
     """Reglas en el orden del embudo: nombre -> (descripción, máscara de incumplimiento)."""
-    c = cargar_config()["limpieza"]
+    c = umbrales() if c is None else c
     duracion_fechas = (df["tsD"] - df["tsO"]).dt.total_seconds()
     precio_tarifa = c["tarifa"]["desbloqueo_eur"] + c["tarifa"]["minuto_eur"] * df["tt_s"] / 60
     vel_calculada = np.where(df["tt_s"] > 0, df["dis_m"] / df["tt_s"].clip(lower=1) * 3.6, np.nan)
@@ -59,7 +70,7 @@ def reglas(df: pd.DataFrame) -> dict[str, tuple[str, pd.Series]]:
         "nulos": ("Algún campo vacío", df.isna().any(axis=1)),
         "duplicado": ("Mismo patinete y misma salida que otro viaje",
                       df.duplicated(["idS", "tsO"], keep="first")),
-        "tiempos_incoherentes": (f"tsD - tsO distinto de tt (±{c["tolerancia_tt_s"]} s) o tt <= 0",
+        "tiempos_incoherentes": (f"tsD - tsO distinto de tt (±{c['tolerancia_tt_s']} s) o tt <= 0",
                                  ((duracion_fechas - df["tt_s"]).abs() > c["tolerancia_tt_s"]) | (df["tt_s"] <= 0)),
         "velocidad_incoherente": (f"vel distinta de 3,6·dis/tt (±{c['tolerancia_vel_kmh']} km/h)",
                                   ~(np.abs(df["vel_kmh"] - vel_calculada) <= c["tolerancia_vel_kmh"])),
@@ -71,6 +82,8 @@ def reglas(df: pd.DataFrame) -> dict[str, tuple[str, pd.Series]]:
         "vel_alta": (f"Velocidad > {c['vel_max_kmh']} km/h", df["vel_kmh"] > c["vel_max_kmh"]),
         "tt_corto": (f"Duración < {c['tt_min_s']} s", df["tt_s"] < c["tt_min_s"]),
         "dis_corta": (f"Distancia < {c['dis_min_m']} m", df["dis_m"] < c["dis_min_m"]),
+        "vel_baja": (f"Velocidad < {c['vel_min_kmh']} km/h (patinete sin cerrar o llevado a mano)",
+                     df["vel_kmh"] < c["vel_min_kmh"]),
     }
 
 
@@ -82,9 +95,9 @@ def asignar_periodo(ts: pd.Series) -> pd.Series:
     return periodo
 
 
-def limpiar(df: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+def limpiar(df: pd.DataFrame, variante: str = "principal") -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """Marca los viajes. Devuelve (viajes, embudo secuencial, recuento por motivo)."""
-    r = reglas(df)
+    r = reglas(df, umbrales(variante))
     marcas = pd.DataFrame({nombre: mascara.fillna(False).astype(bool) for nombre, (_, mascara) in r.items()})
 
     df = df.copy()
