@@ -98,7 +98,7 @@ salto entre el final de un viaje y el inicio del siguiente.
 ## T13. Densidad de orígenes y destinos (Alejandro)
 
 Viajes elegibles del ajuste (16 710) con el origen y el destino en celdas H3
-(`exploracion/espacial.py`).
+(`exploracion/T13_densidad.ipynb`).
 
 | Resolución | Área media | Arista media | Celdas con demanda | Mediana de extremos por celda | Celdas para el 50 / 80 / 90 / 95 % de los extremos | Extremos en el 10 / 20 % de celdas más usadas |
 |---|---|---|---|---|---|---|
@@ -126,7 +126,7 @@ Fuentes: `tablas/exploracion/T13_resoluciones_h3.csv`, `T13_concentracion.csv` y
 
 ## T14. Saldo neto por zona (Alejandro)
 
-Saldo O − D por celda de resolución 8 en el ajuste (`exploracion/espacial.py`). Solo cuentan
+Saldo O − D por celda de resolución 8 en el ajuste (`exploracion/T14_saldo.ipynb`). Solo cuentan
 las celdas con al menos 30 extremos: 90 de 111, con el 99,34 % de los extremos. Si una celda
 estuviera equilibrada, cada extremo sería origen o destino al 50 % y `saldo_rel` tendría una
 desviación típica de 1/√n, que con n = 30 es 0,18; por debajo, el ruido domina.
@@ -162,7 +162,7 @@ desviación típica de 1/√n, que con n = 30 es 0,18; por debajo, el ruido domi
 
 ## T15. Recorridos y radios de acceso (Alejandro)
 
-Viajes elegibles del ajuste (`exploracion/recorridos.py`).
+Viajes elegibles del ajuste (`exploracion/T15_recorridos.ipynb`).
 
 | Variable | P5 | P25 | Mediana | P75 | P95 | P99 |
 |---|---|---|---|---|---|---|
@@ -204,7 +204,7 @@ descriptive meta-analysis», *Physiotherapy* 97(3), 182–189,
 ## T16. Energía de referencia por patinete y día (Alejandro)
 
 Modelo del enunciado: `energia_wh = 13,5 × dis_m / 1000`, con batería de 576 Wh
-(`exploracion/energia_referencia.py`). Un viaje de 2 km da 27 Wh. La suma por viaje coincide
+(`exploracion/T16_energia_referencia.ipynb`). Un viaje de 2 km da 27 Wh. La suma por viaje coincide
 con la suma por patinete, por patinete y día, por día de la flota y por celda de destino, con
 diferencia 0 Wh (`tablas/exploracion/T16_comprobacion.csv`).
 
@@ -231,7 +231,7 @@ diferencia 0 Wh (`tablas/exploracion/T16_comprobacion.csv`).
 
 Lluvia, temperatura y viento de Roma centro según la API histórica de Open-Meteo (modelo
 `best_match`: ECMWF IFS, ERA5 y ERA5-Land; licencia CC BY 4.0), guardados en
-`datos/externos/meteorologia/` con sus metadatos (`exploracion/meteorologia.py`).
+`datos/externos/meteorologia/` con sus metadatos (`exploracion/T17_meteorologia.ipynb`).
 
 | Indicador | Valor | Fuente |
 |---|---|---|
@@ -261,7 +261,7 @@ no desaparece.
 ## T20. Primera matriz O-D en H3 (Alejandro)
 
 Viajes elegibles del ajuste agregados por celda de origen y de destino de resolución 8
-(`movilidad/matrices_od.py`).
+(`movilidad/T20_matrices_od.ipynb`).
 
 | Indicador | Valor | Fuente |
 |---|---|---|
