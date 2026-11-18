@@ -17,6 +17,7 @@ enunciado, `E` extra.
 | T04 | `.gitignore` y carpeta `datos/externos/` | R | | pendiente | |
 | T05 | Elegir líder del proyecto 3 | R | | pendiente | |
 | T06 | Documentar el trabajo y el contenido de cada carpeta | E | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/6d3792bed4354859f778948b0baaab96a7993a2b) |
+| T07 | Ampliar el plan de análisis, simulación y demo 3D | E | Javier | en curso | |
 
 ## Fase 1. Limpieza y exploración
 
@@ -49,7 +50,10 @@ enunciado, `E` extra.
 | T33 | Escenarios de rebalanceo | E | | pendiente | |
 | T34 | Curva flota frente a nivel de servicio e indicadores de uso | R | | pendiente | |
 | T35 | Simulación con estado de carga (movilidad + consumo) | E | | pendiente | |
-| T36 | Mapa interactivo | E | | pendiente | |
+| T36 | Capas de cobertura y flujos OD para el mapa de la demo | E | | pendiente | |
+| T37 | Medir acceso en las zonas peor cubiertas y comparar una red alternativa | E | | pendiente | |
+| T38 | Simular la indisponibilidad temporal de una estación y la derivación de viajes | E | | pendiente | |
+| T39 | Comparar redes finalistas con indicadores de movilidad y recarga | E | | pendiente | |
 
 ## Fase 3. Consumo (10 %)
 
@@ -89,3 +93,14 @@ enunciado, `E` extra.
 | T64 | Reproducción en limpio | R | | pendiente | |
 | T65 | Script de empaquetado `GZZ-P3.zip` | R | | pendiente | |
 | T66 | Ensayo de la defensa | R | | pendiente | |
+
+## Demo 3D para la defensa
+
+| ID | Tarea | Tipo | Responsable | Estado | Entrega |
+|---|---|---|---|---|---|
+| T70 | Definir el esquema y exportar los escenarios y series desde Python | E | | pendiente | |
+| T71 | Integrar el mapa inclinado, el reloj y la ficha de estación con T36 y T70 | E | | pendiente | |
+| T72 | Crear la maqueta 3D de la estación con anclajes, paneles, batería y balance horario | E | | pendiente | |
+| T73 | Conectar los tres escenarios y cotejar los indicadores con las tablas | E | | pendiente | |
+| T74 | Probar teclado, legibilidad, rendimiento, versión sin red y vista sin WebGL | E | | pendiente | |
+| T75 | Ensayar el guion de tres minutos y preparar el vídeo de respaldo | E | | pendiente | |
