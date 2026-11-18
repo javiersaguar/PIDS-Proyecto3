@@ -1,0 +1,16 @@
+indicador,valor
+res,8
+viajes,16859
+celdas_origen,103
+celdas_destino,111
+pares_con_viajes,2156
+pares_posibles,11433
+viajes_intrazonales,3668
+pct_viajes_intrazonales,21.7569
+pct_viajes_top20_pares,14.8882
+pares_entre_celdas_con_viajes,1305
+suma_abs_asimetria_pares,2943
+indice_asimetria,0.2231
+indice_asimetria_esperado_azar,0.2036
+cociente_asimetria_observada_esperada,1.0959
+max_abs_asimetria_par,31
