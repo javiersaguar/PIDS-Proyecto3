@@ -26,7 +26,7 @@ from comun.geo import haversine_m
 TEMA = "exploracion"
 CFG = cargar_config()
 RESOLUCIONES = CFG["exploracion"]["resoluciones_h3"]
-FRANJAS = CFG["exploracion"]["franjas_horarias"]  # provisionales hasta T12
+FRANJAS = CFG["exploracion"]["franjas_horarias"]  # fijadas en T12
 NOMBRES_FRANJA = {"madrugada": "Madrugada", "punta_manana": "Punta de mañana", "mediodia": "Mediodía",
                   "punta_tarde": "Punta de tarde", "noche": "Noche"}
 
@@ -69,6 +69,7 @@ CMAP_DIVERGENTE = LinearSegmentedColormap.from_list(
     "saldo", ["#0d366b", "#2a78d6", "#9ec5f4", "#f0efec", "#f3b1a9", "#e34948", "#8f1d1d"])
 CMAP_DIVERGENTE.set_bad("#d5d4cf")
 COLOR_EMISORA, COLOR_RECEPTORA = "#e34948", "#2a78d6"
+GRIS_REF = "#8a8984"
 HALO = [patheffects.withStroke(linewidth=2.2, foreground="white")]
 
 
@@ -345,7 +346,7 @@ def t13_estabilidad(ajuste: pd.DataFrame, reservada: pd.DataFrame) -> None:
 # ---------------------------------------------------------------------- T14
 
 def franja(hora: pd.Series) -> pd.Series:
-    """Nombre de la franja horaria provisional de cada hora."""
+    """Nombre de la franja horaria de cada hora."""
     etiqueta = pd.Series(pd.NA, index=hora.index, dtype="string")
     for nombre, (inicio, fin) in FRANJAS.items():
         etiqueta[(hora >= inicio) & (hora < fin)] = nombre
@@ -436,7 +437,7 @@ def t14_saldo_franjas(o, d, n_dias: int, ext) -> None:
                      f"{int(sub['incluida'].sum())} celdas", fontsize=9)
     barra = fig.colorbar(pc, ax=ejes, orientation="horizontal", shrink=0.6, pad=0.04, aspect=40)
     barra.set_label("Saldo O − D en la franja (patinetes/día). Rojo: emisora; azul: receptora")
-    fig.suptitle(f"Saldo neto por franja horaria provisional, res. {PARAMETROS['res_mapas']}, {TITULO_AJUSTE}\n"
+    fig.suptitle(f"Saldo neto por franja horaria, res.{PARAMETROS['res_mapas']}, {TITULO_AJUSTE}\n"
                  f"Gris: menos de {PARAMETROS['saldo_min_extremos']} extremos en la franja", fontsize=9)
     guardar_figura(fig, TEMA, "T14_saldo_franjas")
 
@@ -544,7 +545,56 @@ def t14_rebalanceo(ajuste: pd.DataFrame, n_dias: int) -> dict:
     return resumen
 
 
-def t14(ajuste: pd.DataFrame) -> None:
+def t14_operador(todos: pd.DataFrame) -> dict:
+    """Saldo de los viajes frente a las entregas netas del operador de T11, por celda.
+
+    Mismo universo que T11: todos los viajes del CSV en el mes completo. Si el número de
+    patinetes de cada celda no crece ni decrece en el mes, las entregas netas del
+    operador (entregas − recogidas) igualan el saldo O − D de los viajes.
+    """
+    ruta_t11 = carpeta_tablas(TEMA) / "T11_celdas_res8.csv"
+    if not ruta_t11.exists():
+        print("Falta T11_celdas_res8.csv (exploracion/recolocaciones.py): se omite la comparación con T11.")
+        return {}
+    operador = pd.read_csv(ruta_t11).rename(columns={"h3_res8": "h3"})
+    o, d = extremos_t14(todos, PARAMETROS["res_mapas"])
+    t = saldo(o, d, ["h3"])[["h3", "origenes", "destinos", "saldo"]].merge(
+        operador[["h3", "recogidas", "entregas", "neto_entregas"]], on="h3", how="outer")
+    t = t.fillna(0)
+    t[["origenes", "destinos", "saldo", "recogidas", "entregas", "neto_entregas"]] = \
+        t[["origenes", "destinos", "saldo", "recogidas", "entregas", "neto_entregas"]].astype("int64")
+    t["diferencia"] = t["neto_entregas"] - t["saldo"]
+    t = t.sort_values(["saldo", "h3"], ascending=[False, True], ignore_index=True)
+    guardar_tabla(t, "T14_saldo_frente_operador")
+
+    rho = spearmanr(t["saldo"], t["neto_entregas"]).statistic
+    pendiente, ordenada = np.polyfit(t["saldo"], t["neto_entregas"], 1)
+    compensado = 100 * (1 - t["diferencia"].abs().sum() / t["saldo"].abs().sum())
+
+    fig, ax = plt.subplots(figsize=(6.5, 4.0))
+    lim = 1.1 * max(t["saldo"].abs().max(), t["neto_entregas"].abs().max())
+    ax.plot([-lim, lim], [-lim, lim], color=GRIS_REF, lw=1, ls=":", label="Entregas netas = saldo")
+    ax.scatter(t["saldo"], t["neto_entregas"], s=16, color=COLOR_RECEPTORA, edgecolor="white", lw=0.5,
+               label=f"Celda de res. {PARAMETROS['res_mapas']} ({len(t)})")
+    ax.axhline(0, color="#52514e", lw=0.6)
+    ax.axvline(0, color="#52514e", lw=0.6)
+    ax.set_xlim(-lim, lim)
+    ax.set_ylim(-lim, lim)
+    ax.set_aspect("equal")
+    ax.set_xlabel("Saldo O − D de los viajes en el mes (patinetes)")
+    ax.set_ylabel("Entregas − recogidas del operador (T11)")
+    ax.legend(loc="upper left")
+    ax.set_title(f"Saldo de los viajes frente a las recolocaciones del operador por celda\n"
+                 f"Todos los viajes del CSV, febrero de 2021. Spearman {rho:.2f}, pendiente {pendiente:.2f}",
+                 fontsize=9)
+    guardar_figura(fig, TEMA, "T14_saldo_frente_operador")
+    return {"operador_spearman_saldo_neto_entregas": round(float(rho), 3),
+            "operador_pendiente_neto_entregas_sobre_saldo": round(float(pendiente), 3),
+            "operador_ordenada": round(float(ordenada), 2),
+            "operador_pct_saldo_compensado": round(float(compensado), 1)}
+
+
+def t14(ajuste: pd.DataFrame, todos: pd.DataFrame) -> None:
     res = PARAMETROS["res_mapas"]
     n_dias = len(dias_periodo("ajuste"))
     o, d = extremos_t14(ajuste, res)
@@ -552,6 +602,7 @@ def t14(ajuste: pd.DataFrame) -> None:
     t14_saldo_franjas(o, d, n_dias, extension(total["h3"]))
     t14_persistencia(o, d, total)
     rebalanceo = t14_rebalanceo(ajuste, n_dias)
+    operador = t14_operador(todos)
 
     inc = total[total["incluida"]]
     pers = pd.read_csv(carpeta_tablas(TEMA) / "T14_persistencia.csv")
@@ -569,6 +620,7 @@ def t14(ajuste: pd.DataFrame) -> None:
         "celdas_pct_dias_mismo_signo_ge_70": int((pers["pct_dias_mismo_signo"] >= 70).sum()),
         "pct_dias_mismo_signo_mediana": float(pers["pct_dias_mismo_signo"].median()),
         **rebalanceo,
+        **operador,
     }
     guardar_tabla(pd.DataFrame({"indicador": list(resumen),
                                 "valor": pd.Series(list(resumen.values()), dtype=object)}), "T14_resumen")
@@ -589,7 +641,7 @@ def main() -> None:
     t13_mapa_densidad(conteos[PARAMETROS["res_mapas"]])
     t13_puntos_aislados(todos)
     t13_estabilidad(ajuste, reservada)
-    t14(ajuste)
+    t14(ajuste, todos)
 
     tablas = carpeta_tablas(TEMA)
     for nombre in ["T13_resoluciones_h3", "T13_concentracion", "T13_puntos_aislados_resumen", "T13_estabilidad",

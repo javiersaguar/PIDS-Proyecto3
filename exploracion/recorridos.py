@@ -15,7 +15,7 @@ from comun.geo import haversine_m
 
 TEMA = "exploracion"
 CFG = cargar_config()
-FRANJAS = CFG["exploracion"]["franjas_horarias"]  # provisionales hasta T12
+FRANJAS = CFG["exploracion"]["franjas_horarias"]  # fijadas en T12
 RADIOS_PLAN = CFG["movilidad"]["radios_acceso_m"]
 
 PARAMETROS = {
