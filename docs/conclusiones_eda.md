@@ -1,7 +1,9 @@
 # Conclusiones de la exploración (fase 0)
 
 Decisiones que fija la fase 0 para las fases siguientes. Cada valor sale de una tabla o
-figura generada por `ejecutar_todo.py`. Las rutas son relativas a `resultados/`.
+figura generada por los notebooks de `exploracion/` (los ejecuta `ejecutar_todo.py`). Las
+rutas son relativas a `resultados/`. Las mismas gráficas, interactivas, están en la
+[web de resultados](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase0).
 Las cifras que fijan parámetros se calculan sobre el periodo de ajuste (1–21/02); la
 semana reservada (22–28/02) solo se describe para compararla. Los parámetros acordados
 están en `config.yaml`.
@@ -30,7 +32,7 @@ llevan sus marcas en `motivo`.
   1 km/h, solo 82 pasan las demás reglas. Los 225 que añade la regla `vel_baja` tienen
   distancias normales (mediana de 533 m) pero duran mucho: mediana de 35,5 min. Más que un
   desplazamiento en patinete, parecen un patinete que no se cerró a tiempo o que se llevó
-  a mano.
+  a mano (`tablas/exploracion/T10_viajes_lentos.csv`).
 
 | Decisión | Valor propuesto | Evidencia | Periodo | Limitaciones | Qué cambia en el plan |
 |---|---|---|---|---|---|
@@ -39,7 +41,7 @@ llevan sus marcas en `motivo`.
 | Velocidad mínima | 2 km/h (regla nueva `vel_baja`) | Histograma de velocidad: valle entre el pico de desbloqueos y la distribución principal | Ajuste | Sus orígenes y destinos son reales; se pierde el 1 % de la demanda | Se añade al contrato de limpieza |
 | Velocidad máxima | 25 km/h | `T10_sensibilidad_umbrales` | Ajuste | Solo 2 viajes; límite del patinete | Ninguno |
 | Duración máxima | 2 h | `T10_sensibilidad_umbrales` | Ajuste | La curva se aplana a partir de 2 h (0,29 % por encima) | Ninguno |
-| ¿Dependen las conclusiones de los umbrales? | No: se usa la limpieza principal | `tablas/exploracion/T10_comparacion_limpiezas.csv` | Ajuste y reservada | La variante permisiva (30 s, 50 m, sin velocidad mínima, 30 km/h, 3 h) deja un 2,9 % más de viajes; las medianas cambian menos del 3 %, los km un 0,6 % y la concentración espacial (55,5 % de los extremos en el 20 % de celdas H3 de resolución 8) es la misma | Repetir esta comparación con los indicadores de la red elegida |
+| ¿Dependen las conclusiones de los umbrales? | No: se usa la limpieza principal | `tablas/exploracion/T10_comparacion_limpiezas.csv`, `figuras/exploracion/T10_comparacion_limpiezas` | Ajuste y reservada | La variante permisiva (30 s, 50 m, sin velocidad mínima, 30 km/h, 3 h) deja un 2,9 % más de viajes; las medianas cambian menos del 3 %, los km un 0,6 % y la concentración espacial (55,5 % de los extremos en el 20 % de celdas H3 de resolución 8) es la misma | Repetir esta comparación con los indicadores de la red elegida |
 
 ## T11. Solapes y recolocaciones (Javier)
 
@@ -47,15 +49,15 @@ Se encadenan los 25 186 viajes de cada patinete (22 855 pares consecutivos) y se
 salto entre el final de un viaje y el inicio del siguiente.
 
 - **Distribución con dos grupos.** El ruido de GPS (mediana 16,9 m, P75 57,8 m) y las
-  recolocaciones (mediana 3,67 km) están separados por un valle entre 100 y 250 m
-  (`figuras/exploracion/T11_saltos`).
+  recolocaciones (mediana 3,67 km) están separados por un valle casi vacío de unos 100 a
+  500 m (`figuras/exploracion/T11_saltos`).
 - **No son rebalanceos dentro del día.**
   - El patinete recolocado ha estado parado una mediana de **98,8 h**, frente a 5,8 h
     cuando no hay salto.
   - Solo el 0,9 % de las recolocaciones ocurre en menos de 6 h, y el 98,8 % incluye al
     menos una noche.
   - Encaja con recogidas para recarga o mantenimiento que devuelven el patinete días
-    después a otro punto.
+    después a otro punto (`figuras/exploracion/T11_parado`).
 - **Volumen.**
   - 5 111 recolocaciones en el mes (22,4 % de los pares consecutivos; 182,5 al día de media).
   - Afectan a 2 094 de los 2 331 patinetes.
@@ -67,7 +69,7 @@ salto entre el final de un viaje y el inicio del siguiente.
 | Decisión | Valor propuesto | Evidencia | Periodo | Limitaciones | Qué cambia en el plan |
 |---|---|---|---|---|---|
 | Umbral de recolocación | 200 m | `T11_saltos`, `T11_saltos_sensibilidad.csv` | Mes completo | Son indicios: puede haber viajes fuera de la muestra o deriva de GPS | Ninguno |
-| ¿Rebalanceaba el piloto? | Sí, pero con recogidas de varios días, no dentro del día | `T11_resumen.csv` | Mes completo | No hay registros del operador | El escenario de rebalanceo de la fase 1 se plantea nocturno; con estaciones de recarga desaparecen las recogidas para cargar |
+| ¿Rebalanceaba el piloto? | Sí, pero con recogidas de varios días, no dentro del día | `T11_resumen.csv`, `T11_parado` | Mes completo | No hay registros del operador | El escenario de rebalanceo de la fase 1 se plantea nocturno; con estaciones de recarga desaparecen las recogidas para cargar |
 | Saldo del operador por zona | Contrastar con el saldo de T14 | `T11_celdas_res8.csv` | Mes completo | Resolución 8 | Las celdas donde el operador entrega más son candidatas a más stock inicial |
 
 ## T12. Patrones temporales y viajes simultáneos (Javier)

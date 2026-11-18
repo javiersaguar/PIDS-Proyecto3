@@ -52,18 +52,18 @@ flowchart LR
 | Ubicación | Responsabilidad |
 | --- | --- |
 | [datos/brutos/](../datos/brutos/README.md) | CSV original con su huella SHA-256. |
-| `datos/externos/` (prevista) | Respuestas de fuentes externas y metadatos. Registrar fuente, fecha de descarga, parámetros, cobertura, unidades, licencia cuando corresponda y hash. |
+| [datos/externos/](../datos/externos/README.md) | Respuestas de fuentes externas y metadatos. Registrar fuente, fecha de descarga, parámetros, cobertura, unidades, licencia cuando corresponda y hash. |
 | [datos/procesados/](../datos/procesados/README.md) | Viajes normalizados, catálogos geográficos, asignaciones y tablas intermedias compartidas. |
-| `comun/` y `config.yaml` (previstos) | Lectura, distancias, unidades, configuración de los escenarios y utilidades que usan varios módulos. |
-| [exploracion/](../exploracion/README.md) | Limpieza y exploración de la fase 0. Genera `viajes_limpios.parquet` y las tablas y figuras que fijan los parámetros de las fases siguientes. |
+| `comun/` y `config.yaml` | Lectura, distancias, unidades, configuración de los escenarios y utilidades que usan varios módulos. |
+| [exploracion/](../exploracion/README.md) | Notebooks de limpieza y exploración de la fase 0. Generan `viajes_limpios.parquet` y las tablas y figuras que fijan los parámetros de las fases siguientes. |
 | [movilidad/](../movilidad/README.md), [consumo/](../consumo/README.md) y [estacion_recarga/](../estacion_recarga/README.md) | Cálculos y simulaciones de cada fase. |
 | [resultados/](../resultados/README.md) | Indicadores, comparativas, series horarias, mapas y gráficas. |
-| `frontend/` (prevista) | Aplicación web y recursos 3D. El exportador de Python prepara los datos que consume. |
+| `frontend/` | Web de resultados en GitHub Pages: una pestaña por fase con las gráficas interactivas, su explicación y las conclusiones. Cada notebook exporta los datos que dibuja con `comun.web.exportar`. La demo 3D se añadirá a la misma aplicación. |
 | [memoria/](../memoria/README.md) y [presentacion/](../presentacion/README.md) | Memoria reproducible, diapositivas y recursos de la defensa. |
 
 - Fijar el entorno de Python 3.12 y sus dependencias. Empezar con pandas, NumPy, las herramientas geográficas necesarias y Matplotlib. Incorporar y fijar el solver de MILP al entrar en la comparación formal. Verificar su instalación y un problema pequeño en los dos equipos.
 - Centralizar en `config.yaml` los umbrales de limpieza, radios, candidatos, presupuestos, semillas, hipótesis físicas, eficiencias y entradas de cada escenario. Registrar en cada ejecución la configuración, la versión del código, los hashes de entrada y el estado del solver.
-- Preparar un comando maestro, por ejemplo `python ejecutar_todo.py`, que regenere tablas y figuras desde el CSV y las fuentes externas guardadas. La descarga o actualización de fuentes será un paso explícito. Guardar solicitudes sin claves y sacar el secreto de PVWatts del código y del frontend.
+- Hacer cada análisis en un notebook con una celda por análisis: antes, el título, qué queremos ver y por qué importa; después, las conclusiones. El comando maestro `python ejecutar_todo.py` ejecuta los notebooks en orden y regenera tablas, figuras y datos de la web desde el CSV y las fuentes externas guardadas. La descarga o actualización de fuentes será un paso explícito. Guardar solicitudes sin claves y sacar el secreto de PVWatts del código y del frontend.
 - Usar `trip_id` estable derivado del CSV para los cruces entre fases. Mantener `idS` para estadísticas observadas, `station_id` para la identidad geográfica y `scenario_id` para la configuración de una simulación. Usar geometrías WGS84 para intercambio y metros para calcular distancias. Documentar la proyección cuando se usen operadores planos.
 - Definir desde el principio la granularidad de las salidas. Eventos de movilidad con hora exacta, estados de estación cada 15 minutos y balance energético por hora. Diferenciar estados al cierre del intervalo, como el inventario, de sumas durante el intervalo, como los viajes completados o los kWh.
 
