@@ -16,6 +16,7 @@ enunciado, `E` extra.
 | T03 | Script maestro que regenere resultados desde el CSV | R | | pendiente | |
 | T04 | `.gitignore` y carpeta `datos/externos/` | R | | pendiente | |
 | T05 | Elegir líder del proyecto 3 | R | | pendiente | |
+| T06 | Documentar el trabajo y el contenido de cada carpeta | E | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/6d3792bed4354859f778948b0baaab96a7993a2b) |
 
 ## Fase 1. Limpieza y exploración
 
