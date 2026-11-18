@@ -1,0 +1,16 @@
+indicador,valor
+fichero_meteorologia,open-meteo_roma_2021-02_2026-11-18.json
+dias,28
+dias_con_lluvia_mayor_1mm,6
+lluvia_total_ajuste_mm,75.7
+lluvia_total_reservada_mm,0.0
+dias_lluvia_mayor_1mm_ajuste,6
+dias_lluvia_mayor_1mm_reservada,0
+temperatura_media_ajuste_c,9.3238
+temperatura_media_reservada_c,10.9429
+viajes_dia_media_ajuste,795.7143
+viajes_dia_media_reservada,940.2857
+dias_anomalos,1
+celda_meteo_lat,41.9332
+celda_meteo_lon,12.4273
+distancia_celda_meteo_km,6.0912

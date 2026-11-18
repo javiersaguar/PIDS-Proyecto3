@@ -1,0 +1,13 @@
+tipo_dia,franja,viajes,dis_m_mediana,tt_s_mediana,vel_kmh_mediana,dist_recta_m_mediana
+laborable,madrugada,115,1694.79,390.0,15.16,1313.12
+laborable,punta_manana,1719,1572.1,422.0,13.75,1174.35
+laborable,mediodia,4205,1636.79,471.0,12.95,994.98
+laborable,punta_tarde,4549,1700.93,520.0,11.98,920.84
+laborable,noche,1372,1474.86,430.0,13.55,851.71
+laborable,todas,11960,1634.83,479.0,12.83,986.47
+fin_de_semana,madrugada,35,1447.42,451.0,14.12,1146.39
+fin_de_semana,punta_manana,206,1284.6,355.0,14.56,921.42
+fin_de_semana,mediodia,1777,1544.32,511.0,11.16,891.63
+fin_de_semana,punta_tarde,2051,1689.03,570.0,10.95,822.4
+fin_de_semana,noche,681,1386.38,430.0,12.48,787.61
+fin_de_semana,todas,4750,1582.2,511.0,11.43,850.89

@@ -1,0 +1,17 @@
+indicador,valor
+consumo_wh_km,13.5
+bateria_wh,576
+flota_km_dia_media_ajuste,1634.018
+flota_kwh_dia_media_ajuste,22.059
+flota_kwh_dia_max_ajuste,29.542
+flota_cargas_dia_media_ajuste,38.297
+flota_cargas_dia_max_ajuste,51.287
+flota_kwh_dia_media_reservada,27.026
+flota_kwh_total_ajuste,463.244
+celdas_destino_ajuste,111
+celda_kwh_dia_max,0.902
+celda_kwh_dia_p50,0.134
+celdas_80pct_energia,47
+pct_energia_llega_10_16h,33.528
+pct_energia_llega_16_24h,55.45
+pct_energia_llega_resto,11.021

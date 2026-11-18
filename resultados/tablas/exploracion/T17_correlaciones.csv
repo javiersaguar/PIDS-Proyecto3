@@ -1,0 +1,13 @@
+variable,grupo,n,spearman_rho,p_valor
+precipitacion_mm,todos,28,-0.563,0.0018
+precipitacion_mm,laborable,20,-0.589,0.0062
+precipitacion_mm,fin_de_semana,8,-0.464,0.2471
+temp_media_c,todos,28,0.037,0.8497
+temp_media_c,laborable,20,-0.099,0.6771
+temp_media_c,fin_de_semana,8,0.143,0.7358
+horas_lluvia,todos,28,-0.636,0.0003
+horas_lluvia,laborable,20,-0.585,0.0067
+horas_lluvia,fin_de_semana,8,-0.764,0.0274
+viento_max_kmh,todos,28,-0.49,0.0082
+viento_max_kmh,laborable,20,-0.296,0.2056
+viento_max_kmh,fin_de_semana,8,-0.881,0.0039
