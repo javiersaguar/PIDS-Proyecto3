@@ -1,0 +1,7 @@
+radio_m,radio_del_plan,dist_pie_peor_m,t_pie_peor_s,pct_t_pie_supera_viaje_peor,pct_andar_directo_mas_rapido_peor,dist_pie_medio_m,t_pie_medio_s,pct_t_pie_supera_viaje_medio,pct_andar_directo_mas_rapido_medio,pct_dis_le_2R
+150,False,398.7,306.7,28.74,36.69,265.8,204.5,15.07,30.0,3.89
+200,True,531.6,408.9,41.14,43.92,354.4,272.6,24.74,34.52,6.91
+250,False,664.5,511.2,52.26,50.27,443.0,340.8,33.25,38.94,10.0
+300,True,797.4,613.4,60.23,56.32,531.6,408.9,41.14,43.92,13.48
+400,True,1063.2,817.8,72.66,66.29,708.8,545.2,54.97,52.54,21.67
+500,False,1329.0,1022.3,81.1,73.44,886.0,681.5,64.75,59.88,29.37

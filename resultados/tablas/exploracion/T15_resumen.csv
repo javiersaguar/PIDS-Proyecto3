@@ -1,0 +1,12 @@
+indicador,valor
+viajes,16859
+viajes_con_rodeo,15303
+rodeo_mediana,1.329
+rodeo_p25,1.185
+rodeo_p75,1.655
+rodeo_p95,4.549
+pct_rodeo_menor_1,0.05
+viajes_circulares,609
+pct_viajes_circulares,3.61
+viajes_dist_recta_menor_100_m,834
+velocidad_pie_ms,1.3
