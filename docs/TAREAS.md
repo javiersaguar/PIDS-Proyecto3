@@ -24,16 +24,16 @@ responde a una pregunta y deja una tabla o figura que se cita en `docs/conclusio
 | T05 | Elegir líder del proyecto 3 | R | Los dos | hecha | Javier Saguar |
 | T06 | Documentar el trabajo y el contenido de cada carpeta | E | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/6d3792bed4354859f778948b0baaab96a7993a2b) |
 | T07 | Ampliar el plan de análisis, simulación y demo 3D | E | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/bb6054ed01008b6fbb8b2d6d10854c597a06d5ca) |
-| T10 | Limpieza: `viajes_limpios.parquet`, marcas en `motivo`, umbrales justificados y tabla de embudo | R | Javier | en curso | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/a6cc17b7d749d21379e503a619b487a25fc2da83) |
-| T11 | Solapes por patinete y recolocaciones del operador | R | Javier | pendiente | |
-| T12 | Patrones temporales y viajes simultáneos | R | Javier | pendiente | |
+| T10 | Limpieza: `viajes_limpios.parquet`, marcas en `motivo`, umbrales justificados y tabla de embudo | R | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/81e54e25872b346e51243c4f6962adfdf5c89c14) |
+| T11 | Solapes por patinete y recolocaciones del operador | R | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/81e54e25872b346e51243c4f6962adfdf5c89c14) |
+| T12 | Patrones temporales y viajes simultáneos | R | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/81e54e25872b346e51243c4f6962adfdf5c89c14) |
 | T13 | Densidad de orígenes y destinos en H3 y concentración de la demanda | R | Alejandro | pendiente | |
 | T14 | Saldo neto orígenes − destinos por celda, franja y día | R | Alejandro | pendiente | |
 | T15 | Recorridos: distancia, duración, velocidad, rodeo y radios de acceso | R | Alejandro | pendiente | |
 | T16 | Kilómetros y energía de referencia por patinete y día | R | Alejandro | pendiente | |
 | T17 | Meteorología frente a demanda y días anómalos | E | Alejandro | pendiente | |
 | T18 | Modelo de tarifa e ingresos | E | | pendiente | |
-| T19 | Conclusiones de la exploración (`docs/conclusiones_eda.md`) y seguimiento del 23/11 | R | Los dos | pendiente | |
+| T19 | Conclusiones de la exploración (`docs/conclusiones_eda.md`) y seguimiento del 23/11 | R | Los dos | en curso | |
 
 ## Fase 1. Movilidad (60 %)
 
