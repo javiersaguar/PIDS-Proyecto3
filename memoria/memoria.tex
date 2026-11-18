@@ -1,13 +1,19 @@
 % Memoria del Proyecto 3 de PIDS. Se compila con `python memoria/compilar.py`
 % (genera las cifras desde resultados/tablas y llama a latexmk). Ver memoria/README.md.
+%
+% Estructura: la de la plantilla de la asignatura (portada, respuesta a la revisión anterior,
+% reparto del trabajo, índices, cuerpo, limitaciones y trabajo futuro, referencias y anexos)
+% con los apartados del cuerpo que pide docs/PLAN.md (sección 9). Los apartados que aún no
+% tienen resultados llevan \pendiente{...} con el método previsto y las tareas que los cubren.
+% El cuerpo es breve: el detalle de la exploración va a los anexos.
 \documentclass[11pt,a4paper]{article}
 
-% --- Formato de la asignatura: Calibri 11 (aquí Carlito, con las mismas métricas),
-% interlineado 1,15 y márgenes de 2,5 cm.
+% --- Formato: Calibri 11 (aquí Carlito, con las mismas métricas), interlineado 1,15 y
+% márgenes de 2 cm.
 \usepackage[T1]{fontenc}
 \usepackage[sfdefault,lining]{carlito}
 \usepackage[spanish,es-tabla,es-noshorthands,es-nodecimaldot]{babel}
-\usepackage[a4paper,margin=2.5cm]{geometry}
+\usepackage[a4paper,margin=2cm]{geometry}
 \usepackage{setspace}
 \setstretch{1.15}
 \usepackage{microtype}
@@ -47,6 +53,8 @@
 \def\UrlBreaks{\do\/\do\_\do\.}
 \setcounter{biburlnumpenalty}{100}\setcounter{biburlucpenalty}{100}\setcounter{biburllcpenalty}{100}
 \newcommand\fechaversion{18/11/2026}
+% Apartado sin resultados todavía: qué irá y con qué tareas (docs/TAREAS.md).
+\newcommand\pendiente[1]{{\color{tenue}\small\textit{Pendiente.} #1\par}}
 
 \title{Red de estaciones de recarga para patinetes eléctricos compartidos en Roma}
 \author{Alejandro Cuevas \and Javier Saguar}
@@ -80,19 +88,34 @@
 \end{titlepage}
 
 % ------------------------------------------------------------------------------------------
+\section*{Respuesta a la revisión anterior}
+\addcontentsline{toc}{section}{Respuesta a la revisión anterior}
+
+\begin{table}[h]
+  \centering\small
+  \caption{Trazabilidad de las correcciones respecto a la versión anterior.}\label{tab:revision}
+  \begin{tabularx}{\textwidth}{@{}lYlY@{}}
+    \toprule
+    \# & Comentario recibido & Sección modificada & Cambio realizado \\
+    \midrule
+    -- & No aplica: es la primera versión de la memoria. & -- & -- \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
 \section*{Reparto del trabajo}
 \addcontentsline{toc}{section}{Reparto del trabajo}
 
 \begin{table}[h]
   \centering\small
-  \caption{Reparto del trabajo hasta esta versión. Las tareas están en \texttt{docs/TAREAS.md} \cite{codigo}.}
-  \begin{tabularx}{\textwidth}{@{}lYY@{}}
+  \caption{Reparto del trabajo hasta esta versión. Las tareas están en \texttt{docs/TAREAS.md} \cite{codigo}.}\label{tab:reparto}
+  \begin{tabularx}{\textwidth}{@{}lYYYY@{}}
     \toprule
-    Integrante & Fase 0: datos y exploración & Fase 1: movilidad \\
+    Integrante & Fase 0: datos y exploración & Fase 1: movilidad & Fase 2: consumo & Fase 3: estación \\
     \midrule
-    Javier Saguar (líder) & Entorno reproducible, paquete \nb{comun/} y \nb{config.yaml}; limpieza (T10), recolocaciones (T11), patrones temporales (T12); web de resultados; viento frente a lluvia (T17, apartado 6); esta memoria & Revisión de T20 y decisiones de la fase \\
+    Javier Saguar (líder) & Entorno reproducible, paquete \nb{comun/} y \nb{config.yaml}; limpieza (T10), recolocaciones (T11), patrones temporales (T12); web de resultados; viento frente a lluvia (T17, apartado 6); esta memoria & Revisión de T20 y decisiones de la fase & -- & -- \\
     \addlinespace
-    Alejandro Cuevas & Densidad en H3 (T13), saldo por celda (T14), recorridos y radios (T15), energía de referencia (T16), meteorología (T17) & Primera matriz O-D en H3 (T20) \\
+    Alejandro Cuevas & Densidad en H3 (T13), saldo por celda (T14), recorridos y radios (T15), energía de referencia (T16), meteorología (T17) & Primera matriz O-D en H3 (T20) & -- & -- \\
     \bottomrule
   \end{tabularx}
 \end{table}
@@ -101,18 +124,21 @@
 \addcontentsline{toc}{section}{Estado de esta versión}
 La memoria se escribe a la vez que el proyecto. Esta versión recoge la fase~0 completa
 (limpieza y exploración, que fija los parámetros de las demás fases) y la primera matriz
-origen-destino de la fase~1. De los apartados de movilidad, consumo y estación de recarga
-se describe el método previsto y lo que ya fija la exploración; sus resultados entrarán en
-las versiones siguientes.
+origen-destino de la fase~1. Ya están todos los apartados de la versión final; los que aún
+no tienen resultados indican qué contendrán y con qué tareas. El detalle de la exploración
+está en los anexos.
 
 \newpage
+{\setstretch{1}\setlength{\parskip}{0pt}
 \tableofcontents
+\listoffigures
+\listoftables}
 \newpage
 
 % ------------------------------------------------------------------------------------------
 \section{Introducción}
 
-\subsection{Problema}
+\subsection{Contexto y motivación}
 Una empresa quiere implantar en Roma un servicio de patinetes eléctricos compartidos. El
 Ayuntamiento exige que, cuando no se usen, los patinetes queden anclados en estaciones de
 recarga y no en la acera. A partir de los viajes de un piloto de Helbiz en febrero de 2021
@@ -125,19 +151,23 @@ más desde el origen y hasta el destino de cada viaje. Una flota pequeña y muy 
 estaciones vacías en las horas punta. La solución es un compromiso, y esta memoria justifica
 cada elección con cifras.
 
-\subsection{Enfoque}
+\subsection{Objetivos del proyecto}
 \begin{itemize}
-  \item \textbf{Exploración orientada a decisiones.} Cada análisis de la fase~0 responde a una
-        pregunta y fija un parámetro de las fases siguientes: umbrales de limpieza, franjas
-        horarias, rejilla de candidatos, radios de acceso, rebalanceo y días de diseño.
-  \item \textbf{Validación temporal.} Los parámetros se ajustan con los viajes del 1 al 21 de
-        febrero (periodo de \emph{ajuste}). La semana del 22 al 28 (\emph{reservada}) solo
-        se usa para validar la red.
-  \item \textbf{Reproducibilidad.} Todo se regenera desde el CSV original con un único
-        script, \nb{ejecutar_todo.py}, y los parámetros están en \nb{config.yaml}
-        \cite{codigo}. Las cifras de esta memoria no se escriben a mano: un script las lee
-        de las tablas de resultados (apartado~\ref{sec:reproducibilidad}).
+  \item \textbf{Movilidad.} Matrices origen-destino y red de estaciones: número, localización,
+        anclajes y patinetes de cada una, con poca distancia a pie en origen y destino, la
+        flota mínima y el máximo uso de cada patinete.
+  \item \textbf{Consumo.} Energía de cada viaje y consumo de la flota, por patinete y por
+        estación.
+  \item \textbf{Estación de recarga.} Potencia y energía demandadas en cada estación y
+        dimensionado de una estación concreta con paneles fotovoltaicos y baterías para que
+        sea autónoma la mayor parte del tiempo.
+  \item \textbf{Conclusiones.} Justificar el diseño con indicadores y exponer sus límites.
 \end{itemize}
+Tres principios guían el trabajo. Cada análisis de la exploración responde a una pregunta y
+fija un parámetro de las fases siguientes. Los parámetros se ajustan con los viajes del 1 al
+21 de febrero (periodo de \emph{ajuste}) y la semana del 22 al 28 (\emph{reservada}) solo
+valida la red. Y todo se regenera desde el CSV original con un único script
+(apartado~\ref{sec:reproducibilidad}).
 
 % ------------------------------------------------------------------------------------------
 \section{Datos y método}
@@ -151,25 +181,35 @@ extremos de cada viaje. El precio es exactamente 1~€ más 0,15~€ por minuto 
 distancia es la del recorrido, no la línea recta. Los datos meteorológicos son de la API
 histórica de Open-Meteo para Roma centro \cite{openmeteo,era5}.
 
+\subsection{Fases del trabajo}\label{sec:fases}
+El trabajo se divide en cinco fases: datos (limpieza y exploración), movilidad, consumo,
+estación de recarga y conclusiones. Las fases 1 a 4 coinciden con los apartados del
+enunciado; la fase~0 fija sus parámetros (tabla~\ref{tab:decisiones}).
+
+\pendiente{Diagrama de las fases con las entradas y salidas de cada una (tablas, matrices,
+red elegida, series de energía) y el punto en que la semana reservada entra en la validación.}
+
 \subsection{Reproducibilidad}\label{sec:reproducibilidad}
 El repositorio \cite{codigo} separa los datos originales, que no se modifican nunca, de los
 derivados. El paquete \nb{comun/} carga los viajes limpios y los regenera si cambian los
-umbrales de \nb{config.yaml}. Cada tarea es un notebook con su objetivo, un bloque por
-análisis (qué se quiere ver, por qué importa, código y conclusiones) y una tabla de
-decisiones. \nb{ejecutar_todo.py} los ejecuta en orden y guarda tablas, figuras y los
-datos de la web de resultados \cite{web}. Las respuestas de servicios externos se guardan
-con su fecha y su fuente para poder reproducir sin conexión. Las cifras de esta memoria
-salen de \nb{memoria/generar_cifras.py}, que lee \nb{resultados/tablas/}. Se han usado
-pandas \cite{pandas}, SciPy \cite{scipy}, Matplotlib \cite{matplotlib} y H3 \cite{h3}.
+umbrales de \nb{config.yaml}, donde están todos los parámetros. Cada tarea es un notebook
+con su objetivo, un bloque por análisis y una tabla de decisiones. \nb{ejecutar_todo.py} los
+ejecuta en orden y guarda tablas, figuras y los datos de la web de resultados \cite{web}.
+Las respuestas de servicios externos se guardan con su fecha y su fuente para poder
+reproducir sin conexión. Las cifras de esta memoria no se escriben a mano: las genera
+\nb{memoria/generar_cifras.py} a partir de \nb{resultados/tablas/}. Se han usado pandas
+\cite{pandas}, SciPy \cite{scipy}, Matplotlib \cite{matplotlib} y H3 \cite{h3}.
 
 \subsection{Limpieza}
 No hay nulos, duplicados, solapes del mismo patinete ni extremos fuera de Roma, y la
 duración, la velocidad y el precio cuadran en todos los viajes
-(\nb{exploracion/T10_limpieza.ipynb} \cite{codigo}). Por eso solo se excluyen viajes por
-umbrales de comportamiento (tabla~\ref{tab:embudo}). Ningún viaje se borra: cada uno lleva
-el motivo de su exclusión. Quedan \textbf{\cifra{viajes_elegibles} viajes elegibles}
-(\cifra{pct_elegibles}\pc): \cifra{viajes_ajuste} en el ajuste y \cifra{viajes_reservada}
-en la semana reservada.
+(\nb{exploracion/T10_limpieza.ipynb} \cite{codigo}). Solo se excluyen viajes por umbrales de
+comportamiento (tabla~\ref{tab:embudo}), elegidos sobre los histogramas de la
+figura~\ref{fig:umbrales} (anexo~\ref{anx:figuras}). Ningún viaje se borra: cada uno lleva el
+motivo de su exclusión. Quedan \textbf{\cifra{viajes_elegibles} viajes elegibles}
+(\cifra{pct_elegibles}\pc): \cifra{viajes_ajuste} en el ajuste y \cifra{viajes_reservada} en
+la semana reservada. Una limpieza más permisiva deja un \cifra{permisiva_mas_pct}\pc{} más
+de viajes y no cambia los indicadores clave.
 
 \begin{table}[htb]
   \centering\small
@@ -182,241 +222,210 @@ en la semana reservada.
   \end{tabular}
 \end{table}
 
-Los umbrales salen de los histogramas (figura~\ref{fig:umbrales}). El pico de casi mil viajes
-a 0~km/h son desbloqueos sin viaje, que ya quitan la duración y la distancia mínimas. La
-regla de 2~km/h quita viajes de distancia normal pero muy largos: patinetes que no se
-cerraron o que se llevaron a mano. Una limpieza más permisiva (30~s, 50~m, sin velocidad
-mínima, 30~km/h y 3~h) deja un \cifra{permisiva_mas_pct}\pc{} más de viajes y no cambia los
-indicadores clave: las medianas varían menos de un 3\pc{} y la concentración espacial
-(\cifra{concentracion_20pc_res8}\pc{} de los extremos en el 20\pc{} de celdas) es la misma.
-
-\begin{figure}[!htb]
-  \centering
-  \includegraphics[width=\textwidth]{T10_umbrales}
-  \caption{Histogramas de duración, distancia y velocidad con los umbrales de limpieza.}\label{fig:umbrales}
-\end{figure}
+\subsection{Supuestos que afectan al resultado}
+\begin{itemize}
+  \item Sin trayectorias, la distancia a pie hasta una estación es la distancia en línea recta
+        por el factor de rodeo de los recorridos (\cifra{rodeo}), a \cifra{velocidad_pie}~m/s
+        \cite{bohannon2011}.
+  \item La demanda con estaciones es la observada sin ellas; no se modela cuántos viajes se
+        perderían por tener que andar.
+  \item El rebalanceo es nocturno, con \cifra{rebalanceo_base} patinetes al día en el
+        escenario base.
+\end{itemize}
+\pendiente{Supuestos de las fases 1 a 3 (capacidad de los anclajes, potencia de carga,
+estrategia de carga) a medida que se fijen.}
 
 % ------------------------------------------------------------------------------------------
-\section{Exploración orientada a decisiones}
+\section{Exploración orientada a decisiones}\label{sec:exploracion}
+Este apartado resume qué fija cada análisis de la fase~0. Las figuras y tablas de detalle
+están en los anexos y en la web de resultados \cite{web}.
 
 \subsection{El piloto recogía patinetes, no rebalanceaba en el día}
-Al encadenar los viajes de cada patinete, el salto entre el final de uno y el inicio del
-siguiente separa dos grupos: el ruido del GPS (mediana de \cifra{salto_mediana_m}~m) y
-\cifra{recolocaciones} recolocaciones de más de 200~m, con una mediana de
-\cifra{recolocacion_km}~km (\nb{exploracion/T11_recolocaciones.ipynb}). El patinete
-recolocado ha estado parado una mediana de \cifra{parado_recolocado_h}~h, frente a
-\cifra{parado_sin_salto_h}~h cuando no hay salto, y el \cifra{recolocaciones_noche_pct}\pc{}
-de las recolocaciones incluye una noche. Son recogidas de varios días para cargar o reparar,
-no rebalanceo dentro del día. Con estaciones de recarga esas recogidas desaparecen, y el
-rebalanceo de la fase~1 se plantea nocturno.
+Al encadenar los viajes de cada patinete aparecen \cifra{recolocaciones} recolocaciones de más
+de 200~m, con una mediana de \cifra{recolocacion_km}~km
+(\nb{exploracion/T11_recolocaciones.ipynb}). El patinete recolocado ha estado parado una
+mediana de \cifra{parado_recolocado_h}~h, frente a \cifra{parado_sin_salto_h}~h cuando no hay
+salto, y el \cifra{recolocaciones_noche_pct}\pc{} incluye una noche. Son recogidas de varios
+días para cargar o reparar. Con estaciones esas recogidas desaparecen, y el rebalanceo de la
+fase~1 se plantea nocturno.
 
 \subsection{Patrones temporales}
-En el ajuste hay \cifra{viajes_dia_ajuste} viajes al día. Laborables y fines de semana tienen
-el mismo volumen (\cifra{viajes_dia_laborable} y \cifra{viajes_dia_finde}), pero no la misma
-forma (figura~\ref{fig:calor}): el laborable tiene una punta de mañana de 7 a 10~h con el
-\cifra{punta_manana_lab_pct}\pc{} de los viajes, frente al \cifra{punta_manana_finde_pct}\pc{}
-del fin de semana, que concentra más en la tarde (\cifra{punta_tarde_finde_pct}\pc{} de 16 a
-20~h). Por eso las matrices y el simulador separan los dos tipos de día y trabajan con cinco
-franjas: madrugada (0--7), punta de mañana (7--10), mediodía (10--16), punta de tarde
-(16--20) y noche (20--24) (\nb{exploracion/T12_temporal.ipynb}). Como mucho hay
-\cifra{simultaneos_max} viajes en curso a la vez: es una cota muy floja de la flota, que
-fijará la simulación de inventario por estación.
+En el ajuste hay \cifra{viajes_dia_ajuste} viajes al día, con el mismo volumen en laborables
+y fines de semana (\cifra{viajes_dia_laborable} y \cifra{viajes_dia_finde}) pero distinta
+forma (figura~\ref{fig:calor}): el laborable concentra el \cifra{punta_manana_lab_pct}\pc{}
+de los viajes de 7 a 10~h, frente al \cifra{punta_manana_finde_pct}\pc{} del fin de semana,
+que se va a la tarde (\cifra{punta_tarde_finde_pct}\pc{} de 16 a 20~h)
+(\nb{exploracion/T12_temporal.ipynb}). \textbf{Las matrices y el simulador separan los dos
+tipos de día y usan cinco franjas}: 0--7, 7--10, 10--16, 16--20 y 20--24~h.
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=0.9\textwidth]{T12_calor_dia_hora}
+  \includegraphics[width=0.82\textwidth]{T12_calor_dia_hora}
   \caption{Viajes medios por hora y día de la semana, periodo de ajuste.}\label{fig:calor}
 \end{figure}
 
 \subsection{La demanda en el espacio y la rejilla de candidatos}
 Los orígenes y destinos se agregan en celdas hexagonales H3 \cite{h3}
 (\nb{exploracion/T13_densidad.ipynb}). En resolución~8 (arista de \cifra{arista_res8_m}~m)
-hay demanda en \cifra{celdas_res8} celdas; en resolución~9 (arista de
+hay demanda en \cifra{celdas_res8} celdas, y en resolución~9 (arista de
 \cifra{arista_res9_m}~m, del orden del radio de acceso) en \cifra{celdas_res9}. La demanda
 está repartida: el 20\pc{} de las celdas reúne el \cifra{concentracion_20pc_res8}\pc{} de los
-extremos en resolución~8 (figura~\ref{fig:densidad}). Y es estable: la correlación de
-Spearman de las cuotas por celda entre el ajuste y la semana reservada es
-\cifra{estabilidad_res8} en resolución~8 y \cifra{estabilidad_res9} en resolución~9.
-\textbf{Los candidatos a estación serán las celdas de resolución~9}; la resolución~8 queda
-para mapas, saldos y matrices.
+extremos (figura~\ref{fig:densidad}). Y es estable: la correlación de Spearman de las cuotas
+por celda entre el ajuste y la semana reservada es \cifra{estabilidad_res8} en resolución~8
+y \cifra{estabilidad_res9} en resolución~9. \textbf{Los candidatos a estación serán las celdas
+de resolución~9}; la resolución~8 queda para mapas, saldos y matrices.
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=0.75\textwidth]{T13_densidad_res8}
+  \includegraphics[width=0.55\textwidth]{T13_densidad_res8}
   \caption{Orígenes y destinos por celda H3 de resolución 8 en el periodo de ajuste.}\label{fig:densidad}
 \end{figure}
 
 \subsection{Saldo por celda y rebalanceo}
-Si en una celda salen más viajes de los que llegan, se vacía; si llegan más, se llena
-(\nb{exploracion/T14_saldo.ipynb}). De las \cifra{celdas_saldo} celdas con al menos 30
-extremos, \cifra{celdas_emisoras} son emisoras y \cifra{celdas_receptoras} receptoras, y en
-las que más desequilibrio tienen el saldo acumulado crece día tras día sin volver a cero.
-Para devolver cada día cada celda a su estado inicial hay que mover al menos
-\cifra{rebalanceo_res8} patinetes al día en resolución~8 y \cifra{rebalanceo_res9} en
-resolución~9. El piloto ya lo hacía: las entregas netas del operador por celda siguen al
-saldo de los viajes (Spearman de \cifra{operador_spearman}, figura~\ref{fig:operador}) y
-compensan el \cifra{operador_compensado_pct}\pc{} del saldo. \textbf{El rebalanceo nocturno
-forma parte del escenario base}, con \cifra{rebalanceo_base} patinetes al día.
-
-\begin{figure}[!htb]
-  \centering
-  \includegraphics[width=0.62\textwidth]{T14_saldo_frente_operador}
-  \caption{Entregas netas del operador frente al saldo de los viajes por celda de resolución 8, mes completo.}\label{fig:operador}
-\end{figure}
+De las \cifra{celdas_saldo} celdas con al menos 30 extremos, \cifra{celdas_emisoras} pierden
+patinetes y \cifra{celdas_receptoras} los ganan, y en las más desequilibradas el saldo crece
+día tras día (\nb{exploracion/T14_saldo.ipynb}). Devolver cada celda a su estado inicial exige
+mover al menos \cifra{rebalanceo_res8} patinetes al día en resolución~8 y
+\cifra{rebalanceo_res9} en resolución~9. El piloto ya lo hacía: sus entregas siguen al saldo
+de los viajes (Spearman de \cifra{operador_spearman}, figura~\ref{fig:operador} del
+anexo~\ref{anx:figuras}). \textbf{El rebalanceo nocturno forma parte del escenario base.}
 
 \subsection{Recorridos y radios de acceso}\label{sec:radios}
 El viaje mediano recorre \cifra{dis_mediana_m}~m en \cifra{tt_mediana_min}~min a
-\cifra{vel_mediana}~km/h (\nb{exploracion/T15_recorridos.ipynb}). El recorrido es
-\cifra{rodeo} veces la línea recta (mediana), y ese factor de rodeo pasa las distancias en
-línea recta a distancias andando. Con estaciones, cada viaje paga el acceso a pie: si las
-estaciones están a una distancia $R$ y se anda $2R/3$ en cada extremo, a
-\cifra{velocidad_pie}~m/s \cite{bohannon2011}, andar a las estaciones tarda más que el propio
-viaje en una parte creciente de los viajes (figura~\ref{fig:radios} y tabla~\ref{tab:radios}).
-\textbf{Se barren radios de 200, 250 y 300~m y se deja 400~m como sensibilidad}. El
-\cifra{circulares_pct}\pc{} de los viajes son circulares, así que el simulador admite origen
-y destino en la misma estación.
+\cifra{vel_mediana}~km/h (\nb{exploracion/T15_recorridos.ipynb}). Con estaciones, cada viaje
+paga el acceso a pie, y con radios grandes andar a las estaciones tarda más que el propio
+viaje en una parte creciente de los viajes (figura~\ref{fig:radios} y
+tabla~\ref{tab:radios}, en los anexos). \textbf{Se barren radios de 200, 250 y 300~m y se deja
+400~m como sensibilidad.} La tabla~\ref{tab:radios} da además el rango de estaciones del
+barrido de la fase~1 para cada radio. El \cifra{circulares_pct}\pc{} de los viajes son
+circulares, así que el simulador admite origen y destino en la misma estación.
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=0.72\textwidth]{T15_radios_acceso}
-  \caption{Coste del acceso a pie según el radio de acceso, periodo de ajuste.}\label{fig:radios}
-\end{figure}
-
-La tabla~\ref{tab:radios} da además el orden de magnitud del número de estaciones: los
-círculos de radio $R$ en malla hexagonal que cubren el área de las celdas de resolución~9 con
-el 80 al 95\pc{} de los extremos. Es una cuenta de área, no una localización, y fija el rango
-del barrido de la fase~1, ampliado un 20\pc{} por cada lado para que el óptimo no quede en el
-borde.
-
-\begin{table}[htb]
-  \centering\small
-  \caption{Radios de acceso: coste del acceso a pie (caso medio) y rango de estaciones del barrido.}\label{tab:radios}
-  \begin{tabular}{@{}rlrrrr@{}}
-    \toprule
-    $R$ (m) & Papel & \makecell{Andar tarda más\\que el viaje (\%)} & \makecell{Viaje más corto\\que $2R$ (\%)} & \makecell{Estaciones\\(80--95\,\% de extremos)} & \makecell{Rango\\del barrido} \\
-    \midrule
-    \input{generado/tabla_estaciones.tex}% termina en \bottomrule
-  \end{tabular}
-\end{table}
-
-\subsection{Meteorología: lluvia, viento y días anómalos}
-La lluvia explica los días con pocos viajes (\nb{exploracion/T17_meteorologia.ipynb},
-figura~\ref{fig:lluvia}). La correlación de Spearman de los viajes diarios con la lluvia es
-\cifra{rho_lluvia}, y en las horas con lluvia hubo el \cifra{cociente_lluvia}\pc{} de los
-viajes de la misma hora sin lluvia en los días de alrededor: el \cifra{cociente_lluvia_lab}\pc{}
-en laborables y solo el \cifra{cociente_lluvia_finde}\pc{} en fin de semana. El único día por
-debajo del 70\pc{} de la mediana de su tipo de día es el domingo 07/02 (\cifra{viajes_0702}
-viajes, con \cifra{lluvia_0702}~mm). Es demanda real: no se excluye, pero no se usa como día
-de diseño.
-
-\begin{figure}[!htb]
-  \centering
-  \includegraphics[width=0.78\textwidth]{T17_viajes_lluvia}
+  \includegraphics[width=0.55\textwidth]{T17_viajes_lluvia}
   \caption{Viajes diarios y precipitación. La zona sombreada es la semana reservada.}\label{fig:lluvia}
 \end{figure}
 
-En el fin de semana, el viento máximo se asocia con los viajes más que la lluvia
-(\cifra{rho_viento_finde} frente a \cifra{rho_lluvia_finde}, con solo 8 días), y había que
-saber si era el mismo efecto. No lo es (figura~\ref{fig:viento}). Viento y lluvia apenas van
-juntos (\cifra{rho_viento_lluvia_finde}), y descontando la lluvia la correlación del viento
-sigue en \cifra{rho_viento_parcial_finde}. Por horas, con lluvia, viento, temperatura y
-tendencia en el mismo modelo, 10~km/h más de viento quitan un \cifra{viento_finde_pct}\pc{}
-de los viajes del fin de semana (intervalo al 95\pc{} de \cifra{viento_finde_inf} a
-\cifra{viento_finde_sup}\pc{}) y solo un \cifra{viento_lab_pct}\pc{} en laborables, sin
-diferencia clara con cero. La prueba descansa en un episodio: el fin de semana frío y
-ventoso del 13--14/02 (el 14/02, sin lluvia, tuvo \cifra{viajes_1402} viajes). \textbf{El
-viento fuerte reduce por sí mismo la demanda de ocio del fin de semana, menos que la lluvia,
-y casi no afecta a los laborables.} No entra en el simulador; el 13 y el 14/02 se tratan como
-el 07/02.
-
-\begin{figure}[!htb]
-  \centering
-  \includegraphics[width=0.85\textwidth]{T17_viento}
-  \caption{Viento y viajes. Izquierda: los 8 días de fin de semana (huecos, con lluvia). Derecha: efecto horario de 10~km/h más de viento descontada la lluvia, con su intervalo al 95\,\%.}\label{fig:viento}
-\end{figure}
-
-La semana reservada tiene un \cifra{reservada_mas_pct}\pc{} más de viajes al día que el
-ajuste. No llovió, fue más cálida (\cifra{temp_reservada} frente a \cifra{temp_ajuste}~°C)
-y tuvo menos viento. Al tener en cuenta la lluvia y la temperatura, la pendiente de los
-viajes en el mes baja de \cifra{pendiente_mes} a \cifra{pendiente_mes_tiempo} viajes al día
-por cada día, pero no desaparece: el tiempo explica parte del crecimiento, no todo. La
-validación con la semana reservada es, por tanto, más exigente que el ajuste. Se validarán
-las cuotas (reparto de viajes entre estaciones, pares y franjas), que no dependen del
-volumen, y la diferencia de volumen se presentará como resultado.
+\subsection{Meteorología y días de diseño}
+La lluvia explica los días con pocos viajes (figura~\ref{fig:lluvia},
+\nb{exploracion/T17_meteorologia.ipynb}): en las horas con lluvia hubo el
+\cifra{cociente_lluvia}\pc{} de los viajes de la misma hora sin lluvia en los días de
+alrededor, y solo el \cifra{cociente_lluvia_finde}\pc{} en fin de semana. El domingo 07/02
+(\cifra{viajes_0702} viajes, \cifra{lluvia_0702}~mm) es demanda real: no se excluye, pero no
+es día de diseño. El viento fuerte reduce por sí mismo los viajes del fin de semana (un
+\cifra{viento_finde_pct}\pc{} por cada 10~km/h, descontada la lluvia;
+figura~\ref{fig:viento} del anexo~\ref{anx:figuras}), aunque la prueba es un solo episodio, el
+13--14/02, que tampoco son días de diseño. La semana reservada tiene un
+\cifra{reservada_mas_pct}\pc{} más de viajes al día: fue seca, más cálida y menos ventosa, y
+el tiempo explica parte de ese crecimiento, no todo. \textbf{Se validarán las cuotas} (reparto
+de viajes entre estaciones, pares y franjas), que no dependen del volumen.
 
 % ------------------------------------------------------------------------------------------
 \section{Movilidad}
 
-\subsection{Primera matriz origen-destino}
+\subsection{Matrices origen-destino}
 Con las celdas de resolución~8, los viajes del ajuste se reparten en \cifra{od_pares} pares
 origen-destino (\nb{movilidad/T20_matrices_od.ipynb}, figura~\ref{fig:od}). El
 \cifra{od_intrazonales_pct}\pc{} no sale de su celda, los 20 pares más frecuentes suman el
 \cifra{od_top20_pct}\pc{} y las 30 celdas con más extremos reúnen el \cifra{od_top30_pct}\pc{}
 de los viajes. Cada par es casi simétrico: la asimetría observada es \cifra{od_asimetria}
-veces la esperable por azar. No hay corredores de ida sin vuelta; el saldo de cada celda es
-la suma de muchos pares pequeños, y el rebalanceo se plantea por zonas.
+veces la esperable por azar. No hay corredores de ida sin vuelta, y el rebalanceo se plantea
+por zonas.
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=0.62\textwidth]{T20_od_top30}
+  \includegraphics[width=0.55\textwidth]{T20_od_top30}
   \caption{Matriz origen-destino entre las 30 celdas de resolución 8 con más extremos (escala logarítmica), periodo de ajuste.}\label{fig:od}
 \end{figure}
 
-\subsection{Método previsto para la red}
-\begin{enumerate}
-  \item Matrices por franja horaria y tipo de día, y por zonas administrativas.
-  \item Candidatos: centros de las celdas de resolución~9 con demanda.
-  \item Localización con el mismo conjunto de candidatos y viajes: K-medoids como línea base,
-        cobertura de conjuntos (LSCP), $p$-mediana y cobertura máxima (MCLP), con $k$ en el
-        rango de la tabla~\ref{tab:radios} para cada radio. El frente de Pareto entre número
-        de estaciones y distancia a pie en origen y destino da la red elegida.
-  \item Asignación de cada viaje a sus estaciones y simulación de inventario por franjas, con
-        rebalanceo nocturno de \cifra{rebalanceo_base} patinetes al día (\cifra{rebalanceo_sensibilidad} como sensibilidad), para fijar
-        los anclajes y los patinetes de cada estación y la curva de flota frente a nivel de
-        servicio.
-  \item Validación con la semana reservada.
-\end{enumerate}
+\pendiente{Matrices por zonas administrativas (T21) y por franja y tipo de día (T22);
+indicadores y mapa de líneas de deseo (T23).}
+
+\subsection{Alternativas de localización}
+\pendiente{Candidatos en las celdas de resolución~9 con demanda (T24). K-medoids como línea
+base (T25), cobertura de conjuntos LSCP (T26), $p$-mediana y cobertura máxima MCLP (T27), con
+el mismo conjunto de candidatos y viajes y $k$ en el rango de la tabla~\ref{tab:radios}.
+Frente de Pareto entre número de estaciones y distancia a pie en origen y destino (T28).}
+
+\subsection{Flota frente a nivel de servicio}
+\pendiente{Asignación de cada viaje a sus estaciones y matriz estación-estación (T31).
+Simulación de inventario por franjas con rebalanceo nocturno de \cifra{rebalanceo_base}
+patinetes al día (\cifra{rebalanceo_sensibilidad} como sensibilidad) para fijar el stock
+inicial y los anclajes (T32, T33) y curva de flota frente a nivel de servicio (T34).}
+
+\subsection{Red recomendada}
+\pendiente{Estaciones, anclajes, patinetes, cobertura y distancias a pie de la red elegida, y
+su validación con la semana reservada (T30).}
 
 % ------------------------------------------------------------------------------------------
 \section{Consumo}
+
+\subsection{Energía de referencia}
 Con el consumo medio del enunciado, 13,5~Wh/km, y la batería de 576~Wh, la flota observada
 gasta \cifra{flota_kwh_dia}~kWh al día en el ajuste, con un máximo de
 \cifra{flota_kwh_dia_max} (\cifra{flota_cargas_dia} cargas completas al día de media;
-\nb{exploracion/T16_energia_referencia.ipynb}). Ningún viaje ni ningún patinete en un día
-llega a gastar la batería entera, y la autonomía mediana con el uso observado es de
-\cifra{autonomia_mediana_dias} días: con esta flota, cada patinete se recargaría cada varios
-días. Es una referencia. Con estaciones y una flota simulada menor, cada patinete hará más
-viajes, así que el consumo por patinete y por estación se calculará con la flota de la
-simulación.
+\nb{exploracion/T16_energia_referencia.ipynb}). Ningún patinete gasta la batería entera en un
+día, y la autonomía mediana con el uso observado es de \cifra{autonomia_mediana_dias} días.
+Es una referencia: con estaciones y una flota simulada menor cada patinete hará más viajes,
+así que el consumo por patinete y por estación se calculará con la flota de la simulación.
 
-Método previsto: modelo A con 13,5~Wh/km por viaje; modelo B físico con rodadura,
-aerodinámica, pendiente (desnivel origen-destino) y aceleración, calibrado frente a 13,5~Wh/km;
-consumo por viaje, patinete, flota y estación; y estado de carga de cada patinete a lo largo
-del mes.
+\subsection{Comparación de los modelos de consumo}
+\pendiente{Modelo A con 13,5~Wh/km por viaje (T40) y modelo B físico con rodadura,
+aerodinámica, pendiente y aceleración (T41), calibrado frente a 13,5~Wh/km (T43): intensidad
+(Wh/km) y kWh agregados de cada uno.}
+
+\subsection{Hipótesis de velocidad y pendiente}
+\pendiente{Efecto de la velocidad supuesta y del desnivel origen-destino (T42) sobre la
+energía; sensibilidad de los parámetros (T46).}
+
+\subsection{Consumo por viaje, patinete, flota y estación}
+\pendiente{Consumo con la flota simulada (T44) y estado de carga de cada patinete a lo largo
+del mes (T45).}
 
 % ------------------------------------------------------------------------------------------
 \section{Estación de recarga}
-La exploración fija la escala de una estación: la celda de resolución~8 que más energía
-recibe llega a \cifra{celda_kwh_max}~kWh al día, y la mediana es de \cifra{celda_kwh_p50}.
-Una estación cubrirá menos área que una de esas celdas, así que su demanda será de décimas de
-kWh a 1~kWh al día. La energía llega sobre todo sin sol (figura~\ref{fig:perfil}): solo el
-\cifra{energia_sol_pct}\pc{} de los viajes acaba de 10 a 16~h, y el \cifra{energia_tarde_pct}\pc{}
-de 16 a 24~h. Si se carga en cuanto llega el patinete, la batería de la estación debe guardar
-unos dos tercios de la energía; retrasar la carga a las horas de sol es la alternativa.
+
+\subsection{Demanda de las estaciones}
+La exploración fija la escala: la celda de resolución~8 que más energía recibe llega a
+\cifra{celda_kwh_max}~kWh al día, y la mediana es de \cifra{celda_kwh_p50}. Una estación
+cubrirá menos área, así que su demanda será de décimas de kWh a 1~kWh al día. La energía
+llega sobre todo sin sol (figura~\ref{fig:perfil}): solo el \cifra{energia_sol_pct}\pc{} de
+los viajes acaba de 10 a 16~h, y el \cifra{energia_tarde_pct}\pc{} de 16 a 24~h. Si se carga
+en cuanto llega el patinete, la batería debe guardar unos dos tercios de la energía; retrasar
+la carga a las horas de sol es la alternativa.
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=0.7\textwidth]{T16_perfil_horario}
+  \includegraphics[width=0.62\textwidth]{T16_perfil_horario}
   \caption{Energía que llega por hora del día (consumo de los viajes que acaban en esa hora), periodo de ajuste.}\label{fig:perfil}
 \end{figure}
 
-Método previsto: curvas de potencia y energía de todas las estaciones; elección de la
-estación concreta; producción fotovoltaica horaria con PVWatts \cite{pvwatts}; balance horario
-de paneles, batería (4, 8 o 12~kWh) y red; y barrido de paneles por batería hasta que la
-estación sea autónoma la mayor parte del tiempo.
+\pendiente{Curvas de potencia y energía de todas las estaciones de la red elegida (T50).}
+
+\subsection{Estación elegida}
+\pendiente{Criterio de elección y ficha de la estación concreta: localización, anclajes,
+patinetes y demanda (T51).}
+
+\subsection{Una jornada de generación, consumo, batería y red}
+\pendiente{Producción fotovoltaica horaria con PVWatts \cite{pvwatts} (T52) y balance horario
+de paneles, batería y red en una jornada tipo (T54).}
+
+\subsection{Diseños y criterio de autonomía}
+\pendiente{Barrido de número de paneles por batería (4, 8 o 12~kWh), tabla de diseños y
+criterio de autonomía para elegir uno (T55); carga inteligente frente a carga inmediata
+(T56).}
 
 % ------------------------------------------------------------------------------------------
-\section{Conclusiones provisionales y limitaciones}
+\section{Conclusiones}
+
+\subsection{Respuesta a las preguntas iniciales}
+\pendiente{Cuántas estaciones, dónde, con cuántos anclajes y patinetes; cuánta energía
+consume la flota; y qué paneles y batería necesita la estación elegida, con las cifras de la
+ejecución validada (T61).}
+
+\subsection{Decisiones de la exploración}
+Las decisiones de la tabla~\ref{tab:decisiones} están en \nb{config.yaml} y las leen todas
+las tareas.
 
 \begin{table}[H]
   \centering\small
@@ -438,12 +447,13 @@ estación sea autónoma la mayor parte del tiempo.
   \end{tabularx}
 \end{table}
 
-Las decisiones de la tabla~\ref{tab:decisiones} están en \nb{config.yaml} y las leen todas
-las tareas. Limitaciones conocidas hasta ahora:
+% ------------------------------------------------------------------------------------------
+\section{Limitaciones y trabajo futuro}
+Limitaciones conocidas hasta ahora:
 \begin{itemize}
   \item Sin trayectorias: las distancias a pie se estiman con el factor de rodeo del patinete
         y una velocidad a pie supuesta; se contrastarán con la red peatonal en las redes
-        finalistas.
+        finalistas (T29).
   \item Un solo mes de invierno, con crecimiento dentro del mes y una semana de validación más
         cálida, seca y con más demanda.
   \item La demanda observada es la de un servicio sin estaciones; parte de ella no tendría
@@ -452,7 +462,90 @@ las tareas. Limitaciones conocidas hasta ahora:
   \item No se ha podido leer el texto oficial de las restricciones por COVID en Lacio en
         febrero de 2021, así que no se controla el contexto sanitario del mes.
 \end{itemize}
+\pendiente{Limitaciones de las fases 1 a 3 y, para cada una, la mejora que más impacto
+tendría (meteorología típica, viabilidad urbana de las ubicaciones, cambios de comportamiento
+con estaciones).}
 
 \printbibliography[heading=bibintoc,title={Referencias}]
+
+% ------------------------------------------------------------------------------------------
+\clearpage
+\appendix
+\section*{Anexos}
+\addcontentsline{toc}{section}{Anexos}
+Contenido complementario del cuerpo de la memoria.
+
+\section{Tablas de resultados y parámetros}\label{anx:tablas}
+
+\begin{table}[H]
+  \centering\small
+  \caption{Radios de acceso: coste del acceso a pie (caso medio) y rango de estaciones del barrido.}\label{tab:radios}
+  \begin{tabular}{@{}rlrrrr@{}}
+    \toprule
+    $R$ (m) & Papel & \makecell{Andar tarda más\\que el viaje (\%)} & \makecell{Viaje más corto\\que $2R$ (\%)} & \makecell{Estaciones\\(80--95\,\% de extremos)} & \makecell{Rango\\del barrido} \\
+    \midrule
+    \input{generado/tabla_estaciones.tex}% termina en \bottomrule
+  \end{tabular}
+\end{table}
+
+Si las estaciones están a una distancia $R$ y se anda $2R/3$ en cada extremo, a
+\cifra{velocidad_pie}~m/s \cite{bohannon2011}, la tabla~\ref{tab:radios} da la parte de los
+viajes en que andar a las estaciones tarda más que el propio viaje. El número de estaciones
+es el de círculos de radio $R$ en malla hexagonal que cubren el área de las celdas de
+resolución~9 con el 80 al 95\pc{} de los extremos. Es una cuenta de área, no una
+localización, y fija el rango del barrido de la fase~1, ampliado un 20\pc{} por cada lado
+para que el óptimo no quede en el borde.
+
+\section{Figuras adicionales de la exploración}\label{anx:figuras}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\textwidth]{T10_umbrales}
+  \caption{Histogramas de duración, distancia y velocidad con los umbrales de limpieza.}\label{fig:umbrales}
+\end{figure}
+
+El pico de casi mil viajes a 0~km/h de la figura~\ref{fig:umbrales} son desbloqueos sin viaje,
+que ya quitan la duración y la distancia mínimas. La regla de 2~km/h quita viajes de
+distancia normal pero muy largos: patinetes que no se cerraron o que se llevaron a mano. La
+limpieza permisiva (30~s, 50~m, sin velocidad mínima, 30~km/h y 3~h) cambia las medianas
+menos de un 3\pc{} y deja la misma concentración espacial.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.55\textwidth]{T14_saldo_frente_operador}
+  \caption{Entregas netas del operador frente al saldo de los viajes por celda de resolución 8, mes completo.}\label{fig:operador}
+\end{figure}
+
+Las entregas netas del operador por celda siguen al saldo de los viajes
+(figura~\ref{fig:operador}) y compensan el \cifra{operador_compensado_pct}\pc{} del saldo.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.65\textwidth]{T15_radios_acceso}
+  \caption{Coste del acceso a pie según el radio de acceso, periodo de ajuste.}\label{fig:radios}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\textwidth]{T17_viento}
+  \caption{Viento y viajes. Izquierda: los 8 días de fin de semana (huecos, con lluvia). Derecha: efecto horario de 10~km/h más de viento descontada la lluvia, con su intervalo al 95\,\%.}\label{fig:viento}
+\end{figure}
+
+En el fin de semana, el viento máximo se asocia con los viajes más que la lluvia
+(\cifra{rho_viento_finde} frente a \cifra{rho_lluvia_finde}, con solo 8 días). Viento y lluvia
+apenas van juntos (\cifra{rho_viento_lluvia_finde}), y descontando la lluvia la correlación
+del viento sigue en \cifra{rho_viento_parcial_finde}. Por horas, con lluvia, viento,
+temperatura y tendencia en el mismo modelo, 10~km/h más de viento quitan un
+\cifra{viento_finde_pct}\pc{} de los viajes del fin de semana (intervalo al 95\pc{} de
+\cifra{viento_finde_inf} a \cifra{viento_finde_sup}\pc{}) y un \cifra{viento_lab_pct}\pc{} en
+laborables, sin diferencia clara con cero (figura~\ref{fig:viento}). El 14/02, sin lluvia,
+tuvo \cifra{viajes_1402} viajes. Con lluvia y temperatura en el modelo, la pendiente de los
+viajes en el mes baja de \cifra{pendiente_mes} a \cifra{pendiente_mes_tiempo} viajes al día
+por cada día; la semana reservada fue más cálida (\cifra{temp_reservada} frente a
+\cifra{temp_ajuste}~°C).
+
+\section{Fragmentos de código}\label{anx:codigo}
+\pendiente{Solo si alguna función es imprescindible para entender un resultado. El código
+completo está en el repositorio \cite{codigo}.}
 
 \end{document}

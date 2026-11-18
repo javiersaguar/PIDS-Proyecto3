@@ -94,7 +94,7 @@ movilidad:
 
 semilla: 2021
 
-# Entrega (enunciado): GZZ-P3.zip con GZZ-P3.pdf y GZZ-P3_code/. Poner el número de
-# grupo de la asignatura cuando se conozca; la memoria lo lee de aquí.
+# Entrega (enunciado): GZZ-P3.zip con GZZ-P3.pdf y GZZ-P3_code/, con ZZ el número de
+# grupo en dos cifras. Somos el grupo 2; la memoria lo lee de aquí.
 entrega:
-  grupo: "ZZ"
+  grupo: "02"

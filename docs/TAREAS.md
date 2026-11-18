@@ -95,10 +95,10 @@ responde a una pregunta y deja una tabla o figura que se cita en `docs/conclusio
 |---|---|---|---|---|---|
 | T60 | Sensibilidad global del diseño | E | | pendiente | |
 | T61 | Conclusiones y limitaciones | R | | pendiente | |
-| T62 | Memoria `GZZ-P3.pdf` (LaTeX en `memoria/`) | R | Javier | en curso | |
+| T62 | Memoria `G02-P3.pdf` (LaTeX en `memoria/`) | R | Javier | en curso | |
 | T63 | Presentación en PDF | R | | pendiente | |
 | T64 | Reproducción en limpio | R | | pendiente | |
-| T65 | Script de empaquetado `GZZ-P3.zip` | R | | pendiente | |
+| T65 | Script de empaquetado `G02-P3.zip` | R | | pendiente | |
 | T66 | Ensayo de la defensa | R | | pendiente | |
 
 ## Demo 3D para la defensa

@@ -8,8 +8,8 @@
 
 ## Qué debe incluir
 
-- Los archivos fuente de la memoria, según el plan en LaTeX, y el PDF final `GZZ-P3.pdf`, donde `ZZ` es el número de grupo.
-- Las referencias a los datos, los métodos y los programas utilizados. El comprimido de entrega reúne la memoria y la carpeta `GZZ-P3_code/` con los programas reproducibles, según el [enunciado](../docs/enunciado.md#entregable).
+- Los archivos fuente de la memoria, según el plan en LaTeX, y el PDF final `G02-P3.pdf` (somos el grupo 2; el enunciado lo llama `GZZ-P3.pdf`).
+- Las referencias a los datos, los métodos y los programas utilizados. El comprimido de entrega reúne la memoria y la carpeta `G02-P3_code/` con los programas reproducibles, según el [enunciado](../docs/enunciado.md#entregable).
 
 ## Cómo se compila
 
@@ -30,7 +30,7 @@ El script hace dos cosas:
 2. `latexmk -pdf` compila `memoria.tex` con pdflatex y biber (bibliografía en
    `referencias.bib`, estilo IEEE). Los ficheros intermedios van a `memoria/build/`, que no
    se versiona, y el PDF se copia a `memoria/G<grupo>-P3.pdf`. El número de grupo está en
-   `config.yaml` (`entrega.grupo`); mientras no se sepa, el PDF se llama `GZZ-P3.pdf`.
+   `config.yaml` (`entrega.grupo: "02"`), así que el PDF es `memoria/G02-P3.pdf`.
 
 Hace falta una distribución de LaTeX con `latexmk`, `pdflatex` y `biber` (MiKTeX o TeX Live)
 y los paquetes `carlito`, `babel-spanish`, `biblatex-ieee`, `booktabs`, `makecell`,
@@ -43,10 +43,27 @@ y los paquetes `carlito`, `babel-spanish`, `biblatex-ieee`, `booktabs`, `makecel
 | `generar_cifras.py` | Cifras y tablas desde `resultados/tablas/` |
 | `compilar.py` | Genera las cifras y compila el PDF |
 | `generado/` | Salida de `generar_cifras.py` (versionada para poder compilar sin Python) |
-| `GZZ-P3.pdf` | Última versión compilada |
+| `G02-P3.pdf` | Última versión compilada |
 
-Formato: el de la plantilla de la asignatura (Calibri 11, aquí Carlito, que tiene las mismas
-medidas; interlineado 1,15 y márgenes de 2,5 cm), con portada, reparto del trabajo e índice.
+Formato: Calibri 11 (aquí Carlito, que tiene las mismas medidas), interlineado 1,15 y
+márgenes de 2 cm (la plantilla de la asignatura usa 2,5 cm; se cambia en la línea de
+`geometry` de `memoria.tex`).
+
+Estructura, la de la plantilla de la asignatura con los apartados del cuerpo que pide el
+[plan](../docs/PLAN.md#9-memoria-y-entrega):
+
+- Portada, respuesta a la revisión anterior, reparto del trabajo, estado de la versión,
+  índice, índice de figuras e índice de tablas (no cuentan para el límite de páginas).
+- Cuerpo: introducción (contexto y objetivos), datos y método (datos, fases, reproducibilidad,
+  limpieza y supuestos), exploración orientada a decisiones, movilidad, consumo, estación de
+  recarga, conclusiones y limitaciones y trabajo futuro.
+- Referencias y anexos: A, tablas extensas; B, figuras adicionales de la exploración; C,
+  fragmentos de código (solo si son imprescindibles).
+
+Los apartados sin resultados todavía llevan `\pendiente{...}` (texto gris) con lo que
+contendrán y las tareas de [TAREAS.md](../docs/TAREAS.md) que los cubren; al rellenarlos se
+quita esa línea. El cuerpo se queda con las cifras y figuras que justifican cada decisión; el
+detalle va a los anexos, que la plantilla avisa que pueden no leerse.
 
 ## Material de la fase 0 para la memoria
 
