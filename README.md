@@ -62,6 +62,13 @@ npm run dev
 Al hacer push a `main`, el flujo `.github/workflows/pages.yml` la compila y la publica
 en GitHub Pages.
 
+El mapa 3D de la defensa está en `#/mapa` (deck.gl). Es un relato por capítulos (demanda,
+horas, saldo, radios de acceso, estaciones, flota, jornada, flujos y energía) que lee los
+datos que exporta `movilidad/T36_capas_mapa.ipynb` a `frontend/public/demo/`, con el mapa
+base de OpenStreetMap guardado en `datos/externos/osm/`. Funciona sin conexión. Teclas:
+← → capítulos, espacio reloj, H oculta el panel, T cambia de tema y F pantalla completa;
+`?tema=claro` en la URL lo abre con el tema claro.
+
 ## Estructura
 
 | Carpeta | Contenido |

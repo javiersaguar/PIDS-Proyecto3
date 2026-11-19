@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import { FASES } from "./fases";
 import { PaginaFase } from "./paginas/PaginaFase";
 import { Inicio } from "./paginas/Inicio";
@@ -6,12 +6,16 @@ import { useRuta } from "./ruta";
 
 const REPO = "https://github.com/javiersaguar/PIDS-Proyecto3";
 
+// El mapa 3D (deck.gl) se carga aparte para que el resto de la web no lo descargue.
+const Mapa3D = lazy(() => import("./mapa/Mapa3D"));
+
 export function App() {
   const [pagina, seccion] = useRuta();
   const fase = FASES.find((f) => f.id === pagina);
 
   // Al cambiar de fase se vuelve arriba; si la ruta nombra una sección, se baja hasta ella.
   useEffect(() => {
+    if (pagina === "mapa") return;
     if (!seccion) {
       window.scrollTo({ top: 0 });
       return;
@@ -20,6 +24,14 @@ export function App() {
     const t = window.setTimeout(buscar, 60);
     return () => window.clearTimeout(t);
   }, [pagina, seccion]);
+
+  if (pagina === "mapa") {
+    return (
+      <Suspense fallback={<div className="mapa-cargando-modulo">Cargando el mapa 3D…</div>}>
+        <Mapa3D />
+      </Suspense>
+    );
+  }
 
   return (
     <>
@@ -37,6 +49,7 @@ export function App() {
                 {f.pestana}
               </a>
             ))}
+            <a href="#/mapa">Mapa 3D</a>
           </nav>
         </div>
       </header>

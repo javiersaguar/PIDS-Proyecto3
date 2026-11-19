@@ -592,3 +592,14 @@ a.tarjeta:hover {
     display: none;
   }
 }
+
+/* Mientras se descarga el módulo del mapa 3D */
+.mapa-cargando-modulo {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: #111110;
+  color: #c3c2b7;
+  font-size: 14px;
+}
