@@ -1,0 +1,5 @@
+network_id,radio_m,estaciones,pct_viajes_atendidos,pct_origenes_cubiertos,pct_destinos_cubiertos,d_origen_mediana_m,d_destino_mediana_m,d_origen_p90_m,d_destino_p90_m,d_atendidos_media_m,viajes_atendidos_dia,flota,anclajes,anclajes_mediana,anclajes_max,rebalanceo_noche_media,rebalanceo_noche_max,pct_viajes_misma_estacion,kwh_dia_total,kwh_dia_estacion_max,kwh_dia_estacion_mediana,viajes_por_patinete_dia
+voraz_r200,200,290,80.078,90.144,86.834,138.109,142.149,199.346,232.65,124.321,637.19,950,1916,6.0,18,156.545,211,8.863,17.513,0.252,0.048,0.671
+voraz_r250,250,227,80.006,90.377,87.098,145.868,151.168,247.117,276.636,134.914,636.619,848,1716,7.0,19,140.545,197,10.173,17.54,0.295,0.063,0.751
+voraz_r300,300,162,80.126,90.491,87.229,171.994,178.763,297.607,317.394,162.829,637.571,693,1445,8.0,18,118.273,159,12.286,17.532,0.309,0.094,0.92
+voraz_r400,400,87,80.305,90.467,87.235,261.673,268.885,395.241,428.19,239.127,639.0,509,1010,11.0,21,82.364,126,18.668,17.464,0.568,0.164,1.255

@@ -27,6 +27,7 @@ PASOS = [
     "exploracion/T17_meteorologia.ipynb",
     # Fase 1. Movilidad
     "movilidad/T20_matrices_od.ipynb",
+    "movilidad/T36_capas_mapa.ipynb",
 ]
 
 

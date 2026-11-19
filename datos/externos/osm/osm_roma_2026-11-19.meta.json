@@ -1,0 +1,65 @@
+{
+  "url": "https://overpass-api.de/api/interpreter",
+  "metodo": "POST, campo data con la consulta Overpass QL",
+  "fuente": "OpenStreetMap, servida por la Overpass API (https://overpass-api.de/)",
+  "licencia": "Open Database License (ODbL) 1.0 (https://opendatacommons.org/licenses/odbl/1-0/)",
+  "atribucion": "© OpenStreetMap contributors (https://www.openstreetmap.org/copyright)",
+  "caja": {
+    "sur": 41.79,
+    "oeste": 12.4,
+    "norte": 41.97,
+    "este": 12.58
+  },
+  "uso": "Solo como mapa base del mapa 3D de la web (movilidad/T36_capas_mapa.ipynb); no entra en ningún cálculo.",
+  "formato": "Respuesta JSON de Overpass tal como llegó, comprimida con gzip (mtime 0). sha256 de la respuesta sin comprimir.",
+  "capas": {
+    "vias": {
+      "fichero": "osm_roma_vias_2026-11-19.json.gz",
+      "consulta": "[out:json][timeout:120];way[\"highway\"~\"^(motorway|trunk|primary|secondary|tertiary)$\"](41.79,12.40,41.97,12.58);out geom qt;",
+      "fecha_descarga_utc": "2026-11-19T15:46:00+00:00",
+      "osm_base": "2026-11-19T15:44:18Z",
+      "elementos": 9623,
+      "sha256": "3a507e259a0864444679561ee4d2dced6cd192a154037700b5c520b0001c54f3"
+    },
+    "calles": {
+      "fichero": "osm_roma_calles_2026-11-19.json.gz",
+      "consulta": "[out:json][timeout:180];way[\"highway\"~\"^(residential|unclassified|living_street|pedestrian|service)$\"][\"service\"!~\".\"](41.79,12.40,41.97,12.58);out geom qt;",
+      "fecha_descarga_utc": "2026-11-19T15:47:00+00:00",
+      "osm_base": "2026-11-19T15:45:21Z",
+      "elementos": 26426,
+      "sha256": "4d7d49036d0e17e96f8f1f18c3fe5f88d7b5607637a1748e57f180cd4ad26619"
+    },
+    "agua": {
+      "fichero": "osm_roma_agua_2026-11-19.json.gz",
+      "consulta": "[out:json][timeout:120];(way[\"waterway\"=\"river\"](41.79,12.40,41.97,12.58);relation[\"natural\"=\"water\"][\"water\"=\"river\"](41.79,12.40,41.97,12.58);way[\"natural\"=\"water\"][\"water\"=\"river\"](41.79,12.40,41.97,12.58););out geom qt;",
+      "fecha_descarga_utc": "2026-11-19T15:48:00+00:00",
+      "osm_base": "2026-11-19T15:46:20Z",
+      "elementos": 23,
+      "sha256": "682d40143d9e6f3d2cb4e478d0d4657f2f2b27ca0f7790ecbb68a0cbb7642db8"
+    },
+    "verde": {
+      "fichero": "osm_roma_verde_2026-11-19.json.gz",
+      "consulta": "[out:json][timeout:120];(way[\"leisure\"~\"^(park|garden)$\"](41.79,12.40,41.97,12.58);relation[\"leisure\"~\"^(park|garden)$\"](41.79,12.40,41.97,12.58););out geom qt;",
+      "fecha_descarga_utc": "2026-11-19T15:48:00+00:00",
+      "osm_base": "2026-11-19T15:47:20Z",
+      "elementos": 2917,
+      "sha256": "0178778bf433558bc79b529332f8a42d0fa9596e3f2905e3eb6d9fa8a3f586b6"
+    },
+    "tren": {
+      "fichero": "osm_roma_tren_2026-11-19.json.gz",
+      "consulta": "[out:json][timeout:120];way[\"railway\"=\"rail\"][\"service\"!~\".\"](41.79,12.40,41.97,12.58);out geom qt;",
+      "fecha_descarga_utc": "2026-11-19T15:49:00+00:00",
+      "osm_base": "2026-11-19T15:48:21Z",
+      "elementos": 710,
+      "sha256": "7bf6363d369777d4059c8c3f5d752ac6fc02f8f319379cc55cd4df65cf3a3dcb"
+    },
+    "murallas": {
+      "fichero": "osm_roma_murallas_2026-11-19.json.gz",
+      "consulta": "[out:json][timeout:120];(way[\"historic\"=\"citywalls\"](41.79,12.40,41.97,12.58);way[\"barrier\"=\"city_wall\"](41.79,12.40,41.97,12.58););out geom qt;",
+      "fecha_descarga_utc": "2026-11-19T15:50:00+00:00",
+      "osm_base": "2026-11-19T15:48:21Z",
+      "elementos": 136,
+      "sha256": "feaa46b62f76118f08cd15008eb1469fd24b905a2f7e065a58a3e14c715a9956"
+    }
+  }
+}

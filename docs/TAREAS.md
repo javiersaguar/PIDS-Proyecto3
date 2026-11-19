@@ -57,7 +57,7 @@ responde a una pregunta y deja una tabla o figura que se cita en `docs/conclusio
 | T33 | Escenarios de rebalanceo | E | | pendiente | |
 | T34 | Curva flota frente a nivel de servicio e indicadores de uso | R | | pendiente | |
 | T35 | Simulación con estado de carga (movilidad + consumo) | E | | pendiente | |
-| T36 | Capas de cobertura y flujos OD para el mapa de la demo | E | | pendiente | |
+| T36 | Capas de cobertura y flujos OD para el mapa de la demo | E | Alejandro | en curso | [Notebook](../movilidad/T36_capas_mapa.ipynb) (red preliminar voraz hasta que T25–T28 elijan la red) |
 | T37 | Medir acceso en las zonas peor cubiertas y comparar una red alternativa | E | | pendiente | |
 | T38 | Simular la indisponibilidad temporal de una estación y la derivación de viajes | E | | pendiente | |
 | T39 | Comparar redes finalistas con indicadores de movilidad y recarga | E | | pendiente | |
@@ -105,8 +105,8 @@ responde a una pregunta y deja una tabla o figura que se cita en `docs/conclusio
 
 | ID | Tarea | Tipo | Responsable | Estado | Entrega |
 |---|---|---|---|---|---|
-| T70 | Definir el esquema y exportar los escenarios y series desde Python | E | | pendiente | |
-| T71 | Integrar el mapa inclinado, el reloj y la ficha de estación con T36 y T70 | E | | pendiente | |
+| T70 | Definir el esquema y exportar los escenarios y series desde Python | E | Alejandro | en curso | `manifest.json` y `networks/` del plan en `frontend/public/demo/`; faltan los escenarios simulados |
+| T71 | Integrar el mapa inclinado, el reloj y la ficha de estación con T36 y T70 | E | Alejandro | en curso | Web, `#/mapa` |
 | T72 | Crear la maqueta 3D de la estación con anclajes, paneles, batería y balance horario | E | | pendiente | |
 | T73 | Conectar los tres escenarios y cotejar los indicadores con las tablas | E | | pendiente | |
 | T74 | Probar teclado, legibilidad, rendimiento, versión sin red y vista sin WebGL | E | | pendiente | |
