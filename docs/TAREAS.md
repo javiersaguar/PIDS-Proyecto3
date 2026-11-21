@@ -120,4 +120,4 @@ Las doce mejoras acordadas, sus dependencias y los criterios de cierre están en
 |---|---|---|---|---|---|
 | T80 | Redistribuir diez anclajes con flota y capacidad total fijas y medir viajes recuperados | E | | pendiente | |
 | T81 | Simular el despliegue en dos etapas con ampliación modular por saturación | E | | pendiente | |
-| T82 | Incorporar al plan las doce mejoras acordadas | E | Javier | en curso | |
+| T82 | Incorporar al plan las doce mejoras acordadas | E | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/e394d6286eebefa7b77ce32c1e5faf5a4a4276c7) |
