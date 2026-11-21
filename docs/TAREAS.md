@@ -48,18 +48,18 @@ responde a una pregunta y deja una tabla o figura que se cita en `docs/conclusio
 | T24 | Candidatos a estación | R | | pendiente | |
 | T25 | Línea base K-medoids / K-means con barrido de k | R | | pendiente | |
 | T26 | Cobertura de conjuntos (LSCP) con MILP | R | | pendiente | |
-| T27 | p-mediana y cobertura máxima (MCLP) | R | | pendiente | |
+| T27 | p-mediana y cobertura máxima de viajes completos con ambos extremos cubiertos | R | | pendiente | |
 | T28 | Frente de Pareto y elección de la red | R | | pendiente | |
-| T29 | Distancias a pie por red peatonal OSM | E | | pendiente | |
+| T29 | Contrastar la cobertura geométrica con rutas a pie en dos sectores con barreras | E | | pendiente | |
 | T30 | Validación temporal (semanas 1–3 frente a 4) | E | | pendiente | |
 | T31 | Asignación de viajes a estaciones y matriz estación → estación | R | | pendiente | |
 | T32 | Simulación de inventario: stock inicial y anclajes por estación | R | | pendiente | |
-| T33 | Escenarios de rebalanceo | E | | pendiente | |
+| T33 | Rebalanceo nocturno con 0, 100 y 220 movimientos, km y déficit residual | E | | pendiente | |
 | T34 | Curva flota frente a nivel de servicio e indicadores de uso | R | | pendiente | |
 | T35 | Simulación con estado de carga (movilidad + consumo) | E | | pendiente | |
 | T36 | Capas de cobertura y flujos OD para el mapa de la demo | E | Alejandro | en curso | [Notebook](../movilidad/T36_capas_mapa.ipynb) (red preliminar voraz hasta que T25–T28 elijan la red) |
 | T37 | Medir acceso en las zonas peor cubiertas y comparar una red alternativa | E | | pendiente | |
-| T38 | Simular la indisponibilidad temporal de una estación y la derivación de viajes | E | | pendiente | |
+| T38 | Comparar la red habitual y una redundante en cinco cierres críticos con derivación de viajes | E | | pendiente | |
 | T39 | Comparar redes finalistas con indicadores de movilidad y recarga | E | | pendiente | |
 
 ## Fase 2. Consumo (10 %)
@@ -79,12 +79,12 @@ responde a una pregunta y deja una tabla o figura que se cita en `docs/conclusio
 | ID | Tarea | Tipo | Responsable | Estado | Entrega |
 |---|---|---|---|---|---|
 | T50 | Curvas de potencia y energía de todas las estaciones | R | | pendiente | |
-| T51 | Elección de la estación concreta | R | | pendiente | |
+| T51 | Comparar tres emplazamientos por acceso, superficie y sombra y elegir una estación | R | | pendiente | |
 | T52 | Producción FV con PVWatts (API, guardada) | R | | pendiente | |
 | T53 | Contraste con PVGIS de febrero de 2021 y pvlib | E | | pendiente | |
 | T54 | Balance horario FV + batería + red | R | | pendiente | |
-| T55 | Barrido paneles × batería y elección | R | | pendiente | |
-| T56 | Carga inteligente frente a carga inmediata | E | | pendiente | |
+| T55 | Comparar paneles y 0, 4, 8 y 12 kWh de batería con producción de referencia y baja | R | | pendiente | |
+| T56 | Comparar carga inmediata y solar con reserva de patinetes listos y conciliar la carga final | E | | pendiente | |
 | T57 | Previsión de demanda horaria | E | | pendiente | |
 | T58 | Extrapolación anual | E | | pendiente | |
 | T59 | Valoración económica y CO₂ | E | | pendiente | |
@@ -93,7 +93,7 @@ responde a una pregunta y deja una tabla o figura que se cita en `docs/conclusio
 
 | ID | Tarea | Tipo | Responsable | Estado | Entrega |
 |---|---|---|---|---|---|
-| T60 | Sensibilidad global del diseño | E | | pendiente | |
+| T60 | Probar el diseño con días difíciles, demanda punta adicional y producción solar baja | E | | pendiente | |
 | T61 | Conclusiones y limitaciones | R | | pendiente | |
 | T62 | Memoria `G02-P3.pdf` (LaTeX en `memoria/`) | R | Javier | en curso | |
 | T63 | Presentación en PDF | R | | pendiente | |
@@ -108,6 +108,16 @@ responde a una pregunta y deja una tabla o figura que se cita en `docs/conclusio
 | T70 | Definir el esquema y exportar los escenarios y series desde Python | E | Alejandro | en curso | `manifest.json` y `networks/` del plan en `frontend/public/demo/`; faltan los escenarios simulados |
 | T71 | Integrar el mapa inclinado, el reloj y la ficha de estación con T36 y T70 | E | Alejandro | en curso | Web, `#/mapa` |
 | T72 | Crear la maqueta 3D de la estación con anclajes, paneles, batería y balance horario | E | | pendiente | |
-| T73 | Conectar los tres escenarios y cotejar los indicadores con las tablas | E | | pendiente | |
+| T73 | Mostrar operación normal, cierre y red mejorada con el mismo cierre y cotejar los indicadores | E | | pendiente | |
 | T74 | Probar teclado, legibilidad, rendimiento, versión sin red y vista sin WebGL | E | | pendiente | |
 | T75 | Ensayar el guion de tres minutos y preparar el vídeo de respaldo | E | | pendiente | |
+
+## Experimentos integrados
+
+Las doce mejoras acordadas, sus dependencias y los criterios de cierre están en [PLAN.md, sección 7](PLAN.md#7-experimentos-integrados).
+
+| ID | Tarea | Tipo | Responsable | Estado | Entrega |
+|---|---|---|---|---|---|
+| T80 | Redistribuir diez anclajes con flota y capacidad total fijas y medir viajes recuperados | E | | pendiente | |
+| T81 | Simular el despliegue en dos etapas con ampliación modular por saturación | E | | pendiente | |
+| T82 | Incorporar al plan las doce mejoras acordadas | E | Javier | en curso | |

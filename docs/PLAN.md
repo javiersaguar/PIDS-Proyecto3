@@ -10,7 +10,7 @@
 | [4. Movilidad y flota](#4-movilidad-y-flota) | Dónde ubicar estaciones y cuántos anclajes y patinetes instalar |
 | [5. Consumo](#5-consumo) | Cuánta energía necesita cada viaje y dónde se repone |
 | [6. Estaciones de recarga](#6-estaciones-de-recarga) | Qué potencia, superficie solar y almacenamiento necesita una estación |
-| [7. Experimentos integrados](#7-experimentos-integrados) | Qué diseño resiste mejor fallos, picos y cambios de carga |
+| [7. Experimentos integrados](#7-experimentos-integrados) | Las doce mejoras acordadas, su esfuerzo y la evidencia que debe producir cada una |
 | [8. Demo 3D para la defensa](#8-demo-3d-para-la-defensa) | Cómo enseñar un resultado y explorar sus consecuencias en directo |
 | [9. Memoria y entrega](#9-memoria-y-entrega) | Qué evidencias entran en los entregables |
 | [10. Calendario y reparto](#10-calendario-y-reparto) | En qué orden se construye y quién revisa cada bloque |
@@ -25,9 +25,9 @@ Estudiamos cómo cambiaría el servicio si los viajes observados con Helbiz en R
 3. **Recarga (20 %).** Calcular perfiles de demanda para todas las estaciones. Dimensionar los paneles y la batería de apoyo de una estación concreta, con curvas de potencia y un balance energético verificable.
 4. **Conclusiones (10 %).** Justificar el diseño con indicadores, exponer sus límites y entregar el código que reproduce las cifras de la memoria. [Enunciado y formato de entrega](enunciado.md)
 
-**Objetivo adicional del equipo.** Desarrollar un frontend 3D para comparar redes, reproducir un día de operación y acercarse a una estación para inspeccionar anclajes, paneles y almacenamiento. La prueba de indisponibilidad de una estación es el caso principal para la defensa. La carga inteligente es el siguiente experimento si el estado de carga y la disponibilidad se pueden comparar en la misma simulación.
+**Objetivo de la defensa.** Extender el mapa 3D existente para comparar la operación normal, el cierre de una estación en hora punta y la respuesta de una red mejorada con el mismo presupuesto de infraestructura. La maqueta permitirá inspeccionar los anclajes, paneles y almacenamiento de la estación dimensionada.
 
-**Ampliaciones.** Priorizar la comparación conjunta de movilidad y recarga, la cobertura de las zonas peor atendidas y la resiliencia ante fallos. La valoración económica, la previsión avanzada y el rebalanceo orientado a la generación solar quedan como extensiones con hipótesis explícitas. El seguimiento de responsables y estados se lleva en [TAREAS.md](TAREAS.md).
+**Alcance acordado por el equipo.** Implementar las doce mejoras de la sección 7, incluida la carga inteligente con reserva de patinetes listos. Los requisitos y pesos de evaluación son los del enunciado. [Experimentos integrados](#7-experimentos-integrados) · [Seguimiento de tareas](TAREAS.md)
 
 ## 2. Arquitectura y reproducción
 
@@ -58,7 +58,7 @@ flowchart LR
 | [exploracion/](../exploracion/README.md) | Notebooks de limpieza y exploración de la fase 0. Generan `viajes_limpios.parquet` y las tablas y figuras que fijan los parámetros de las fases siguientes. |
 | [movilidad/](../movilidad/README.md), [consumo/](../consumo/README.md) y [estacion_recarga/](../estacion_recarga/README.md) | Cálculos y simulaciones de cada fase. |
 | [resultados/](../resultados/README.md) | Indicadores, comparativas, series horarias, mapas y gráficas. |
-| `frontend/` | Web de resultados en GitHub Pages: una pestaña por fase con las gráficas interactivas, su explicación y las conclusiones. Cada notebook exporta los datos que dibuja con `comun.web.exportar`. La demo 3D se añadirá a la misma aplicación. |
+| `frontend/` | Web de resultados en GitHub Pages con gráficas por fase y el mapa 3D de Roma en `#/mapa`. Los notebooks exportan sus datos y el simulador aportará los escenarios que comparará la demo. |
 | [memoria/](../memoria/README.md) y [presentacion/](../presentacion/README.md) | Memoria reproducible, diapositivas y recursos de la defensa. |
 
 - Fijar el entorno de Python 3.12 y sus dependencias. Empezar con pandas, NumPy, las herramientas geográficas necesarias y Matplotlib. Incorporar y fijar el solver de MILP al entrar en la comparación formal. Verificar su instalación y un problema pequeño en los dos equipos.
@@ -139,7 +139,7 @@ Formar candidatos a partir de celdas con demanda en el periodo de ajuste. Levant
 | p-mediana | Minimizar la distancia agregada de acceso y salida para un presupuesto fijo de estaciones. | Distancias media y P90 a la estación en origen y destino. |
 | Cobertura máxima (MCLP) | Maximizar el número de viajes con ambos extremos cubiertos bajo un presupuesto fijo. | Curva cobertura frente a estaciones y lista de viajes excluidos. |
 
-- Comparar con el mismo conjunto de candidatos, viajes, radios y métrica de distancia. Barrer inicialmente 200, 300 y 400 m como hipótesis. Calcular distancias geográficas para el barrido y verificar con red peatonal los puntos críticos de las redes finalistas si el insumo está disponible. Contrastar el efecto de barreras y pasos sobre una muestra.
+- Comparar con el mismo conjunto de candidatos, viajes, radios y métrica de distancia. Usar los radios de `config.yaml` (200, 250 y 300 m, con 400 m como sensibilidad). Calcular distancias geográficas para el barrido y contrastar las redes finalistas con un grafo peatonal en dos sectores con barreras.
 - Un viaje está **cubierto** si tanto el origen como el destino tienen una estación accesible dentro del radio. Medir también cobertura de cada extremo y cuantiles de distancia para revelar dónde se pierde servicio. Los cuantiles indican explícitamente si se calculan sobre todos los viajes o sobre el subconjunto cubierto.
 - Mostrar un frente de Pareto con estaciones, cobertura y distancia de acceso. Tomar hasta tres redes finalistas que representen compromisos distintos y pasar cada una por la misma simulación de flota. Registrar método, presupuesto, radio, tiempo de cómputo y calidad conocida de la solución.
 - Elegir la propuesta con un criterio fijado sobre el periodo de ajuste, por ejemplo el menor número de estaciones que cumpla el nivel de servicio y acceso acordado. Mostrar también el resultado en la semana reservada y la alternativa inmediatamente más económica en infraestructura.
@@ -149,7 +149,7 @@ Formar candidatos a partir de celdas con demanda en el periodo de ajuste. Levant
 1. **Referencia de capacidad.** Para una asignación fija sin rechazos ni rebalanceo, calcular el mínimo de la serie acumulada de llegadas menos salidas por estación. El stock inicial mínimo es el valor necesario para que el saldo total nunca sea negativo. El máximo del inventario resultante da una referencia de anclajes para esa secuencia. Definir el orden de los eventos empatados y explicar el supuesto de inventario inicial.
 2. **Simulación con restricciones.** Procesar llegadas y recogidas en orden temporal. Fijar que las llegadas de viajes ya iniciados se procesan antes que las nuevas solicitudes con la misma hora. Verificar un patinete disponible en el origen y reservar un anclaje de destino cuando se acepta un viaje. En un viaje circular cuenta el hueco liberado por su salida. La reserva anticipada es una política conservadora que hace explícito el compromiso de devolución.
 3. **Asignación y alternativas.** Probar primero la estación candidata más cercana en cada extremo. Cuando falte inventario o hueco, permitir desvío a otra estación dentro del radio del escenario. Usar el tiempo de viaje observado como aproximación y guardar la distancia adicional y cada causa de rechazo. Los viajes rechazados quedan fuera del inventario y de la recarga simulados.
-4. **Dimensionado.** Barrer tamaños de flota y anclajes por estación. Comparar ajustes de stock inicial, operación sin traslados y, si se evalúa, un rebalanceo nocturno con límites de capacidad y tiempo. Contabilizar vehículos en tránsito durante una recolocación.
+4. **Dimensionado.** Barrer tamaños de flota y anclajes por estación. Comparar ajustes de stock inicial y los límites de 0, 100 y 220 movimientos nocturnos de `config.yaml`. Registrar la distancia, el tiempo y los vehículos en tránsito durante cada recolocación.
 5. **Indicadores.** Mostrar viajes completados / solicitudes válidas, rechazos por cobertura, estación inactiva, falta de vehículo o anclaje y, si se activa, batería. Reportar salidas y devoluciones por estación, viajes por patinete y día, horas de uso sobre horas disponibles y distribución de ocupación. Explicar la diferencia entre la flota simulada y los 2 331 identificadores observados en el mes.
 
 **Evidencia de cierre.** Comprobar con casos pequeños que se conserva el total de patinetes entre estaciones y tránsito, que la ocupación más reservas respeta la capacidad y que cada solicitud tiene un resultado único. Entregar una tabla por estación con coordenadas, stock inicial, anclajes y utilización, más la curva de servicio frente a tamaño de flota.
@@ -205,23 +205,34 @@ Modelar todos los flujos en el lado AC con intervalos de una hora y energía en 
 
 ## 7. Experimentos integrados
 
-| Prioridad | Experimento | Comparación y resultado que debe salir |
-| --- | --- | --- |
-| Principal | Diseño conjunto de la red y la recarga | Simular hasta tres redes del frente espacial con la misma demanda, reglas de servicio y flota comparable. Añadir anclajes totales, servicio, pico de recarga y concentración de kWh al criterio de elección. Buscar si una red algo más distribuida reduce el pico o si los anclajes adicionales superan ese beneficio. |
-| Principal | Indisponibilidad de una estación en hora punta | En la red elegida, fijar la estación crítica y el intervalo con el periodo de ajuste. Comparar operación normal, indisponibilidad y derivación a estaciones vecinas, con el mismo conjunto de viajes y presupuesto. Publicar viajes perdidos o desviados, metros extra y cambios de ocupación y de carga en las estaciones vecinas. |
-| Principal | Acceso en las zonas peor cubiertas | Mostrar por zona con volumen suficiente la cobertura OD y el acceso en origen y destino. Comparar la red elegida con una solución que protege el grupo de zonas con menor cobertura. Informar cuántos viajes o estaciones cuesta mejorar ese extremo de la distribución. Las métricas describen acceso espacial para la demanda observada. |
-| Siguiente | Carga inteligente con reserva de patinetes listos | Comparar carga inmediata y una regla que aprovecha horas solares mientras protege una reserva de patinetes disponibles. Usar la misma red, clima, flota e inventario inicial. Medir importación, pico, horas autónomas y rechazos por batería. |
-| Siguiente | Dimensionado bajo demanda alta y baja producción | Ensayar cambios controlados como demanda punta +25 % y energía solar −40 %, por separado y juntos. Remuestrear solicitudes del mismo tipo de día y franja punta con semilla fija. Asignarles identificadores de simulación nuevos y reutilizar la misma muestra para todas las redes. Medir servicio, energía sin cubrir y si cambia la solución recomendada. Estos niveles son hipótesis de estrés. |
-| Opcional | Rebalanceo orientado a disponibilidad y excedente solar | Comparar, en un grupo de estaciones con perfiles solares disponibles, una política nocturna con una que coloca patinetes descargados donde hay excedente diurno. Contabilizar tiempo, distancia y energía de traslado, además de la recarga y el servicio. |
-| Opcional | Sombra, costes y previsión | Probar sensibilidad a sombra estacional y a costes con fuente. Si se añade previsión, comparar contra el perfil histórico por hora y tipo de día con un corte cronológico. Llevarlo a la memoria si afecta una decisión de red, carga o inversión. |
+Las doce mejoras forman parte de la entrega del equipo. Los rangos son horas-persona estimadas e incluyen implementación, comprobaciones y un resultado utilizable en la memoria o la defensa. La suma de los rangos es **88–152 h-persona**. El simulador, los datos y la exportación se reutilizan entre mejoras. El motor base de asignación e inventario T31–T34 tiene una estimación propia de **16–26 h-persona**. [Seguimiento de tareas](TAREAS.md)
 
-### Protocolo de los dos experimentos operativos
+| Mejora | Trabajo previo | Esfuerzo | Entregable y valor |
+| --- | --- | ---: | --- |
+| **1. Optimizar viajes completos (T26–T30)** | Candidatos T24 y referencia voraz T36 | **8–14 h** | Comparar el voraz por extremos con un modelo que maximice viajes cubiertos en origen **y** destino. Entregar la curva de cobertura y distancias con el mismo número de estaciones y radio, el resultado de la semana reservada y la brecha del solver. Alinea la función objetivo con el viaje que se quiere servir. |
+| **2. Diseñar para el fallo de una estación (T38–T39)** | Redes comparables y simulador T32 | **8–14 h** | Comparar la red habitual y la red con redundancia. Analizar los cinco cierres más críticos del ajuste y mostrar por cierre viajes rechazados, recogidas o devoluciones desviadas, metros adicionales y saturación vecina en hora punta. Identifica dónde aporta valor una segunda alternativa. |
+| **3. Redistribuir diez anclajes (T80)** | Simulador T32 y caso de cierre T38 | **5–9 h** | Comparar la asignación actual, el traslado de diez anclajes hacia las estaciones más usadas y el mismo traslado guiado por el beneficio marginal simulado. Entregar viajes recuperados por anclaje trasladado y pérdidas en las estaciones que ceden capacidad. Indica cómo invertir la capacidad disponible con flota y anclajes totales fijos. |
+| **4. Medir la distancia a pie (T29)** | Redes candidatas y grafo peatonal archivado de dos sectores | **10–16 h** | Comparar línea recta y recorrido por calles y pasos transitables, con al menos un sector junto al Tíber y otro con una barrera urbana. Entregar cobertura OD, P90 de acceso y cambios de estación asignada. Cuantifica el sesgo de los radios y mejora la selección de emplazamientos. |
+| **5. Mejorar el acceso de las zonas peor servidas (T37)** | Asignación OD T31 y delimitación de zonas | **4–7 h** | Comparar la red elegida y una variante que proteja el cuartil peor cubierto en el ajuste, con un mínimo explícito de observaciones por zona. Entregar cobertura global y por zona, viajes beneficiados y su coste en estaciones o cobertura global. Hace visible el reparto del servicio para la demanda observada. |
+| **6. Dimensionar para los días difíciles (T30/T60)** | Simulador T32, cortes temporales fijados y balance T54 para el caso solar | **5–9 h** | Reproducir días completos, la semana reservada y un pico adicional de demanda. Entregar servicio diario, peor día y pérdidas por causa, junto con la sensibilidad ante producción solar baja. Comprueba si el diseño resiste picos que una media mensual disimula. |
+| **7. Limitar el rebalanceo nocturno (T33)** | Simulador T32 y distancias entre estaciones | **8–14 h** | Comparar 0, 100 y 220 movimientos nocturnos con una política que priorice los déficits donde más viajes se recuperan. Entregar movimientos, kilómetros de traslado, déficit residual y rechazos del día siguiente. Cuantifica el esfuerzo real de mantener el stock. |
+| **8. Cargar con el sol y mantener una reserva operativa (T35/T45/T56)** | Estado de carga y balance base T50–T55 | **14–24 h** | Comparar carga inmediata y carga en horas solares con una reserva de vehículos listos. Entregar kWh de red, pico, viajes rechazados por batería y carga total al final del periodo. Comprueba cuánto ahorro de red es compatible con el mismo nivel de servicio. |
+| **9. Comprobar cuánto aporta una batería fija (T52–T55)** | Perfil FV y balance base | **6–10 h** | Comparar solar con 0, 4, 8 y 12 kWh de almacenamiento bajo producción de referencia y baja. Entregar un frente de capacidad frente a kWh de red, pico y horas activas autónomas. Justifica el tamaño de batería, incluida la opción de 0 kWh si cumple el objetivo. |
+| **10. Comparar tres emplazamientos para la estación (T51/T72)** | Red elegida, datos de superficie y balance base | **6–11 h** | Preparar fichas de tres ubicaciones con acceso peatonal, superficie útil, orientación y sensibilidad a la sombra. Llevar a la maqueta el número de anclajes y paneles del emplazamiento elegido. Conecta el diseño energético con una restricción física verificable sobre plano. |
+| **11. Convertir el mapa 3D en una comparación reproducible (T70–T75)** | Series de inventario, cierres, anclajes y balance exportados | **6–10 h** | Mostrar la misma hora y demanda en operación normal, cierre y red mejorada durante el mismo cierre. Incluir cifras conciliadas con la memoria, modo local sin conexión y respaldo grabado. Permite demostrar qué cambio recupera servicio y dónde se desplaza la recarga. |
+| **12. Simular un despliegue por etapas (T81)** | Red seleccionada, simulador y capacidades modulares | **8–14 h** | Comparar despliegue completo desde el inicio con una primera red y una ampliación modular activada por saturación. Entregar servicio de cada etapa, módulos necesarios y viajes recuperados por módulo. Permite recomendar dónde arrancar y cuándo ampliar. |
 
-- **Indisponibilidad.** Configurar `station_id`, hora de inicio y duración. En la política base de fallo, suspender nuevas asignaciones a la estación durante el evento y honrar devoluciones reservadas antes de la incidencia. Mantener los patinetes anclados en su estado hasta que termine o se ejecute un traslado modelado. En la política de derivación, buscar la estación activa más próxima dentro del radio y comprobar su inventario y capacidad. Aplicar el evento a los mismos viajes que el control.
-- **Carga inteligente.** Habilitarla cuando el simulador pueda medir patinetes listos, patinetes cargando y reservas. La primera regla activa la carga ante un mínimo de patinetes listos o un tiempo máximo de espera y da prioridad al excedente solar para el resto. Si usa un pronóstico corto, entrenarlo solo con datos anteriores al intervalo evaluado. Fijar previamente el umbral de carga y el máximo deterioro de servicio admisible, por ejemplo un punto porcentual. Mostrar el resultado aunque la regla no produzca ventaja energética.
-- **Comparabilidad.** Mantener trazabilidad de qué cambia y qué permanece fijo entre escenarios. Distinguir el periodo de diseño, la semana reservada y los ejemplos didácticos elegidos para la defensa. Publicar diferencias absolutas y relativas con el mismo denominador y las causas de pérdida de servicio.
+### Resultado preliminar y comparaciones
 
-Si una red con menos estaciones pierde muchos retornos durante un fallo, cuantificar cuántos anclajes y metros cuadrados recuperan servicio en las alternativas cercanas. Si la carga inteligente reduce kWh de red y empeora el servicio, mostrar ambas cifras en la misma tabla.
+En una comprobación exploratoria con la red T36 de 162 estaciones y radio de 300 m se hicieron cinco sustituciones entre los 508 emplazamientos distintos del barrido exportado. Se eligió cada cambio con los viajes del 1 al 21 de febrero, buscando más viajes con al menos dos estaciones accesibles en cada extremo por distancia geométrica y conservando la cobertura OD ordinaria del ajuste. En la semana del 22 al 28 subieron de **704 a 929** los viajes con esa redundancia, y de **4 982 a 4 993** los viajes con ambos extremos cubiertos. Regenerar la comparación con el código del proyecto y verificar cuánto se conserva al introducir distancias a pie, inventario y reservas. [Candidatos y red preliminar de T36](../frontend/public/demo/networks/barrido.json)
+
+- **Protocolo común.** Fijar redes, umbrales, presupuestos, cortes horarios y parámetros de las políticas con el periodo de ajuste. Dejar constancia de la comprobación exploratoria anterior y usar la semana reservada para evaluar los diseños fijados. Publicar el denominador, los valores absolutos y las diferencias. Distinguir cobertura geométrica, acceso peatonal y servicio que la simulación puede prestar. Comparar también hasta tres redes finalistas por flota, anclajes, pico de recarga y concentración de kWh.
+- **Cierre y respuesta.** Fijar emplazamiento e intervalo en el ajuste. Para la comparación de la demo, usar el mismo emplazamiento crítico presente en ambas redes y mantener flota, anclajes totales, demanda e intervalo. Suspender nuevas asignaciones y respetar devoluciones ya reservadas. Al desviar, buscar alternativas accesibles con stock y hueco disponible. La prueba de los diez anclajes registra las estaciones que ceden y reciben capacidad.
+- **Demanda y producción bajo estrés.** Usar días completos observados y contrastar, por separado y juntos, una demanda punta un 25 % mayor y una producción solar un 40 % menor como hipótesis de estrés. Remuestrear solicitudes del mismo tipo de día y franja con semilla fija e identificadores nuevos. Aplicar la misma muestra y la misma serie solar a las alternativas que se comparen.
+- **Carga inteligente.** Usar la misma red, demanda, generación y estado inicial que en carga inmediata. Cargar al alcanzar un mínimo de patinetes listos o un tiempo máximo de espera y dar prioridad al excedente solar en el resto de casos. Fijar por adelantado el deterioro de servicio admisible y comparar la energía pendiente al cierre.
+- **Ampliación modular.** Fijar los módulos y el umbral de saturación con el ajuste. Activar ampliaciones usando ocupación y rechazos observados hasta ese momento. Medir el efecto sobre la etapa siguiente con el mismo flujo de solicitudes del despliegue completo.
+
+La previsión avanzada, los costes con fuente y el rebalanceo orientado al excedente solar pueden aprovechar las mismas salidas. El trabajo de las doce mejoras se cierra con la comparación y su evidencia aunque la política probada aporte poco o no justifique cambiar el diseño.
 
 ## 8. Demo 3D para la defensa
 
@@ -240,19 +251,19 @@ La demo representa una jornada de la simulación. Abre en el mapa de Roma con un
 
 **Maqueta.** Construir una sola estación paramétrica con geometrías reutilizables. El valor de anclajes y el número de módulos salen del diseño dimensionado. Al mover el reloj, mostrar ocupación, reservas y disponibilidad en la maqueta y en una ficha textual. Resaltar los flujos activos entre FV, batería, red y cargadores junto a un gráfico con la misma hora. Mostrar potencia y energía con unidades distintas y dejar claro cuándo se lee una hora completa del balance. La maqueta es un esquema de diseño con un perímetro y una orientación documentados.
 
-**Comparación.** Fijar tres escenarios precalculados para la defensa, una red de referencia, la red seleccionada y la red seleccionada con la estación temporalmente indisponible. La red de referencia y la seleccionada comparten demanda y reglas de operación. El cambio de infraestructura queda visible en los indicadores. Reservar una comparación de carga inmediata e inteligente como cuarto escenario si hay resultados validados. El panel puede exponer dos diseños FV ya calculados si ayuda a explicar la decisión de inversión.
+**Comparación.** Fijar tres escenarios precalculados para la defensa. Reproducir la red de referencia en operación normal, la misma red con un cierre en hora punta y la red mejorada con el mismo cierre. Fijar el reloj, la demanda, la flota y el número total de anclajes. Mostrar el efecto del cambio en viajes rechazados, desvíos y ocupación vecina. En la ficha de la estación dimensionada se compararán las curvas de carga inmediata e inteligente y los diseños de almacenamiento calculados.
 
-### Experiencia mínima y ampliaciones
+### Integración con el mapa existente
 
-1. Iterar primero sobre un mapa con datos de prueba identificados, un reloj y una ficha. Pasar a un conjunto real exportado desde el momento en que haya una asignación e inventario consistentes.
+1. Reutilizar el mapa `#/mapa`, su reloj y sus fichas. Integrar las series del simulador cuando estén conciliadas con las tablas. Identificar la red preliminar que sirve de referencia en el mapa.
 2. Mostrar el visor de la estación y el gráfico de energía como dos vistas del mismo estado. Sincronizar `scenario_id`, `station_id` y hora al alternar entre mapa y maqueta. Si una estación carece de balance energético, mostrar sus datos de movilidad y ofrecer acceso a la estación dimensionada.
 3. Añadir el cierre temporal de estación como escenario que se puede activar desde el mapa. Destacar la estación y el intervalo afectados, las derivaciones y los rechazos sin perder la referencia del escenario normal. Incluir un salto al instante del fallo.
-4. Como ampliación de la interfaz, permitir fijar dos escenarios lado a lado, comparar su diferencia por zonas o inspeccionar un intervalo crítico de autonomía. Priorizar las interacciones que ayuden a defender una decisión del proyecto.
+4. Mantener la misma hora y escala al cambiar de escenario. Mostrar la diferencia de viajes completados, desvíos y anclajes libres junto al mapa.
 
 ### Tecnología propuesta y contrato de datos
 
 - Aplicación estática con TypeScript, React y Vite. Compilar una versión que se pueda servir desde un servidor HTTP local. El frontend muestra datos exportados y aplica filtros de presentación. El cálculo científico y el solver se ejecutan en Python. [Guía de compilación y despliegue de Vite](https://vite.dev/guide/static-deploy.html)
-- Usar MapLibre GL JS para el mapa inclinado y las capas con extrusión. Usar geometrías locales simplificadas para el recorte de la demo. Si se incorporan datos OSM, conservar su procedencia y atribución en el mapa y en los metadatos. [Capas de MapLibre](https://maplibre.org/maplibre-style-spec/layers/#fill-extrusion) · [Licencia y atribución de OpenStreetMap](https://www.openstreetmap.org/copyright)
+- Mantener deck.gl para el mapa inclinado y las capas con extrusión. Reutilizar las geometrías locales y mantener la procedencia y atribución de OSM en el mapa y en los metadatos. [Código del mapa](../frontend/src/mapa/Mapa3D.tsx) · [Licencia y atribución de OpenStreetMap](https://www.openstreetmap.org/copyright)
 - Usar Three.js con React Three Fiber para la estación. Montar la escena al abrir la vista, reutilizar paneles y anclajes con instancias y renderizar al cambiar el estado o la cámara. Los movimientos de cámara responden a una selección. Ofrecer reducción de movimiento y controles por teclado. [Guía de rendimiento de React Three Fiber](https://r3f.docs.pmnd.rs/advanced/scaling-performance)
 - Generar un conjunto pequeño de datos por escenario y día. Mantener coordenadas GeoJSON en orden longitud–latitud y estados por estación enlazados por identificador. Incluir tiempos con desfase explícito y mostrar todos en `Europe/Rome`. Seleccionar el intervalo correspondiente sin interpolar recuentos ni inventar actividad entre dos puntos de muestreo.
 
@@ -277,8 +288,8 @@ Cada escenario apunta a una sola red y a sus propias series. Guardar en el manif
 | Tiempo | Acción en pantalla | Qué contar |
 | --- | --- | --- |
 | 0:00–0:30 | Mostrar el mapa y el reloj en una hora de demanda observada | Qué se conoce del piloto y cómo se obtiene una red con estaciones. |
-| 0:30–1:10 | Cambiar de la red base a la red recomendada manteniendo la hora | Qué se gana en cobertura o servicio y cuánto aumentan estaciones, anclajes o flota. Usar las cifras de la ejecución validada. |
-| 1:10–1:50 | Activar la incidencia e ir a su hora | Mostrar dónde se desplazan los viajes y si los anclajes vecinos absorben la carga operativa. |
+| 0:30–1:10 | Activar el cierre en la red de referencia e ir a su hora | Mostrar dónde se desvían los viajes, cuáles se rechazan y qué estaciones vecinas se saturan. |
+| 1:10–1:50 | Cambiar a la red mejorada con el mismo cierre y a la misma hora | Mostrar cuántos viajes y devoluciones recupera la nueva distribución de emplazamientos y anclajes con el mismo presupuesto. |
 | 1:50–2:35 | Abrir la estación dimensionada y mover el reloj del mediodía a la punta de tarde | Mostrar cómo cambian la producción de los paneles, la demanda, el almacenamiento y el apoyo de red usando la serie AC. |
 | 2:35–3:00 | Volver al resumen de diseño | Cerrar con el tamaño de red, flota y batería recomendados, más una limitación que afecte a su interpretación. |
 
@@ -296,10 +307,10 @@ Cada escenario apunta a una sola red y a sus propias series. Guardar en el manif
 
 | Hito | Entrega de análisis | Entrega de demo |
 | --- | --- | --- |
-| 23/11 · seguimiento | Fase 0 cerrada: limpieza, exploración y parámetros de comparación en `conclusiones_eda.md`. Primera matriz OD en H3. | Esquema de exportación y maqueta del flujo de navegación con datos de prueba etiquetados. |
-| 30/11 · seguimiento | Redes candidatas comparables, primer simulador de inventario y modelo de consumo contrastado. | Mapa inclinado con estaciones y reproducción de un día exportado. |
-| 09/12 · seguimiento | Flota y anclajes, estación dimensionada, balance energético y primera comparación de incidencia. | Mapa, selección de escenario y maqueta 3D enlazados a resultados reales. |
-| 14/12 · revisión | Figuras y tablas cerradas, memoria casi final y reproducción en limpio. | Guion ensayado, compilación sin red y respaldo grabado. |
+| 23/11 · seguimiento | Fase 0 cerrada: limpieza, exploración y parámetros de comparación en `conclusiones_eda.md`. Primera matriz OD en H3. | Mostrar el mapa disponible y fijar las series y métricas que necesita la comparación. |
+| 30/11 · seguimiento | Redes candidatas, evaluación fuera del ajuste, contraste peatonal y territorial, primer simulador de inventario y modelo de consumo. | Conectar la red de referencia al simulador y preparar los estados de operación y rechazo. |
+| 09/12 · seguimiento | Comparaciones de cierres, anclajes y rebalanceo. Estación dimensionada, balance base y comparación de baterías. | Comparar el cierre en ambas redes y enlazar la maqueta con el balance de la estación. |
+| 14/12 · revisión | Sensibilidad a días difíciles, carga inteligente y despliegue por etapas. Figuras y tablas de las doce mejoras, memoria casi final y reproducción en limpio. | Guion ensayado, resultados cotejados con la memoria, compilación sin red y respaldo grabado. |
 | 14–16/12 · cierre | Memoria, código reproducible, presentación PDF y revisión del paquete. | Pasar la versión congelada al equipo que se usará en la defensa. |
 
 **Fases de trabajo.** Las fases 1 a 4 coinciden con los apartados del enunciado. El seguimiento de cada tarea está en [TAREAS.md](TAREAS.md).
@@ -325,7 +336,7 @@ Cada escenario apunta a una sola red y a sus propias series. Guardar en el manif
 | Simulación de incidencias, integración y frontend | Javier | Alejandro contrasta con las tablas de movilidad y energía. |
 | Exportador, escenarios, memoria y defensa | Ambos | Acordar el esquema antes de integrar y revisar la misma ejecución en la memoria y la demo. |
 
-**Líder del proyecto 3: Javier Saguar.** Coordina el reparto y los seguimientos de los lunes y revisa lo que entra en `main`. Acordar en cada seguimiento qué hipótesis se cierran y qué ampliaciones entran en el siguiente hito. [Calendario de la asignatura](enunciado.md#calendario) · [Seguimiento de tareas](TAREAS.md)
+**Líder del proyecto 3.** Javier Saguar coordina el reparto y los seguimientos de los lunes y revisa lo que entra en `main`. En cada seguimiento se cierran las hipótesis del siguiente hito y se comprueban las dependencias de las doce mejoras. [Calendario de la asignatura](enunciado.md#calendario) · [Seguimiento de tareas](TAREAS.md)
 
 ## 11. Riesgos y criterios de cierre
 
@@ -342,6 +353,7 @@ Cada escenario apunta a una sola red y a sus propias series. Guardar en el manif
 - [ ] La red elegida y la alternativa aportan indicadores comparables. Se detallan el criterio de elección, el estado del solver y el comportamiento en la semana reservada.
 - [ ] La simulación conserva inventario, reservas y trazabilidad de todos los viajes, incluidos los rechazados.
 - [ ] Los Wh por viaje se concilian con los agregados. La demanda de todas las estaciones y el dimensionado solar y de batería de una estación incluyen unidades, balances y límites de potencia y superficie.
+- [ ] Cada una de las doce mejoras tiene una comparación reproducible con sus entradas, periodo, métricas y conclusión. La memoria recoge las comparaciones que cambian o justifican el diseño y enlaza a las tablas o figuras del resto.
 - [ ] El caso de indisponibilidad tiene una comparación verificable y la demo enlaza sus cifras con los resultados guardados.
 - [ ] La demo completa su guion en modo local, los elementos 3D y los gráficos responden a la misma hora y hay respaldo para la defensa.
 - [ ] La memoria y el código reproducible pasan la prueba en limpio. El nombre y el contenido del comprimido cumplen la entrega.
