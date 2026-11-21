@@ -42,7 +42,7 @@ responde a una pregunta y deja una tabla o figura que se cita en `docs/conclusio
 | ID | Tarea | Tipo | Responsable | Estado | Entrega |
 |---|---|---|---|---|---|
 | T20 | Matrices O-D en rejilla H3 | R | Alejandro | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/2086566aff82beb1c2812f94f73c90a4f43f08cc) · [Notebook](https://github.com/javiersaguar/PIDS-Proyecto3/commit/19ffdcb1bd5233d38151985db2b5918cb5909fe5) |
-| T21 | Matrices O-D por zonas administrativas | R | Javier | en curso | |
+| T21 | Matrices O-D por zonas administrativas | R | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/c7b3d4065c8c24026abfe129cdc68223b95a1c39) · [Notebook](../movilidad/T21_matrices_od_administrativas.ipynb) · [Web](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase1/t21) |
 | T22 | Matrices por franja horaria y laborable/fin de semana | R | | pendiente | |
 | T23 | Indicadores O-D y mapa de líneas de deseo | R | | pendiente | |
 | T24 | Candidatos a estación | R | | pendiente | |
