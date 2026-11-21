@@ -31,9 +31,9 @@ export const FASES: Fase[] = [
     fechas: "23/11–4/12",
     peso: "60 %",
     estado: "en curso",
-    tareas: "T20–T38",
+    tareas: "T20–T39",
     previsto: [
-      "Matrices origen–destino por celda H3, franja horaria y tipo de día, con mapa de líneas de deseo.",
+      "Matrices origen–destino por franja horaria y tipo de día, con mapa de líneas de deseo.",
       "Frente de Pareto entre número de estaciones y demanda cubierta para las redes candidatas.",
       "Mapa de la red elegida con su cobertura y validación con la semana reservada.",
       "Curva de flota frente a nivel de servicio a partir de la simulación de inventario.",

@@ -291,6 +291,24 @@ Viajes elegibles del ajuste agregados por celda de origen y de destino de resolu
 | ¿Hay corredores asimétricos? | No: cada par es casi simétrico (1,10 veces lo esperable por azar). El saldo de T14 es la suma de muchos pares pequeños | `T20_resumen.csv` | Ajuste | Resolución 8 | El rebalanceo se plantea por zonas, no por corredores |
 | Viajes intrazonales | El 21,4 % no sale de su celda de resolución 8 | ídem | Ajuste | Depende de la resolución | Con radios de 300 m o más, parte de ellos empezarían y acabarían en la misma estación |
 
+## T21. Matrices OD por municipios y zonas urbanísticas
+
+En febrero, **23 268 de 23 292 viajes elegibles** tienen ambos extremos asignados
+en las dos divisiones de Istat. Las matrices completas incluyen los otros
+24 viajes en la categoría «Sin asignar».
+
+| División | Viajes dentro de la misma unidad | Proporción sobre viajes asignados |
+|---|---:|---:|
+| Municipio | 17 120 | 73,6 % |
+| Zona urbanística | 9 731 | 41,8 % |
+| H3, resolución 8 | 4 933 | 21,2 % |
+
+El mayor flujo entre municipios va del **VII al I (748 viajes)** y el regreso
+registra 707. El porcentaje intrazonal depende de la escala, por lo que conviene
+usar los municipios para resumir los intercambios y las zonas urbanísticas o H3
+para describir los desplazamientos locales. La asignación usa la cartografía
+de Istat del 31/12/2021. [Notebook de T21](../movilidad/T21_matrices_od_administrativas.ipynb) · [Tablas](../resultados/tablas/movilidad)
+
 ## Preguntas de la exploración ya respondidas
 
 - ¿Coincide el saldo de T14 con las entregas netas del operador de T11? **Sí** (T14):

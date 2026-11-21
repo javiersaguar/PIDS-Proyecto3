@@ -1,0 +1,22 @@
+{
+  "fuente": "Istat, Basi territoriali e variabili censuarie",
+  "catalogo": "https://www.istat.it/notizia/basi-territoriali-e-variabili-censuarie/",
+  "url": "https://www.istat.it/wp-content/uploads/2025/04/ASC_21.zip",
+  "fichero": "istat_asc_2021_2026-11-21.zip",
+  "fecha_descarga_utc": "2026-11-21T22:17:29Z",
+  "fecha_referencia": "2021-12-31",
+  "licencia": "CC BY 4.0",
+  "licencia_url": "https://creativecommons.org/licenses/by/4.0/",
+  "condiciones": "https://www.istat.it/dati/open-data/",
+  "atribucion": "Istat, Basi territoriali 2021, aree sub-comunali",
+  "formato": "ZIP original con shapefiles y tablas de las áreas subcomunales de Italia",
+  "crs": "EPSG:32632",
+  "unidad_coordenadas": "metros",
+  "ambito": "Roma",
+  "filtro": "PRO_COM = 58091",
+  "capas": {
+    "municipio": "ASC_Liv_1_2021.shp",
+    "zona_urbanistica": "ASC_Liv_3_2021.shp"
+  },
+  "sha256": "7c3dfbaab24940b996978ecb237d820ae1da6cfa6b9c05f5d1d40db4170e47b9"
+}

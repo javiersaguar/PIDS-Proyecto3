@@ -1,8 +1,10 @@
 import { FASES } from "../../fases";
 import { T20 } from "./T20";
+import { T21 } from "./T21";
 
 const SECCIONES = [
   { id: "t20", tarea: "T20", titulo: "Primera matriz OD" },
+  { id: "t21", tarea: "T21", titulo: "Matrices por zonas administrativas" },
   { id: "siguientes", tarea: "", titulo: "Lo que falta" },
   { id: "decisiones", tarea: "", titulo: "Decisiones" },
 ];
@@ -25,10 +27,11 @@ export function Fase1() {
         ))}
       </nav>
       <T20 />
+      <T21 />
       <section id="siguientes" className="seccion">
         <header>
           <div>
-            <div className="etiqueta">T21–T38</div>
+            <div className="etiqueta">T22–T39</div>
             <h2>Lo que falta de la fase</h2>
           </div>
           <div>

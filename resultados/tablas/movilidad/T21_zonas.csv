@@ -1,0 +1,171 @@
+nivel,codigo,nombre,etiqueta
+municipio,1,Municipio I,I
+municipio,2,Municipio II,II
+municipio,3,Municipio III,III
+municipio,4,Municipio IV,IV
+municipio,5,Municipio V,V
+municipio,6,Municipio VI,VI
+municipio,7,Municipio VII,VII
+municipio,8,Municipio VIII,VIII
+municipio,9,Municipio IX,IX
+municipio,10,Municipio X,X
+municipio,11,Municipio XI,XI
+municipio,12,Municipio XII,XII
+municipio,13,Municipio XIII,XIII
+municipio,14,Municipio XIV,XIV
+municipio,15,Municipio XV,XV
+zona_urbanistica,10L,Morena,10L
+zona_urbanistica,10A,Don Bosco,10A
+zona_urbanistica,10B,Appio-Claudio,10B
+zona_urbanistica,10C,Quarto Miglio,10C
+zona_urbanistica,10D,Pignatelli,10D
+zona_urbanistica,10E,Lucrezia Romana,10E
+zona_urbanistica,10F,Osteria del Curato,10F
+zona_urbanistica,10G,Romanina,10G
+zona_urbanistica,10H,Gregna,10H
+zona_urbanistica,10I,Barcaccia,10I
+zona_urbanistica,11Y,Appia Antica Sud,11Y
+zona_urbanistica,15A,Marconi,15A
+zona_urbanistica,12A,Eur,12A
+zona_urbanistica,12B,Villaggio Giuliano,12B
+zona_urbanistica,12C,Torrino,12C
+zona_urbanistica,12D,Laurentino,12D
+zona_urbanistica,10X,Ciampino,10X
+zona_urbanistica,11A,Ostiense,11A
+zona_urbanistica,11B,Valco S. Paolo,11B
+zona_urbanistica,11C,Garbatella,11C
+zona_urbanistica,11D,Navigatori,11D
+zona_urbanistica,11E,Tormarancia,11E
+zona_urbanistica,11F,Tre Fontane,11F
+zona_urbanistica,11G,Grottaperfetta,11G
+zona_urbanistica,11X,Appia Antica Nord,11X
+zona_urbanistica,12L,Porta Medaglia,12L
+zona_urbanistica,12E,Cecchignola,12E
+zona_urbanistica,12F,Mezzocammino,12F
+zona_urbanistica,12G,Spinaceto,12G
+zona_urbanistica,12H,Vallerano Castel di Leva,12H
+zona_urbanistica,12I,Decima,12I
+zona_urbanistica,13B,Acilia Nord,13B
+zona_urbanistica,13C,Acilia Sud,13C
+zona_urbanistica,13D,Palocco,13D
+zona_urbanistica,13E,Ostia Antica,13E
+zona_urbanistica,13F,Ostia Nord,13F
+zona_urbanistica,12M,Castel Romano,12M
+zona_urbanistica,12N,Santa Palomba,12N
+zona_urbanistica,12X,Tor di Valle,12X
+zona_urbanistica,13A,Malafede,13A
+zona_urbanistica,15E,Magliana,15E
+zona_urbanistica,13G,Ostia Sud,13G
+zona_urbanistica,13H,Castel Fusano,13H
+zona_urbanistica,13I,Infernetto,13I
+zona_urbanistica,13X,Castel Porziano,13X
+zona_urbanistica,15B,Portuense,15B
+zona_urbanistica,15C,Pian Due Torri,15C
+zona_urbanistica,15D,Trullo,15D
+zona_urbanistica,16C,Pisana,16C
+zona_urbanistica,16D,Gianicolense,16D
+zona_urbanistica,16E,Massimina,16E
+zona_urbanistica,16X,Villa Pamphili,16X
+zona_urbanistica,16F,Pantano di Grano,16F
+zona_urbanistica,15F,Corviale,15F
+zona_urbanistica,15G,Ponte Galeria,15G
+zona_urbanistica,16A,Colli Portuensi,16A
+zona_urbanistica,16B,Buon Pastore,16B
+zona_urbanistica,18F,Boccea,18F
+zona_urbanistica,17A,Prati,17A
+zona_urbanistica,17B,Della Vittoria,17B
+zona_urbanistica,17C,Eroi,17C
+zona_urbanistica,18A,Aurelio Sud,18A
+zona_urbanistica,18B,Val Cannuta,18B
+zona_urbanistica,18C,Fogaccia,18C
+zona_urbanistica,18D,Aurelio Nord,18D
+zona_urbanistica,18E,Casalotti di Boccea,18E
+zona_urbanistica,19F,Pineto,19F
+zona_urbanistica,19G,Castelluccia,19G
+zona_urbanistica,19A,Medaglie d' Oro,19A
+zona_urbanistica,19B,Primavalle,19B
+zona_urbanistica,19E,Trionfale,19E
+zona_urbanistica,19C,Ottavia,19C
+zona_urbanistica,19D,S. Maria della Pietà,19D
+zona_urbanistica,20G,Giustiniana,20G
+zona_urbanistica,19H,S. Maria di Galeria,19H
+zona_urbanistica,1A,Centro Storico,1A
+zona_urbanistica,1B,Trastevere,1B
+zona_urbanistica,1C,Aventino,1C
+zona_urbanistica,1D,Testaccio,1D
+zona_urbanistica,1E,Esquilino,1E
+zona_urbanistica,1F,XX Settembre,1F
+zona_urbanistica,1G,Celio,1G
+zona_urbanistica,1X,Zona Archeologica,1X
+zona_urbanistica,20A,Tor di Quinto,20A
+zona_urbanistica,20B,Acquatraversa,20B
+zona_urbanistica,20D,Farnesina,20D
+zona_urbanistica,20C,Tomba di Nerone,20C
+zona_urbanistica,20F,Grottarossa Est,20F
+zona_urbanistica,20E,Grottarossa Ovest,20E
+zona_urbanistica,20N,Cesano,20N
+zona_urbanistica,20H,La Storta,20H
+zona_urbanistica,20I,S. Cornelia,20I
+zona_urbanistica,20L,Prima Porta,20L
+zona_urbanistica,20M,Labaro,20M
+zona_urbanistica,4D,Fidene,4D
+zona_urbanistica,4E,Serpentara,4E
+zona_urbanistica,5G,Pietralata,5G
+zona_urbanistica,20O,Martignano,20O
+zona_urbanistica,20X,Foro Italico,20X
+zona_urbanistica,2A,Villaggio Olimpico,2A
+zona_urbanistica,2B,Parioli,2B
+zona_urbanistica,2C,Flaminio,2C
+zona_urbanistica,2D,Salario,2D
+zona_urbanistica,2E,Trieste,2E
+zona_urbanistica,2X,Villa Borghese,2X
+zona_urbanistica,2Y,Villa Ada,2Y
+zona_urbanistica,3A,Nomentano,3A
+zona_urbanistica,3B,S. Lorenzo,3B
+zona_urbanistica,3X,Università,3X
+zona_urbanistica,3Y,Verano,3Y
+zona_urbanistica,4A,Monte Sacro,4A
+zona_urbanistica,4B,Val Melaina,4B
+zona_urbanistica,4C,Monte Sacro Alto,4C
+zona_urbanistica,4F,Casal Boccone,4F
+zona_urbanistica,4G,Conca d'Oro,4G
+zona_urbanistica,4H,Sacco Pastore,4H
+zona_urbanistica,4I,Tufello,4I
+zona_urbanistica,4L,Aeropoprto dell' Urbe,4L
+zona_urbanistica,4M,Settebagni,4M
+zona_urbanistica,4N,Bufalotta,4N
+zona_urbanistica,4O,Tor S. Giovanni,4O
+zona_urbanistica,5A,Casal Bertone,5A
+zona_urbanistica,5B,Casal Bruciato,5B
+zona_urbanistica,5C,Tiburtino Nord,5C
+zona_urbanistica,5D,Tiburtino Sud,5D
+zona_urbanistica,5E,S. Basilio,5E
+zona_urbanistica,5F,Tor Cervara,5F
+zona_urbanistica,7F,Casetta Mistica,7F
+zona_urbanistica,7G,Centro Direzionale Centocelle,7G
+zona_urbanistica,7H,Omo,7H
+zona_urbanistica,5H,Casal de' Pazzi,5H
+zona_urbanistica,5I,S. Alessandro,5I
+zona_urbanistica,5L,Settecamini,5L
+zona_urbanistica,6A,Torpignattara,6A
+zona_urbanistica,6B,Casilino,6B
+zona_urbanistica,6C,Quadraro,6C
+zona_urbanistica,6D,Gordiani,6D
+zona_urbanistica,7A,Centocelle,7A
+zona_urbanistica,7B,Alessandrina,7B
+zona_urbanistica,7C,Tor Sapienza,7C
+zona_urbanistica,7D,La Rustica,7D
+zona_urbanistica,7E,Tor Tre Teste,7E
+zona_urbanistica,8F,Torre Angela,8F
+zona_urbanistica,8G,Borghesiana,8G
+zona_urbanistica,8A,Torrespaccata,8A
+zona_urbanistica,8B,Torre Maura,8B
+zona_urbanistica,8E,Lunghezza,8E
+zona_urbanistica,8C,Giardinetti-Tor Vergata,8C
+zona_urbanistica,8D,Acqua Vergine,8D
+zona_urbanistica,8H,S. Vittorino,8H
+zona_urbanistica,9A,Tuscolano Nord,9A
+zona_urbanistica,9B,Tuscolano Sud,9B
+zona_urbanistica,9C,Tor Fiscale,9C
+zona_urbanistica,9D,Appio,9D
+zona_urbanistica,9E,Latino,9E
