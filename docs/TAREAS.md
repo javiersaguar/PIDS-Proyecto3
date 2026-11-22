@@ -47,11 +47,11 @@ responde a una pregunta y deja una tabla o figura que se cita en `docs/conclusio
 | T23 | Indicadores O-D y mapa de líneas de deseo | R | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/7a0b270582a792ba146f5bbacc253f9ea56a7a97) · [Notebook](../movilidad/T23_indicadores_lineas_deseo.ipynb) · [Web](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase1/t23) |
 | T24 | Candidatos a estación | R | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/af9efdc77e0f7c3f07e3f5cdb1d7d45626d65070) · [Notebook](../movilidad/T24_candidatos_estacion.ipynb) · [Web](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase1/t24) |
 | T25 | Línea base K-medoids / K-means con barrido de k | R | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/af9efdc77e0f7c3f07e3f5cdb1d7d45626d65070) · [Notebook](../movilidad/T25_linea_base_localizacion.ipynb) · [Web](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase1/t25) |
-| T26 | Cobertura de conjuntos (LSCP) con MILP | R | Javier | en curso | |
-| T27 | p-mediana y cobertura máxima de viajes completos con ambos extremos cubiertos | R | Javier | en curso | |
-| T28 | Frente de Pareto y elección de la red | R | Javier | en curso | |
-| T29 | Contrastar la cobertura geométrica con rutas a pie en dos sectores con barreras | E | Javier | en curso | |
-| T30 | Validación temporal (semanas 1–3 frente a 4) | E | Javier | en curso | |
+| T26 | Cobertura de conjuntos (LSCP) con MILP | R | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/dd4df126ee78dac55f256035c46e74cc3ce2344b) · [Notebook](../movilidad/T26_cobertura_parcial.ipynb) · [Resultados](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase1/t30) |
+| T27 | p-mediana y cobertura máxima de viajes completos con ambos extremos cubiertos | R | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/dd4df126ee78dac55f256035c46e74cc3ce2344b) · [Notebook](../movilidad/T27_pmediana_mclp.ipynb) · [Resultados](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase1/t30) |
+| T28 | Frente de Pareto y elección de la red | R | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/dd4df126ee78dac55f256035c46e74cc3ce2344b) · [Notebook](../movilidad/T28_pareto_eleccion.ipynb) · [Resultados](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase1/t30) |
+| T29 | Contrastar la cobertura geométrica con rutas a pie en dos sectores con barreras | E | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/dd4df126ee78dac55f256035c46e74cc3ce2344b) · [Notebook](../movilidad/T29_rutas_peatonales.ipynb) · [Resultados](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase1/t30) |
+| T30 | Validación temporal (semanas 1–3 frente a 4) | E | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/dd4df126ee78dac55f256035c46e74cc3ce2344b) · [Notebook](../movilidad/T30_validacion_temporal.ipynb) · [Resultados](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase1/t30) |
 | T31 | Asignación de viajes a estaciones y matriz estación → estación | R | | pendiente | |
 | T32 | Simulación de inventario: stock inicial y anclajes por estación | R | | pendiente | |
 | T33 | Rebalanceo nocturno con 0, 100 y 220 movimientos, km y déficit residual | E | | pendiente | |
