@@ -43,8 +43,8 @@ responde a una pregunta y deja una tabla o figura que se cita en `docs/conclusio
 |---|---|---|---|---|---|
 | T20 | Matrices O-D en rejilla H3 | R | Alejandro | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/2086566aff82beb1c2812f94f73c90a4f43f08cc) · [Notebook](https://github.com/javiersaguar/PIDS-Proyecto3/commit/19ffdcb1bd5233d38151985db2b5918cb5909fe5) |
 | T21 | Matrices O-D por zonas administrativas | R | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/c7b3d4065c8c24026abfe129cdc68223b95a1c39) · [Notebook](../movilidad/T21_matrices_od_administrativas.ipynb) · [Web](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase1/t21) |
-| T22 | Matrices por franja horaria y laborable/fin de semana | R | Javier | en curso | |
-| T23 | Indicadores O-D y mapa de líneas de deseo | R | Javier | en curso | |
+| T22 | Matrices por franja horaria y laborable/fin de semana | R | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/7a0b270582a792ba146f5bbacc253f9ea56a7a97) · [Notebook](../movilidad/T22_matrices_od_temporales.ipynb) · [Web](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase1/t22) |
+| T23 | Indicadores O-D y mapa de líneas de deseo | R | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/7a0b270582a792ba146f5bbacc253f9ea56a7a97) · [Notebook](../movilidad/T23_indicadores_lineas_deseo.ipynb) · [Web](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase1/t23) |
 | T24 | Candidatos a estación | R | | pendiente | |
 | T25 | Línea base K-medoids / K-means con barrido de k | R | | pendiente | |
 | T26 | Cobertura de conjuntos (LSCP) con MILP | R | | pendiente | |
