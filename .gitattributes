@@ -1,2 +1,5 @@
 # Los datos se guardan tal cual, sin convertir finales de línea
 *.csv -text
+
+# Los PDF son binarios y se guardan tal como salen de la compilación.
+*.pdf binary

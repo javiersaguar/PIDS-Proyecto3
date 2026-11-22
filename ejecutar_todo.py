@@ -28,6 +28,8 @@ PASOS = [
     # Fase 1. Movilidad
     "movilidad/T20_matrices_od.ipynb",
     "movilidad/T21_matrices_od_administrativas.ipynb",
+    "movilidad/T22_matrices_od_temporales.ipynb",
+    "movilidad/T23_indicadores_lineas_deseo.ipynb",
     "movilidad/T36_capas_mapa.ipynb",
 ]
 

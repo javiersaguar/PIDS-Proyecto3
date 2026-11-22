@@ -309,6 +309,25 @@ usar los municipios para resumir los intercambios y las zonas urbanísticas o H3
 para describir los desplazamientos locales. La asignación usa la cartografía
 de Istat del 31/12/2021. [Notebook de T21](../movilidad/T21_matrices_od_administrativas.ipynb) · [Tablas](../resultados/tablas/movilidad)
 
+## T22. Matrices OD por franja y tipo de día
+
+Se generaron 90 matrices al cruzar tres divisiones territoriales, tres periodos,
+cinco franjas de salida y dos tipos de día. En las tres divisiones se recuperan
+los mismos totales por corte, incluidos los extremos sin asignar de T21.
+La franja de 7 a 10 h del ajuste tiene **114,6 viajes por laborable** y **34,3
+por día de fin de semana**. Se conservan perfiles separados para el simulador.
+[Notebook de T22](../movilidad/T22_matrices_od_temporales.ipynb) · [Resumen por franja](../resultados/tablas/movilidad/T22_segmentos.csv)
+
+## T23. Indicadores OD y líneas de deseo
+
+En el ajuste, los diez pares de celdas con más viajes en ambos sentidos
+concentran **el 10,6 %** de los viajes entre celdas H3. La asimetría agregada
+es del **22,4 %** frente al **20,4 %** esperado si los dos sentidos de cada
+par fueran equiprobables. El simulador podrá usar los saldos por par y franja
+para estimar dónde y cuándo hace falta rebalancear. El mapa conecta los
+centros de celda y ajusta el grosor al volumen total de ida y vuelta.
+[Notebook de T23](../movilidad/T23_indicadores_lineas_deseo.ipynb) · [Indicadores por corte](../resultados/tablas/movilidad/T23_indicadores.csv)
+
 ## Preguntas de la exploración ya respondidas
 
 - ¿Coincide el saldo de T14 con las entregas netas del operador de T11? **Sí** (T14):

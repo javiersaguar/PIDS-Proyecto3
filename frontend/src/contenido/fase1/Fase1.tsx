@@ -1,17 +1,21 @@
 import { FASES } from "../../fases";
 import { T20 } from "./T20";
 import { T21 } from "./T21";
+import { T22 } from "./T22";
+import { T23 } from "./T23";
 
 const SECCIONES = [
   { id: "t20", tarea: "T20", titulo: "Primera matriz OD" },
   { id: "t21", tarea: "T21", titulo: "Matrices por zonas administrativas" },
+  { id: "t22", tarea: "T22", titulo: "Matrices por franja" },
+  { id: "t23", tarea: "T23", titulo: "Líneas de deseo" },
   { id: "siguientes", tarea: "", titulo: "Lo que falta" },
   { id: "decisiones", tarea: "", titulo: "Decisiones" },
 ];
 
 const DECISIONES = [
   ["Viajes intrazonales", "21,4 % en resolución 8; con radios de 300 m o más, parte empezarían y acabarían en la misma estación", "T20"],
-  ["Corredores asimétricos", "No hay: los pares son casi simétricos y el rebalanceo se plantea por zonas, no por corredores", "T20"],
+  ["Desequilibrio interzonal", "Comparar el saldo por par y franja antes de decidir el rebalanceo", "T23"],
 ];
 
 export function Fase1() {
@@ -28,10 +32,12 @@ export function Fase1() {
       </nav>
       <T20 />
       <T21 />
+      <T22 />
+      <T23 />
       <section id="siguientes" className="seccion">
         <header>
           <div>
-            <div className="etiqueta">T22–T39</div>
+            <div className="etiqueta">T24–T39</div>
             <h2>Lo que falta de la fase</h2>
           </div>
           <div>

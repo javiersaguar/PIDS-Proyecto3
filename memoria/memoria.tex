@@ -52,7 +52,7 @@
 \DeclareUrlCommand\nb{\urlstyle{tt}}
 \def\UrlBreaks{\do\/\do\_\do\.}
 \setcounter{biburlnumpenalty}{100}\setcounter{biburlucpenalty}{100}\setcounter{biburllcpenalty}{100}
-\newcommand\fechaversion{18/11/2026}
+\newcommand\fechaversion{22/11/2026}
 % Apartado sin resultados todavía: qué irá y con qué tareas (docs/TAREAS.md).
 \newcommand\pendiente[1]{{\color{tenue}\small\textit{Pendiente.} #1\par}}
 
@@ -63,6 +63,7 @@
 \begin{document}
 
 % ------------------------------------------------------------------------------------------
+\hypersetup{pageanchor=false}
 \begin{titlepage}
   \centering
   {\large UNIVERSIDAD POLITÉCNICA DE MADRID\par}
@@ -80,12 +81,13 @@
     \textbf{Grupo} & G\cifra{grupo} \\
     \textbf{Autores} & Cuevas, Alejandro \\
                      & Saguar, Javier \\
-    \textbf{Versión} & Fase 0 completa y comienzo de la fase 1 \\
+    \textbf{Versión} & Fase 0 y análisis origen-destino \\
     \textbf{Fecha} & \fechaversion \\
     \textbf{Curso académico} & 2026/2027 \\
   \end{tabular}
   \vspace{2cm}
 \end{titlepage}
+\hypersetup{pageanchor=true}
 
 % ------------------------------------------------------------------------------------------
 \section*{Respuesta a la revisión anterior}
@@ -113,7 +115,7 @@
     \toprule
     Integrante & Fase 0: datos y exploración & Fase 1: movilidad & Fase 2: consumo & Fase 3: estación \\
     \midrule
-    Javier Saguar (líder) & Entorno reproducible, paquete \nb{comun/} y \nb{config.yaml}; limpieza (T10), recolocaciones (T11), patrones temporales (T12); web de resultados; viento frente a lluvia (T17, apartado 6); esta memoria & Revisión de T20 y decisiones de la fase & -- & -- \\
+    Javier Saguar (líder) & Entorno reproducible, paquete \nb{comun/} y \nb{config.yaml}; limpieza (T10), recolocaciones (T11), patrones temporales (T12); web de resultados; viento frente a lluvia (T17, apartado 6); esta memoria & Revisión de T20, matrices administrativas y temporales, indicadores y líneas de deseo (T21--T23) & -- & -- \\
     \addlinespace
     Alejandro Cuevas & Densidad en H3 (T13), saldo por celda (T14), recorridos y radios (T15), energía de referencia (T16), meteorología (T17) & Primera matriz O-D en H3 (T20) & -- & -- \\
     \bottomrule
@@ -122,11 +124,11 @@
 
 \section*{Estado de esta versión}
 \addcontentsline{toc}{section}{Estado de esta versión}
-La memoria se escribe a la vez que el proyecto. Esta versión recoge la fase~0 completa
-(limpieza y exploración, que fija los parámetros de las demás fases) y la primera matriz
-origen-destino de la fase~1. Ya están todos los apartados de la versión final; los que aún
-no tienen resultados indican qué contendrán y con qué tareas. El detalle de la exploración
-está en los anexos.
+Esta versión recoge la fase~0 y el análisis origen-destino de la fase~1 (T20--T23).
+Incluye matrices en H3 y divisiones administrativas, cortes por franja y tipo de día e
+indicadores de los principales flujos. Los siguientes apartados describen el método
+previsto hasta que se incorporen sus resultados. El detalle de la exploración está en
+los anexos.
 
 \newpage
 {\setstretch{1}\setlength{\parskip}{0pt}
@@ -328,9 +330,8 @@ Con las celdas de resolución~8, los viajes del ajuste se reparten en \cifra{od_
 origen-destino (\nb{movilidad/T20_matrices_od.ipynb}, figura~\ref{fig:od}). El
 \cifra{od_intrazonales_pct}\pc{} no sale de su celda, los 20 pares más frecuentes suman el
 \cifra{od_top20_pct}\pc{} y las 30 celdas con más extremos reúnen el \cifra{od_top30_pct}\pc{}
-de los viajes. Cada par es casi simétrico: la asimetría observada es \cifra{od_asimetria}
-veces la esperable por azar. No hay corredores de ida sin vuelta, y el rebalanceo se plantea
-por zonas.
+de los viajes. La sección de indicadores compara el desequilibrio agregado de estos pares
+con una referencia de sentidos equiprobables.
 
 \begin{figure}[!htb]
   \centering
@@ -338,8 +339,51 @@ por zonas.
   \caption{Matriz origen-destino entre las 30 celdas de resolución 8 con más extremos (escala logarítmica), periodo de ajuste.}\label{fig:od}
 \end{figure}
 
-\pendiente{Matrices por zonas administrativas (T21) y por franja y tipo de día (T22);
-indicadores y mapa de líneas de deseo (T23).}
+\subsubsection{Municipios y zonas urbanísticas (T21)}
+Se asignaron los extremos por intersección con los polígonos de Istat de 2021
+\cite{istatasc}. En febrero, \cifra{od_adm_asignados} viajes tienen ambos extremos
+asignados. Las matrices conservan otros \cifra{od_adm_sin_zona} viajes en la categoría
+sin asignar. Sobre los viajes con ambos extremos asignados, el
+\cifra{od_municipio_intra_pct}\pc{} permanece en el mismo municipio, el
+\cifra{od_urbanistica_intra_pct}\pc{} en la misma zona urbanística y el
+\cifra{od_h3_intra_muestra_adm_pct}\pc{} en la misma celda H3. La escala municipal
+resume intercambios territoriales y la división fina conserva los flujos locales
+(figura~\ref{fig:od-administrativa}). El notebook
+\nb{movilidad/T21_matrices_od_administrativas.ipynb} genera ambas matrices administrativas
+para el mes y para cada periodo de análisis.
+
+\subsubsection{Franjas horarias y tipos de día (T22)}
+Se construyeron \cifra{od_matrices_temporales} matrices entre las tres divisiones, los
+tres periodos, las cinco franjas y los dos tipos de día. La clasificación se hace por
+la hora local de salida. Cada recuento se divide por el número de días de su tipo para
+comparar demanda diaria. En el ajuste, de 7 a 10~h se registran
+\cifra{od_manana_lab_dia} viajes por laborable y \cifra{od_manana_fds_dia} por día de fin
+de semana (figura~\ref{fig:od-franjas}). El simulador de inventario usará perfiles
+separados. Las matrices completas salen de \nb{movilidad/T22_matrices_od_temporales.ipynb}.
+
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=0.71\textwidth]{T22_demanda_franjas}
+  \caption{Viajes diarios por franja y tipo de día en el periodo de ajuste.}\label{fig:od-franjas}
+\end{figure}
+
+\subsubsection{Indicadores y líneas de deseo (T23)}
+En H3, los diez pares de celdas con más viajes, sumando ambos sentidos, concentran el
+\cifra{od_top10_inter_pct}\pc{} de los \cifra{od_interzonales_ajuste} viajes entre
+celdas del ajuste. La suma de saldos absolutos por par equivale al
+\cifra{od_asimetria_obs_pct}\pc{} de esos viajes, frente al
+\cifra{od_asimetria_azar_pct}\pc{} esperado si los sentidos son equiprobables,
+manteniendo fijo el total de cada par. La diferencia agregada es pequeña. Los
+desequilibrios locales y el momento en que aparecen se conservan en
+\nb{movilidad/T23_indicadores_lineas_deseo.ipynb} para estudiar el inventario. La
+figura~\ref{fig:lineas-deseo} representa flujos agregados entre centros de celda.
+
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=0.64\textwidth]{T23_lineas_deseo}
+  \caption{Líneas de deseo de los pares H3 con más viajes entre celdas en el ajuste. El grosor suma ambos sentidos y la flecha indica el predominante.}\label{fig:lineas-deseo}
+\end{figure}
+\FloatBarrier
 
 \subsection{Alternativas de localización}
 \pendiente{Candidatos en las celdas de resolución~9 con demanda (T24). K-medoids como línea
@@ -497,6 +541,12 @@ localización, y fija el rango del barrido de la fase~1, ampliado un 20\pc{} por
 para que el óptimo no quede en el borde.
 
 \section{Figuras adicionales de la exploración}\label{anx:figuras}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{T21_od_administrativa}
+  \caption{Matrices del ajuste por municipios y por las zonas urbanísticas con más extremos. Cada panel tiene su propia escala.}\label{fig:od-administrativa}
+\end{figure}
 
 \begin{figure}[H]
   \centering

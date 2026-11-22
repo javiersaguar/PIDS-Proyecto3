@@ -16,3 +16,5 @@
 
 - [T20](T20_matrices_od.ipynb) construye la matriz H3 del periodo de ajuste.
 - [T21](T21_matrices_od_administrativas.ipynb) genera las matrices de municipios y zonas urbanísticas de Roma del mes, del ajuste y de la semana reservada. Las tablas completas y su catálogo están en [resultados/tablas/movilidad/](../resultados/tablas/movilidad). La asignación por viaje se regenera en `datos/procesados/T21_viajes_zonificados.parquet`.
+- [T22](T22_matrices_od_temporales.ipynb) segmenta las tres divisiones por hora local de salida y por tipo de día. El CSV de matrices es disperso. Cada fila representa un par con viajes.
+- [T23](T23_indicadores_lineas_deseo.ipynb) usa esas matrices para calcular la concentración y la asimetría. El mapa muestra los pares H3 con más viajes entre celdas.

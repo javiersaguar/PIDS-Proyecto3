@@ -214,6 +214,30 @@ def cifras() -> dict[str, str]:
         "od_top20_pct": num(t20["pct_viajes_top20_pares"], 1), "od_top30_pct": num(t20["pct_viajes_entre_top30_celdas"], 1),
         "od_asimetria": num(t20["cociente_asimetria_observada_esperada"], 2),
     }
+
+    # T21–T23. Divisiones administrativas, cortes temporales y líneas de deseo.
+    t21 = leer("movilidad/T21_resumen.csv")
+    municipio = fila(t21, nivel="municipio", periodo="mes")
+    zona = fila(t21, nivel="zona_urbanistica", periodo="mes")
+    t22 = leer("movilidad/T22_segmentos.csv")
+    t23 = leer("movilidad/T23_indicadores.csv")
+    flujo = fila(t23, nivel="h3", periodo="ajuste", tipo_dia="todos", franja="todas")
+    c |= {
+        "od_adm_asignados": num(municipio["asignados"]),
+        "od_adm_sin_zona": num(municipio["sin_asignar"]),
+        "od_municipio_intra_pct": num(municipio["pct_intrazonales"], 1),
+        "od_urbanistica_intra_pct": num(zona["pct_intrazonales"], 1),
+        "od_h3_intra_muestra_adm_pct": num(municipio["pct_intrazonales_h3"], 1),
+        "od_matrices_temporales": num(t23["tipo_dia"].ne("todos").sum()),
+        "od_manana_lab_dia": num(fila(t22, periodo="ajuste", tipo_dia="laborable",
+                                    franja="punta_manana")["viajes_dia"], 1),
+        "od_manana_fds_dia": num(fila(t22, periodo="ajuste", tipo_dia="fin_de_semana",
+                                    franja="punta_manana")["viajes_dia"], 1),
+        "od_interzonales_ajuste": num(flujo["interzonales"]),
+        "od_top10_inter_pct": num(flujo["pct_top10_interzonales"], 1),
+        "od_asimetria_obs_pct": num(100 * flujo["asimetria"], 1),
+        "od_asimetria_azar_pct": num(100 * flujo["asimetria_azar"], 1),
+    }
     return c
 
 
