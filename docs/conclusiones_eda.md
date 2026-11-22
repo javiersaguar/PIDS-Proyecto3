@@ -389,33 +389,76 @@ y se publican los conteos por estación de los viajes con cobertura completa. La
 de salidas y la de llegadas coinciden por separado con el total de viajes cubiertos.
 [Barrido](../resultados/tablas/movilidad/T25_barrido.csv) · [Redes](../resultados/tablas/movilidad/T25_redes.csv) · [Comparación 3D](https://javiersaguar.github.io/PIDS-Proyecto3/#/mapa/localizacion)
 
-## T26–T28. Optimización y elección de red
+## T26. Mínimo de estaciones para cubrir viajes completos
 
-La cobertura parcial fija el 80 % de viajes con ambos extremos accesibles y minimiza
-el número de estaciones. MCLP fija el presupuesto y maximiza ese mismo recuento.
-La p-mediana minimiza la distancia ponderada por la demanda de las celdas.
-Los tres métodos evalúan la red final con los extremos originales del ajuste.
-Las tablas conservan la procedencia de la solución factible, la cota y la brecha.
-La cota de p-mediana usa una relajación de las asignaciones más lejanas, y el coste
-factible usa la distancia completa. [T26](../resultados/tablas/movilidad/T26_resultados.csv) · [T27](../resultados/tablas/movilidad/T27_resultados.csv) · [Solver de SciPy](https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.milp.html)
+Se exigen **13 368 de los 16 710 viajes** del ajuste. Las variables binarias
+abren emplazamientos de T24. Cada grupo OD cuenta en proporción a su
+multiplicidad si se abre al menos un candidato de su conjunto de origen y
+uno de su conjunto de destino. Se valida cada solución factible sobre los
+viajes originales.
 
-El criterio de T28 elige entre los radios de 200, 250 y 300 m la red evaluada con
-menos estaciones que alcanza el 80 % en el ajuste. El P90 de los extremos sirve
-de primer desempate. Con ese criterio se congelaron **159 estaciones a 300 m**,
-con **80,03 %** de cobertura en recta. La opción de 158 estaciones a 300 m deja
-la cobertura del ajuste en 79,80 %. El frente incluye además la distancia P90.
-[Finalistas](../resultados/tablas/movilidad/T28_finalistas.csv) · [Emplazamientos](../resultados/tablas/movilidad/T28_estaciones.csv)
+Se comparte una variable por conjunto de acceso, se relajan las aperturas a
+fracciones y se verifica la cota dual con aritmética entera. Esto acota el
+mínimo por abajo. La solución factible lo acota por arriba. La auditoría
+aplica ambos criterios al catálogo existente y a la demanda de ajuste.
 
-## T29–T30. Validación temporal y acceso a pie
+| Radio | Voraz por extremos | Cota inicial | Cota auditada | Factible | Margen sobre 13 368 viajes |
+|---:|---:|---:|---:|---:|---:|
+| 200 m | 293 | 289 | 289 | 289 | +18 |
+| 250 m | 228 | 224 | 224 | 225 | +6 |
+| 300 m | 163 | 62 | 154 | 159 | +5 |
+| 400 m (sensibilidad) | 87 | 33 | 79 | 86 | +144 |
 
-La misma red pasa del **80,03 % al 75,62 %** de cobertura geométrica en toda Roma.
-Los periodos contienen 16 710 y 6 582 viajes respectivamente. El objetivo de
-ajuste era 80 % y la semana reservada queda 4,38 puntos por debajo.
+El mínimo está certificado a 200 m. A 300 m, **154–159 estaciones** deja por
+resolver hasta cinco estaciones y muestra lo cerca que la solución queda
+del umbral de demanda. [Auditoría](../resultados/tablas/movilidad/T26_certificados.csv) · [T26 en la web](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase1/t26)
 
-| Periodo | Viajes comparables en Tíber y Termini | Ambos extremos en recta | Ambos extremos a pie | Cambio |
+## T27. Cobertura y distancias con presupuesto fijo
+
+MCLP maximiza el recuento de viajes completos para un número fijo de estaciones.
+La p-mediana minimiza la distancia media ponderada por la demanda de las
+celdas. Su cota relaja las asignaciones lejanas y el coste factible usa la
+distancia completa. La comparación vuelve a medir todos los métodos sobre
+los mismos extremos originales. El P90 del cuadro incluye extremos de
+viajes fuera de radio.
+
+| Método a 300 m y 159 estaciones | Viajes completos en ajuste | Cobertura | P90 de acceso |
+|---|---:|---:|---:|
+| MCLP | 13 373 | 80,03 % | 309,8 m |
+| Voraz por extremos | 13 191 | 78,94 % | 310,4 m |
+| P-mediana | 11 623 | 69,56 % | 374,9 m |
+
+MCLP recupera **182 viajes completos** frente al voraz. La mejor red MCLP
+conocida en ese presupuesto cubre 13 373 y la cota dual auditada limita el
+máximo a 13 566, una diferencia de 193 viajes. La web permite repetir la
+comparación para cada presupuesto ensayado y consultar el desglose en cero,
+uno y dos extremos cubiertos. [Resultados](../resultados/tablas/movilidad/T27_resultados.csv) · [Cotas de MCLP](../resultados/tablas/movilidad/T27_certificados.csv) · [T27 en la web](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase1/t27)
+
+## T28. Frente de Pareto y elección
+
+Una red del frente carece de otra alternativa evaluada que iguale o mejore
+estaciones, viajes completos y P90 y mejore estrictamente alguno. La regla
+compara los radios de 200, 250 y 300 m. Entre las redes que cubren al menos
+el 80 % elige por menos estaciones, menor P90, más viajes cubiertos y menor radio.
+
+| Finalista congelada | Estaciones | Radio | Cobertura de ajuste | P90 |
 |---|---:|---:|---:|---:|
-| Ajuste | 966 | 85,9 % | 44,4 % | −41,5 pp |
-| Semana reservada | 427 | 82,2 % | 44,0 % | −38,2 pp |
+| Elegida (LSCP) | 159 | 300 m | 80,03 % | 309,8 m |
+| Menos estaciones (MCLP) | 158 | 300 m | 79,80 % | 310,4 m |
+| Menor radio (LSCP) | 225 | 250 m | 80,04 % | 265,6 m |
+
+Las dos primeras redes factibles publicadas difieren en 39 viajes completos.
+La opción de 250 m requiere 66 estaciones adicionales y reduce el P90 en
+44,1 m. El objetivo interactivo se aplica a las redes ya ensayadas en el ajuste.
+Las ubicaciones de las tres redes constan en una tabla que se verifica por
+huella antes de la evaluación temporal. [Barrido](../resultados/tablas/movilidad/T28_comparacion.csv) · [Emplazamientos](../resultados/tablas/movilidad/T28_estaciones.csv) · [T28 en la web](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase1/t28)
+
+## T29. Cuánto acceso se pierde al caminar
+
+| Periodo | Viajes comparables | En recta | A pie | Cambio | Pierde origen | Pierde destino | Pierde ambos |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| Ajuste | 966 | 85,9 % | 44,4 % | −41,5 pp | 148 | 172 | 81 |
+| Semana reservada | 427 | 82,2 % | 44,0 % | −38,2 pp | 66 | 61 | 36 |
 
 Los dos extremos del viaje deben caer en el mismo núcleo. Se excluyeron de los
 porcentajes emparejados 6 viajes del ajuste y 2 de la semana reservada por falta
@@ -424,7 +467,31 @@ sobre todos los viajes del sector. El grafo respeta sentidos peatonales y
 restricciones explícitas. Los conectores de hasta 60 m evitan cruzar ejes de río
 y ferrocarril. Se usa cartografía archivada de noviembre de 2026 para evaluar
 la demanda observada de febrero de 2021. Los resultados peatonales corresponden
-a estos dos sectores. [Cobertura geométrica](../resultados/tablas/movilidad/T30_validacion_geometrica.csv) · [Prueba peatonal](../resultados/tablas/movilidad/T30_validacion_peatonal.csv) · [Etiquetas de acceso peatonal de OpenStreetMap](https://wiki.openstreetmap.org/wiki/Key:foot)
+a estos dos sectores. Las columnas de pérdida clasifican exclusivamente a los viajes
+cubiertos en recta que rebasan el radio al medir calles.
+
+El P90 a pie del ajuste es **413,1 m**, frente a 285,7 m en recta. Al variar el
+umbral entre 200 y 400 m sobre la misma red y los mismos 966 viajes comparables,
+la cobertura a pie va del 14,6 % al 78,2 %. En la semana reservada Termini baja
+del 75,7 % al 30,4 % a 300 m, frente al 87,0 % al 54,1 % en Tíber. Estas dos
+muestras muestran la sensibilidad a barreras locales. [Prueba peatonal](../resultados/tablas/movilidad/T30_validacion_peatonal.csv) · [Curvas](../resultados/tablas/movilidad/T30_sensibilidad_peatonal.csv) · [T29 en la web](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase1/t29) · [Mapa 3D](https://javiersaguar.github.io/PIDS-Proyecto3/#/mapa/validacion)
+
+## T30. Transferencia a la semana reservada
+
+En toda Roma, con las mismas 159 estaciones y 300 m de radio, se pasa de
+**13 373 de 16 710 (80,03 %)** a **4 977 de 6 582 (75,62 %)**. La caída es
+de 4,41 pp con 18,2 % más de viajes diarios y el P90 sube de 309,8 a 329,4 m.
+Los siete días de reserva quedan por debajo del 80 %. El 26/02 presenta la
+menor cobertura, **72,95 % sobre 1 087 viajes**.
+
+Se divide el cambio según tipo de día y franja T12. Para cada grupo se
+multiplica el cambio de peso por su cobertura media y el cambio de
+cobertura por su peso medio. Las contribuciones se suman para recuperar la
+caída total. En esta muestra, **−0,03 pp** se asocian a cambios de mezcla
+horaria y **−4,38 pp** a diferencias de cobertura dentro de las franjas.
+La comparación es descriptiva y corresponde a una semana. La proximidad
+de las estaciones se evalúa antes de modelar patinetes y anclajes disponibles.
+[Cobertura diaria](../resultados/tablas/movilidad/T30_cobertura_diaria.csv) · [Desglose por franja](../resultados/tablas/movilidad/T30_cobertura_franjas.csv) · [Descomposición](../resultados/tablas/movilidad/T30_efectos_temporales.csv) · [T30 en la web](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase1/t30)
 
 ## Preguntas de la exploración ya respondidas
 

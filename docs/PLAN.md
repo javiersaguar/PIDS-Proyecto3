@@ -146,6 +146,8 @@ T24 deja el [catálogo compartido de candidatos](../resultados/tablas/movilidad/
 - Un viaje está **cubierto** si tanto el origen como el destino tienen una estación accesible dentro del radio. Medir también cobertura de cada extremo y cuantiles de distancia para revelar dónde se pierde servicio. Los cuantiles indican explícitamente si se calculan sobre todos los viajes o sobre el subconjunto cubierto.
 - Mostrar un frente de Pareto con estaciones, cobertura y distancia de acceso. Tomar hasta tres redes finalistas que representen compromisos distintos y pasar cada una por la misma simulación de flota. Registrar método, presupuesto, radio, tiempo de cómputo y calidad conocida de la solución.
 - Elegir la propuesta con un criterio fijado sobre el periodo de ajuste, por ejemplo el menor número de estaciones que cumpla el nivel de servicio y acceso acordado. Mostrar también el resultado en la semana reservada y la alternativa inmediatamente más económica en infraestructura.
+- En T26 y T27, comprobar los recuentos en los viajes originales y auditar la brecha con una relajación OD compacta. Publicar el intervalo entre cota y solución en las unidades de cada objetivo. En T28, mostrar las tres finalistas y permitir revisar objetivos de cobertura sobre el barrido del ajuste.
+- En T29, documentar rutas comparables, casos sin par medible, pérdidas solo en el origen, solo en el destino o en ambos, y sensibilidad al umbral con la red fija. En T30, publicar cobertura y volumen de cada día y comparar los dos periodos por tipo de día y franja. Separar cambio en el peso de las franjas y cambio de cobertura dentro de ellas.
 
 ### Capacidad e inventario
 
@@ -271,7 +273,7 @@ El [capítulo Validación](https://javiersaguar.github.io/PIDS-Proyecto3/#/mapa/
 
 | Orden | Datos que incorporar | Mejora que se verá en la web |
 |---|---|---|
-| 1 | Redes finalistas de T26–T28, rutas a pie de T29 y validación del 22 al 28/02 de T30 | Disponible en Validación. Se puede cambiar la red y el periodo, consultar los denominadores y abrir un ejemplo de recorrido. |
+| 1 | Redes finalistas de T26–T28, rutas a pie de T29 y validación del 22 al 28/02 de T30 | Las cinco fichas de la fase 1 muestran cotas, comparaciones, frentes, sensibilidad peatonal y evolución diaria. El capítulo 3D abre las ubicaciones, los sectores y los ejemplos de recorrido de las redes congeladas. [Fichas de análisis](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase1/t26) |
 | 2 | Asignaciones y flujos estación a estación de T31 | Elegir una estación y ver de dónde vienen sus viajes, a qué estaciones van y cuántas solicitudes quedan fuera de cobertura. Abrir la evidencia del periodo y la red desde la propia ficha. |
 | 3 | Inventario, rechazos y recolocaciones de T32–T35 | Sustituir la referencia de capacidad por las series del simulador. Localizar a qué hora faltan patinetes o anclajes, con el día y la demanda fijos al comparar escenarios. |
 | 4 | Energía por viaje de T44 y curvas de potencia de T50 | Sincronizar el reloj del mapa con la ficha de recarga. Mostrar la demanda calculada, la producción fotovoltaica y el balance de batería en la estación dimensionada. |

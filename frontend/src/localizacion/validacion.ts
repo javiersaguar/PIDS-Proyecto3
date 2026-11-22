@@ -39,11 +39,15 @@ export type Peatonal = {
   linea_cubiertos: number;
   a_pie_cubiertos: number;
   a_pie_total_verificados: number;
+  pierde_origen: number;
+  pierde_destino: number;
+  pierde_ambos: number;
   pct_linea: number | null;
   pct_a_pie: number | null;
   delta_pp: number | null;
   p90_linea_m: number | null;
   p90_a_pie_m: number | null;
+  mediana_desvio_m: number | null;
   cambios_estacion: number;
   extremos_asignables_ambos: number;
 };
@@ -71,18 +75,22 @@ export type Barrido = {
   metodo: string;
   k: number;
   radio_m: number;
+  viajes: number;
+  viajes_cubiertos: number;
+  viajes_un_extremo: number;
+  viajes_sin_cobertura: number;
   pct_viajes_cubiertos: number;
+  d_media_m: number;
   d_p90_m: number;
+  d_origen_p90_m: number;
+  d_destino_p90_m: number;
   pareto_radio: boolean;
+  pareto_principal: boolean;
 };
 
-export type ResultadoSolver = {
+type ResultadoSolver = {
   network_id: string;
-  metodo: string;
-  k: number;
-  radio_m: number;
-  pct_viajes_cubiertos: number;
-  obj_factible: number;
+  obj_factible: number | null;
   cota_obj: number | null;
   brecha_pct: number | null;
   solver_s: number;
@@ -91,9 +99,40 @@ export type ResultadoSolver = {
   optimalidad_probada: boolean;
 };
 
+type AuditoriaLSCP = {
+  network_id: string;
+  radio_m: number;
+  k_factible: number;
+  k_voraz: number;
+  objetivo_viajes: number;
+  viajes_cubiertos: number;
+  viajes_margen: number;
+  cota_previa: number;
+  cota_inferior: number;
+  brecha_estaciones: number;
+  cota_lp_verificada: number | null;
+  origen_solucion: string;
+};
+
+type AuditoriaMCLP = {
+  network_id: string;
+  viajes_cubiertos: number;
+  cota_previa: number;
+  cota_superior: number;
+  brecha_viajes: number;
+};
+
+type MedicionTemporal = {
+  network_id: string;
+  periodo: Periodo;
+  viajes: number;
+  viajes_cubiertos: number;
+};
+
 export type DatosValidacion = {
   seleccionada: string;
   objetivo_pct: number;
+  radios_principales: number[];
   huella_redes: string;
   periodos: Record<Periodo, { inicio: string; fin: string; dias: number; viajes: number; viajes_dia: number }>;
   metodos: Record<string, string>;
@@ -102,9 +141,27 @@ export type DatosValidacion = {
   peatonal: Peatonal[];
   ejemplos: CasoPeatonal[];
   sectores: SectorMapa[];
+  grafos: {
+    periodo: Periodo;
+    sector: Exclude<Sector, "ambos">;
+    nodos: number;
+    tramos: number;
+    margen_min_m: number;
+    extremos_sin_enlace: number;
+    estaciones_sector: number;
+    estaciones_sin_enlace: number;
+  }[];
+  enlace_max_m: number;
+  peatonal_radios: (Pick<Peatonal, "network_id" | "periodo" | "sector" | "viajes_comparables" |
+    "pct_linea" | "pct_a_pie" | "linea_cubiertos" | "a_pie_cubiertos"> & { radio_m: number })[];
+  diaria: (MedicionTemporal & { fecha: string })[];
+  franjas: (MedicionTemporal & { tipo_dia: string; franja: string })[];
+  efectos: { network_id: string; tipo_dia: string; franja: string; mezcla_pp: number; dentro_pp: number }[];
   barrido: Barrido[];
   lscp: ResultadoSolver[];
   solver: ResultadoSolver[];
+  lscp_audit: AuditoriaLSCP[];
+  mclp_audit: AuditoriaMCLP[];
 };
 
 function leerRuta(ruta: string) {

@@ -122,6 +122,7 @@ class CoberturaOD:
         conjuntos = [tuple(self.alcance.indices[a:b])
                      for a, b in zip(self.alcance.indptr[:-1], self.alcance.indptr[1:])]
         iguales = Counter(tuple(sorted((o, d))) for o, d in zip(conjuntos[:n], conjuntos[n:]) if o and d)
+        self.grupos = tuple(iguales)
         self.pesos = np.array(list(iguales.values()), dtype=float)
         filas, columnas, coef = [], [], []
         f = 0

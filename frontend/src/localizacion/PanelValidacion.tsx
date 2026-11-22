@@ -6,8 +6,8 @@ import {
   contornoSector, PERIODOS, ROLES, SECTORES, type EstadoValidacion, type Periodo, type Sector,
 } from "./validacion";
 
-export function pp(x: number | null) {
-  return x === null ? "—" : (x > 0 ? "+" : "") + num(x, 1) + " pp";
+export function pp(x: number | null, decimales = 1) {
+  return x === null ? "—" : (x > 0 ? "+" : "") + num(x, decimales) + " pp";
 }
 
 const porcentaje = (x: number | null) => x === null ? "—" : pc(x);
@@ -66,6 +66,7 @@ export function IndicadoresValidacion({ estado: e }: { estado: EstadoValidacion 
           <div><dt>Cambio</dt><dd>{pp(pie.delta_pp)}</dd></div>
         </dl>
         <p>{num(pie.linea_cubiertos)} → {num(pie.a_pie_cubiertos)} viajes con cobertura en los dos extremos.</p>
+        <p>Entre los viajes que cumplían en recta, {num(pie.pierde_origen)} salen del radio solo en el origen, {num(pie.pierde_destino)} solo en el destino y {num(pie.pierde_ambos)} en ambos.</p>
         <p>P90 de {metros(pie.p90_linea_m)} en recta y {metros(pie.p90_a_pie_m)} a pie.</p>
         <p>{num(pie.cambios_estacion)} de {num(pie.extremos_asignables_ambos)} extremos cubiertos con ambos métodos cambian de estación.</p>
         <p>{num(pie.viajes_sin_par_rutas)} de {num(pie.viajes_sector)} viajes quedaron fuera de la comparación por falta de un par de rutas medibles.</p>
@@ -101,7 +102,10 @@ export function PanelValidacion({ estado: e, enfocar, enfocarArea }: {
       <p className="loc-nota">El mapa delimita los sectores de la prueba. Los recorridos usan la cartografía archivada de OpenStreetMap.</p>
       <BuscarEmplazamiento puntos={e.marcadores} elegido={e.elegido} cambiar={e.elegir} />
       {e.elegido && <FichaEmplazamiento candidato={e.elegido} acercar={() => enfocar(e.elegido!)} />}
-      <p className="loc-nota"><a href="#/fase1/t30">Ver gráficos, cotas y método</a></p>
+      <div className="loc-acciones">
+        <a href={["#/fase1/t29", e.periodo, e.sector, e.red.network_id].join("/")}>Sensibilidad a pie</a>
+        <a href={["#/fase1/t30", e.periodo, e.sector, e.red.network_id].join("/")}>Validación temporal</a>
+      </div>
     </>
   );
 }

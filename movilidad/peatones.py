@@ -16,11 +16,12 @@ from shapely.strtree import STRtree
 from comun.config import ruta
 from comun.datos import cargar_viajes
 from comun.geo import haversine_m
-from redes import distancias, extremos, leer
+from redes import RADIOS, cobertura_split, distancias, extremos, leer
 
 OSM = ruta("externos") / "osm"
 META = OSM / "osm_peatonal.meta.json"
 ENLACE_MAX_M = 60
+RADIOS_PRUEBA = tuple(sorted(set(RADIOS) | {350}))
 PERMITIDO = {"yes", "designated", "permissive"}
 RESTRINGIDO = {"no", "private", "customers", "permit", "delivery", "use_sidepath", "destination"}
 VIA_A_PIE = {
@@ -257,20 +258,46 @@ def medir_sector(geo, pie, mismo, radio):
     nc = int(comparables.sum())
     gc = int((cub_g & comparables).sum())
     pc = int((cub_p & comparables).sum())
+    potenciales = cub_g & comparables
+    pierde_o = po > radio
+    pierde_d = pdest > radio
+    perdidas = {
+        "pierde_origen": int((potenciales & pierde_o & ~pierde_d).sum()),
+        "pierde_destino": int((potenciales & ~pierde_o & pierde_d).sum()),
+        "pierde_ambos": int((potenciales & pierde_o & pierde_d).sum()),
+    }
     ambos = np.r_[comparables, comparables]
     asignables = (geo <= radio) & (pie <= radio)
     assert not np.any(cub_p & ~cub_g)
+    assert pc + sum(perdidas.values()) == gc
     return {
         "viajes_sector": n, "viajes_comparables": nc, "viajes_sin_par_rutas": n - nc,
         "linea_total_cubiertos": int(cub_g.sum()), "a_pie_total_verificados": int(cub_p.sum()),
         "linea_cubiertos": gc, "a_pie_cubiertos": pc,
+        **perdidas,
         "pct_linea": 100 * gc / nc if nc else None, "pct_a_pie": 100 * pc / nc if nc else None,
         "delta_pp": 100 * (pc - gc) / nc if nc else None,
         "p90_linea_m": np.quantile(geo[ambos], .9) if nc else None,
         "p90_a_pie_m": np.quantile(pie[ambos], .9) if nc else None,
+        "mediana_desvio_m": np.median(pie[ambos] - geo[ambos]) if nc else None,
         "cambios_estacion": int((~mismo & asignables).sum()),
         "extremos_asignables_ambos": int(asignables.sum()),
     }
+
+
+def sensibilidad(geo, pie, radios):
+    """Valora otros umbrales en la misma red y con el mismo denominador."""
+    comparables = np.logical_and(*np.split(np.isfinite(pie), 2))
+    n = int(comparables.sum())
+    for radio in radios:
+        _, _, recta = cobertura_split(geo, radio)
+        _, _, andando = cobertura_split(pie, radio)
+        g = int((recta & comparables).sum())
+        p = int((andando & comparables).sum())
+        assert p <= g
+        yield {"radio_m": radio, "viajes_comparables": n, "linea_cubiertos": g,
+               "a_pie_cubiertos": p, "pct_linea": 100 * g / n if n else None,
+               "pct_a_pie": 100 * p / n if n else None}
 
 
 def juntar_extremos(coleccion):
@@ -286,7 +313,14 @@ def evaluar(periodo, redes, estaciones):
     estaciones = estaciones.drop_duplicates("station_id").sort_values("station_id")
     posiciones = estaciones[["lon", "lat"]].to_numpy()
     mapas_ids = {a: i for i, a in enumerate(estaciones["station_id"])}
-    todas_geometria, datos_por_red, casos, diagnostico = [], {}, [], []
+    resultados, curva, datos_por_red, casos, diagnostico = [], [], {}, [], []
+    radios = sorted(set(RADIOS_PRUEBA) | set(redes["radio_m"]))
+
+    def registrar(red, sector, dg, dp, iguales):
+        claves = {"network_id": red.network_id, "periodo": periodo, "sector": sector}
+        resultados.append({**claves, **medir_sector(dg, dp, iguales, red.radio_m)})
+        curva.extend({**claves, **punto} for punto in sensibilidad(dg, dp, radios))
+
     for clave, sector in meta["sectores"].items():
         o = dentro(viajes[["lonO", "latO"]], sector["nucleo"])
         d = dentro(viajes[["lonD", "latD"]], sector["nucleo"])
@@ -297,7 +331,7 @@ def evaluar(periodo, redes, estaciones):
         go, gs, ge, gn = sector["recorte"]
         margen = min(haversine_m(nn, no, nn, go), haversine_m(nn, ne, nn, ge),
                      haversine_m(ns, no, gs, no), haversine_m(nn, no, gn, no))
-        assert margen > redes["radio_m"].max() + ENLACE_MAX_M
+        assert margen > max(radios) + ENLACE_MAX_M
         en_recorte = dentro(posiciones, sector["recorte"])
         candidata = np.flatnonzero(en_recorte)
         puntos = extremos(muestra)
@@ -319,8 +353,7 @@ def evaluar(periodo, redes, estaciones):
             dg = linea[np.arange(2 * n), ids[ix_g]]
             dp = caminando[np.arange(2 * n), ids[ix_p]]
             iguales = ix_g == ix_p
-            todas_geometria.append({"network_id": red.network_id, "periodo": periodo, "sector": clave,
-                                    **medir_sector(dg, dp, iguales, red.radio_m)})
+            registrar(red, clave, dg, dp, iguales)
             datos_por_red.setdefault(red.network_id, []).append((dg, dp, iguales))
             if red.rol != "recomendada":
                 continue
@@ -343,6 +376,5 @@ def evaluar(periodo, redes, estaciones):
 
     for red in redes.itertuples():
         dg, dp, eq = (juntar_extremos(c) for c in zip(*datos_por_red[red.network_id]))
-        todas_geometria.append({"network_id": red.network_id, "periodo": periodo, "sector": "ambos",
-                                **medir_sector(dg, dp, eq, red.radio_m)})
-    return pd.DataFrame(todas_geometria), pd.DataFrame(diagnostico), casos
+        registrar(red, "ambos", dg, dp, eq)
+    return pd.DataFrame(resultados), pd.DataFrame(diagnostico), casos, pd.DataFrame(curva)

@@ -27,9 +27,12 @@
 
 ## Selección y validación
 
-- [T26](T26_cobertura_parcial.ipynb) resuelve la cobertura parcial de viajes completos y deja el número de estaciones factible y su cota.
-- [T27](T27_pmediana_mclp.ipynb) compara p-mediana, MCLP y el voraz por extremos a presupuestos comunes. Regenera la lista de viajes excluidos por red MCLP en `datos/procesados/T27_viajes_excluidos.parquet`.
-- [T28](T28_pareto_eleccion.ipynb) genera el frente y fija [los emplazamientos de las finalistas](../resultados/tablas/movilidad/T28_estaciones.csv).
-- [T29](T29_rutas_peatonales.ipynb) mide rutas en dos sectores con barreras. [T30](T30_validacion_temporal.ipynb) evalúa las mismas redes en la semana reservada y genera el [capítulo Validación](https://javiersaguar.github.io/PIDS-Proyecto3/#/mapa/validacion).
+| Tarea | Resultado y comprobación | Vista |
+|---|---|---|
+| [T26](T26_cobertura_parcial.ipynb) | Minimiza estaciones con objetivo de viajes completos. La [auditoría](../resultados/tablas/movilidad/T26_certificados.csv) verifica la cota inferior y el margen sobre el objetivo en cada radio. | [Mínimo de estaciones](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase1/t26) |
+| [T27](T27_pmediana_mclp.ipynb) | Contrasta p-mediana, MCLP y voraz a presupuestos comunes. Publica cotas de MCLP y regenera los viajes excluidos por red en `datos/procesados/T27_viajes_excluidos.parquet`. | [Presupuesto fijo](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase1/t27) |
+| [T28](T28_pareto_eleccion.ipynb) | Genera el frente y fija [los emplazamientos de las finalistas](../resultados/tablas/movilidad/T28_estaciones.csv) antes de evaluar la reserva. | [Pareto y elección](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase1/t28) |
+| [T29](T29_rutas_peatonales.ipynb) | Mide rutas en dos sectores con barreras, separa pérdidas por extremo y ensaya varios umbrales sobre las mismas estaciones. | [Acceso por calles](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase1/t29) · [Mapa](https://javiersaguar.github.io/PIDS-Proyecto3/#/mapa/validacion) |
+| [T30](T30_validacion_temporal.ipynb) | Evalúa la misma red en la reserva. Publica recuentos diarios, por franja y tipo de día, y descompone la variación en cambio de pesos y cambio dentro de cada grupo. | [Semana reservada](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase1/t30) |
 
-`python ejecutar_todo.py --desde movilidad/T26_cobertura_parcial.ipynb` regenera estas etapas desde los resultados de T24 y T25 y la cartografía archivada. Las soluciones bajo límite de tiempo registran su cota y procedencia. T30 verifica la huella de las estaciones congeladas antes de usar los resultados peatonales del ajuste.
+`python ejecutar_todo.py --desde movilidad/T26_cobertura_parcial.ipynb` regenera estas etapas desde los resultados de T24 y T25 y la cartografía archivada. Las soluciones bajo límite de tiempo registran su cota y procedencia. T30 verifica la huella de las estaciones congeladas antes de usar los resultados peatonales del ajuste. Para auditar cotas sobre las soluciones archivadas, ejecutar `python movilidad/certificados.py` desde la raíz.

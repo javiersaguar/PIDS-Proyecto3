@@ -309,6 +309,106 @@
   align-items: start;
 }
 
+.val-pasos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--linea);
+  margin-bottom: 1.25rem;
+}
+
+.val-pasos a {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.45rem 0.65rem;
+  border-radius: 0.35rem;
+  color: var(--texto);
+  font-size: 0.82rem;
+  text-decoration: none;
+}
+
+.val-pasos span {
+  color: var(--tenue);
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+}
+
+.val-pasos a:hover,
+.val-pasos a[aria-current="page"] {
+  background: var(--acento-fondo);
+  color: var(--acento);
+}
+
+.val-analisis {
+  gap: 1.1rem;
+}
+
+.val-analisis h3,
+.val-analisis h4,
+.val-texto {
+  margin: 0;
+}
+
+.val-texto {
+  max-width: 82ch;
+}
+
+.val-hallazgo {
+  background: var(--acento-fondo);
+  border-left: 3px solid var(--acento);
+  padding: 0.85rem 1rem;
+}
+
+.val-hallazgo strong {
+  color: var(--acento);
+  font-size: clamp(1.35rem, 3vw, 1.95rem);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.15;
+}
+
+.val-hallazgo p {
+  max-width: 82ch;
+  margin: 0.35rem 0 0;
+}
+
+.val-recuadro {
+  height: 100%;
+  padding: 0.8rem 0.95rem;
+  background: var(--fondo-suave);
+  border: 1px solid var(--linea);
+  border-radius: 0.35rem;
+}
+
+.val-recuadro p {
+  margin: 0.4rem 0 0;
+}
+
+.val-fila {
+  background: var(--acento-fondo);
+}
+
+.val-rango span {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.val-rango output {
+  min-width: 4rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.val-huella {
+  overflow-wrap: anywhere;
+}
+
+.val-fuentes {
+  padding-top: 0.7rem;
+  border-top: 1px solid var(--linea);
+}
+
 @media (max-width: 760px) {
   .loc-explorador,
   .loc-graficas,

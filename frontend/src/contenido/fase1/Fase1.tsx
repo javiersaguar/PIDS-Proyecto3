@@ -5,7 +5,7 @@ import { T22 } from "./T22";
 import { T23 } from "./T23";
 import { T24 } from "./T24";
 import { T25 } from "./T25";
-import { T30 } from "./T30";
+import { TAREAS_RED, ValidacionRed } from "./ValidacionRed";
 
 const SECCIONES = [
   { id: "t20", tarea: "T20", titulo: "Primera matriz OD" },
@@ -14,7 +14,7 @@ const SECCIONES = [
   { id: "t23", tarea: "T23", titulo: "Líneas de deseo" },
   { id: "t24", tarea: "T24", titulo: "Candidatos a estación" },
   { id: "t25", tarea: "T25", titulo: "Líneas base de localización" },
-  { id: "t30", tarea: "T26–T30", titulo: "Selección y validación" },
+  ...TAREAS_RED,
   { id: "siguientes", tarea: "", titulo: "Lo que falta" },
   { id: "decisiones", tarea: "", titulo: "Decisiones" },
 ];
@@ -24,6 +24,7 @@ const DECISIONES = [
   ["Desequilibrio interzonal", "Comparar el saldo por par y franja antes de decidir el rebalanceo", "T23"],
   ["Catálogo de estaciones", "Partir de los candidatos de T24 y revisar los avisos cartográficos de las redes finalistas", "T24"],
   ["Líneas base", "Comparar cobertura de viajes completos y distancia en cada extremo con el mismo presupuesto y radio", "T25"],
+  ["Selección de la red", "Congelar los emplazamientos del ajuste antes de comprobar el acceso a pie y la transferencia temporal", "T28"],
 ];
 
 export function Fase1() {
@@ -44,7 +45,7 @@ export function Fase1() {
       <T23 />
       <T24 />
       <T25 />
-      <T30 />
+      <ValidacionRed />
       <section id="siguientes" className="seccion">
         <header>
           <div>

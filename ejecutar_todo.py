@@ -35,6 +35,7 @@ PASOS = [
     "movilidad/T25_linea_base_localizacion.ipynb",
     "movilidad/T26_cobertura_parcial.ipynb",
     "movilidad/T27_pmediana_mclp.ipynb",
+    "movilidad/certificados.py",
     "movilidad/T28_pareto_eleccion.ipynb",
     "movilidad/T29_rutas_peatonales.ipynb",
     "movilidad/T30_validacion_temporal.ipynb",

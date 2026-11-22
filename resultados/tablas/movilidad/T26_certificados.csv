@@ -1,0 +1,5 @@
+network_id,radio_m,k_factible,k_voraz,objetivo_viajes,viajes_cubiertos,viajes_margen,cota_previa,cota_inferior,brecha_estaciones,origen_solucion,estado_lp,segundos_lp,grupos_acceso,cota_lp_verificada,cota_entera_lp
+lscp_r200_k289,200,289,293,13368,13386,18,289,289,0,MILP,0,1.012000000,1271,288.249999080,289
+lscp_r250_k225,250,225,228,13368,13374,6,224,224,1,heuristica OD,0,2.327000000,2243,223.073639533,224
+lscp_r300_k159,300,159,163,13368,13373,5,62,154,5,heuristica OD,0,2.657000000,2258,153.877043197,154
+lscp_r400_k86,400,86,87,13368,13512,144,33,79,7,heuristica OD,0,5.772000000,3400,78.021917139,79

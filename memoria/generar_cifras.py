@@ -270,13 +270,49 @@ def cifras() -> dict[str, str]:
     finalistas = leer("movilidad/T28_finalistas.csv")
     red = fila(finalistas, rol="recomendada")
     alternativa = fila(finalistas, rol="menos_estaciones")
+    radio_menor = fila(finalistas, rol="radio_menor")
+    ajuste = {"network_id": red["network_id"], "periodo": "ajuste"}
+    cota = fila(leer("movilidad/T26_certificados.csv"), radio_m=red["radio_m"])
+    t27 = leer("movilidad/T27_resultados.csv")
+    presupuesto = {"radio_m": cota["radio_m"], "k": cota["k_factible"]}
+    mclp = fila(t27, **presupuesto, metodo="mclp")
+    voraz = fila(t27, **presupuesto, metodo="voraz")
+    cota_mclp = fila(leer("movilidad/T27_certificados.csv"), network_id=mclp["network_id"])
     t30_geo = leer("movilidad/T30_validacion_geometrica.csv")
     t30_pie = leer("movilidad/T30_validacion_peatonal.csv")
+    t30_radios = leer("movilidad/T30_sensibilidad_peatonal.csv")
+    radio_max = t30_radios["radio_m"].max()
+    efectos = leer("movilidad/T30_efectos_temporales.csv").groupby("network_id")[["mezcla_pp", "dentro_pp"]].sum()
+    efecto = efectos.loc[red["network_id"]]
+    dias = leer("movilidad/T30_cobertura_diaria.csv")
+    dias = dias.loc[dias["network_id"].eq(red["network_id"]) & dias["periodo"].eq("reservada") & dias["viajes"].gt(0)]
+    peor = dias.loc[(dias["viajes_cubiertos"] / dias["viajes"]).idxmin()]
+    pie_a = fila(t30_pie, **ajuste, sector="ambos")
+    geo_a = fila(t30_geo, **ajuste)
+    geo_r = fila(t30_geo, network_id=red["network_id"], periodo="reservada")
     c |= {
         "red_estaciones": num(red["k"]),
         "red_radio": num(red["radio_m"]),
         "red_alternativa_k": num(alternativa["k"]),
         "red_alternativa_pct": num(alternativa["pct_viajes_cubiertos"], 2),
+        "red_radio_menor": num(radio_menor["radio_m"]),
+        "red_radio_menor_k": num(radio_menor["k"]),
+        "red_lscp_cota": num(cota["cota_inferior"]),
+        "red_lscp_factible": num(cota["k_factible"]),
+        "red_lscp_margen": num(cota["viajes_margen"]),
+        "red_mclp_ganancia": num(mclp["viajes_cubiertos"] - voraz["viajes_cubiertos"]),
+        "red_mclp_brecha": num(cota_mclp["brecha_viajes"]),
+        "red_pierde_o": num(pie_a["pierde_origen"]),
+        "red_pierde_d": num(pie_a["pierde_destino"]),
+        "red_pierde_ambos": num(pie_a["pierde_ambos"]),
+        "red_pie_umbral_max": num(radio_max),
+        "red_pie_sensibilidad_pct": num(fila(t30_radios, **ajuste, sector="ambos", radio_m=radio_max)["pct_a_pie"], 1),
+        "red_variacion_geo": num(geo_r["pct_viajes_cubiertos"] - geo_a["pct_viajes_cubiertos"], 2),
+        "red_variacion_mezcla": num(efecto["mezcla_pp"], 2),
+        "red_variacion_dentro": num(efecto["dentro_pp"], 2),
+        "red_peor_dia": pd.Timestamp(peor["fecha"]).strftime("%d/%m"),
+        "red_peor_pct": num(100 * peor["viajes_cubiertos"] / peor["viajes"], 2),
+        "red_peor_viajes": num(peor["viajes"]),
     }
     for periodo in ("ajuste", "reservada"):
         geom = fila(t30_geo, network_id=red["network_id"], periodo=periodo)
