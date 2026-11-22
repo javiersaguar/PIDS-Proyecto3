@@ -278,9 +278,19 @@ export const CAPITULOS: Capitulo[] = [
     decision: ({ barrido, radio }) => (
       <>
         <b>Red preliminar.</b> La menor k que cubre el 80 % de los viajes: <b>{barrido.k_referencia} estaciones con {radio} m</b>.
-        Es una heurística voraz; la red final saldrá de comparar LSCP, p-mediana y MCLP exactos (T25–T28).
+        Es una heurística voraz. <a href="#/mapa/localizacion">Explora los candidatos de T24 y las dos líneas base de T25.</a>
       </>
     ),
+  },
+  {
+    id: "localizacion",
+    corto: "Localización",
+    titulo: "Candidatos y comparación de redes",
+    vista: () => ({ ...ROMA, latitude: 41.880, zoom: 11.45, pitch: 22, bearing: 0 }),
+    capas: { viajes: "no", demanda: "no", saldo: false, estaciones: "no", radios: false, flujos: false },
+    controles: {},
+    cuerpo: () => null,
+    cifras: () => [],
   },
   {
     id: "flota",
@@ -293,9 +303,9 @@ export const CAPITULOS: Capitulo[] = [
     cuerpo: ({ demo }) => (
       <>
         <p>
-          En cada estación se reproducen las salidas y llegadas de las {demo.manifiesto.periodo.dias} jornadas del ajuste,
-          con el stock repuesto cada noche a las {demo.manifiesto.hora_reposicion}:00. El stock inicial es lo que necesita
-          para no quedarse vacía en su peor jornada; los anclajes, el máximo de patinetes que llega a tener a la vez.
+          La referencia T36 estima stock y anclajes con las salidas y llegadas de las {demo.manifiesto.periodo.dias} jornadas
+          del ajuste, reponiendo el stock cada noche a las {demo.manifiesto.hora_reposicion}:00.
+          El stock inicial cubre el peor día de cada estación y los anclajes recogen su ocupación máxima calculada.
         </p>
         <p>
           La flota suma el peor día de cada estación, así que es conservadora. La simulación con rechazos (T32) la ajustará.
@@ -325,9 +335,9 @@ export const CAPITULOS: Capitulo[] = [
     leyenda: "anclajes",
     cuerpo: () => (
       <p>
-        Las cuatro redes de referencia atienden el mismo 80 % de los viajes. Un radio mayor pide menos estaciones, menos
-        patinetes y menos rebalanceo, pero cada usuario anda más. Es el compromiso que pide el enunciado: no hay una red que
-        gane en todo.
+        Las cuatro redes preliminares cubren geométricamente ambos extremos de alrededor del 80 % de los viajes.
+        Un radio mayor permite cubrir una cuota similar con menos estaciones. La tabla compara también la
+        distancia de acceso y la capacidad de referencia.
       </p>
     ),
     cifras: () => [],
@@ -350,9 +360,9 @@ export const CAPITULOS: Capitulo[] = [
     leyenda: "ocupacion",
     cuerpo: ({ demo, red }) => (
       <p>
-        La jornada del {fechaLarga(demo.dia.fecha)} con las {red.resumen.estaciones} estaciones. El contorno de cada columna son
-        sus anclajes y el relleno, los patinetes anclados cada 15 minutos. En naranja, los viajes que la red atendería; en
-        gris, los que quedan fuera por no tener estación cerca del origen o del destino.
+        Se reproducen los viajes observados del {fechaLarga(demo.dia.fecha)} con las {red.resumen.estaciones} estaciones
+        de referencia. El contorno y el relleno de cada columna muestran los anclajes y la ocupación que estima T36.
+        El naranja indica viajes con cobertura geométrica en ambos extremos y el gris, fuera de cobertura.
       </p>
     ),
     cifras: ({ ahora, demo, radio }) => {

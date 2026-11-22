@@ -366,7 +366,11 @@ barrido. Hay **65** con avisos cartográficos, entre cercanía al río (20) y ce
 a vías con restricciones (47), con dos coincidencias. La separación mínima
 entre posiciones es de 236 m. El catálogo conserva las coordenadas originales,
 la corrección y el estado de revisión urbana.
-[Catálogo](../resultados/tablas/movilidad/T24_candidatos.csv) · [Fuente cartográfica](../datos/externos/osm/osm_roma_2026-11-19.meta.json)
+La ficha cartográfica muestra el contorno de la celda, las coordenadas de cálculo,
+la distancia al candidato vecino y la vía con nombre más próxima en la cartografía.
+El mapa de detalle amplía la celda desplazada con mayor demanda y une el centro H3
+con la posición propuesta. Las marcas de proximidad orientan la revisión sobre el terreno.
+[Catálogo](../resultados/tablas/movilidad/T24_candidatos.csv) · [Mapa de T24](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase1/t24) · [Fuente cartográfica](../datos/externos/osm/osm_roma_2026-11-19.meta.json)
 
 ## T25. Líneas base comparables en el ajuste
 
@@ -378,7 +382,12 @@ El umbral del 80 % se alcanza desde 350 estaciones ensayadas a 200 m y desde
 280 a 250 m con ambos métodos. El número de estaciones estimado por área en
 T13 sirve para acotar el barrido. La cobertura conjunta de un viaje se mide
 directamente sobre sus dos extremos y será el objetivo de la comparación de T26–T28.
-[Barrido](../resultados/tablas/movilidad/T25_barrido.csv) · [Resumen](../resultados/tablas/movilidad/T25_resumen.csv) · [Redes](../resultados/tablas/movilidad/T25_redes.csv)
+La superposición de los métodos muestra los emplazamientos compartidos y exclusivos
+para cada radio y tamaño. Los gráficos distinguen viajes con ambos extremos cubiertos,
+uno solo y ninguno. Para cada red se asigna cada extremo a su estación más cercana
+y se publican los conteos por estación de los viajes con cobertura completa. La suma
+de salidas y la de llegadas coinciden por separado con el total de viajes cubiertos.
+[Barrido](../resultados/tablas/movilidad/T25_barrido.csv) · [Redes](../resultados/tablas/movilidad/T25_redes.csv) · [Comparación 3D](https://javiersaguar.github.io/PIDS-Proyecto3/#/mapa/localizacion)
 
 ## Preguntas de la exploración ya respondidas
 

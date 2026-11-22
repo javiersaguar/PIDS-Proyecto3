@@ -4,6 +4,9 @@ import { FlyToInterpolator, type MapViewState, type PickingInfo } from "@deck.gl
 import DeckGL from "@deck.gl/react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { num } from "../formato";
+import { capasLocalizacion, fondoLocalizacion, rotulosLocalizacion } from "../localizacion/capas";
+import { PanelLocalizacion, useLocalizacionDemo } from "../localizacion/DemoLocalizacion";
+import type { Candidato, Marcador } from "../localizacion/modelo";
 import { useRuta } from "../ruta";
 import { capaEtiquetas, capasBase, capasDatos, luces, maximosDe, pasoOcupacion, valorDemanda, valorSaldo } from "./capas";
 import { CAPITULOS, type Capas, type Contexto, type TipoDia } from "./capitulos";
@@ -77,9 +80,11 @@ export default function Mapa3D() {
 
 function Escena({ demo, tema: nombreTema, setTema }: { demo: Demo; tema: Tema["nombre"]; setTema: (t: Tema["nombre"]) => void }) {
   const tema = TEMAS[nombreTema];
-  const [, idRuta] = useRuta();
+  const [, idRuta, ...parametros] = useRuta();
   const indice = Math.max(0, CAPITULOS.findIndex((c) => c.id === idRuta));
   const capitulo = CAPITULOS[indice];
+  const esLocalizacion = capitulo.id === "localizacion";
+  const localizacion = useLocalizacionDemo(esLocalizacion, parametros.join("/"));
   const reducido = useMemo(movimientoReducido, []);
 
   const radioDefecto = demo.manifiesto.networks.find((r) => r.network_id === demo.manifiesto.network_por_defecto)!.radio_m;
@@ -112,17 +117,27 @@ function Escena({ demo, tema: nombreTema, setTema }: { demo: Demo; tema: Tema["n
         zoom: v.zoom - (estrecho ? 0.9 : 0),
         maxPitch: 75,
         minZoom: 10.5,
-        maxZoom: 17,
+        maxZoom: esLocalizacion ? 19 : 17,
         padding: { left: panelVisible && !estrecho ? 430 : 0, right: 0, top: 0, bottom: estrecho ? 220 : 0 },
         ...(conTransicion && !reducido
           ? { transitionDuration: 2200, transitionInterpolator: new FlyToInterpolator({ speed: 1.3 }) }
           : {}),
       };
     },
-    [capitulo, estrecho, panelVisible, reducido],
+    [capitulo, esLocalizacion, estrecho, panelVisible, reducido],
   );
   const [vista, setVista] = useState<Vista>(() => vistaDe(contextoVista, false));
   const interaccion = useRef({ usuario: false, transicion: false });
+  const navegacion = useRef<HTMLElement>(null);
+
+  const enfocar = useCallback((c: Candidato) => {
+    interaccion.current = { usuario: true, transicion: false };
+    setVista((v) => ({
+      ...v, longitude: c.lon, latitude: c.lat, zoom: estrecho ? 15.5 : 16.25, bearing: 0, pitch: 15, maxZoom: 19,
+      padding: { left: panelVisible && !estrecho ? 430 : 0, right: 0, top: 0, bottom: estrecho ? 220 : 0 },
+      transitionDuration: 0,
+    }));
+  }, [estrecho, panelVisible]);
 
   // Al entrar en un capítulo: cámara, reloj, k y selección.
   useEffect(() => {
@@ -154,6 +169,15 @@ function Escena({ demo, tema: nombreTema, setTema }: { demo: Demo; tema: Tema["n
     // Solo al cambiar de capítulo.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [capitulo.id]);
+
+  useEffect(() => {
+    navegacion.current?.querySelector('[aria-current="step"]')?.scrollIntoView({ block: "nearest", inline: "nearest" });
+  }, [indice, panelVisible]);
+
+  const elegidoLocal = localizacion.elegido;
+  useEffect(() => {
+    if (esLocalizacion && elegidoLocal) enfocar(elegidoLocal);
+  }, [esLocalizacion, elegidoLocal, enfocar]);
 
   // Al cambiar de radio, la red de referencia de ese radio.
   useEffect(() => {
@@ -199,7 +223,10 @@ function Escena({ demo, tema: nombreTema, setTema }: { demo: Demo; tema: Tema["n
       if (e.altKey || e.ctrlKey || e.metaKey) return;
       if (!enControl && (e.key === "ArrowRight" || e.key === "PageDown")) ir(indice + 1);
       else if (!enControl && (e.key === "ArrowLeft" || e.key === "PageUp")) ir(indice - 1);
-      else if (e.key === "Escape") setSeleccion(null);
+      else if (e.key === "Escape") {
+        if (esLocalizacion) localizacion.elegir(null);
+        else setSeleccion(null);
+      }
       else if (!enControl && e.key === " " && capitulo.controles.reloj) {
         e.preventDefault();
         setReproduciendo((r) => !r);
@@ -212,7 +239,7 @@ function Escena({ demo, tema: nombreTema, setTema }: { demo: Demo; tema: Tema["n
     };
     window.addEventListener("keydown", tecla);
     return () => window.removeEventListener("keydown", tecla);
-  }, [indice, ir, capitulo.controles.reloj, nombreTema, setTema]);
+  }, [indice, ir, capitulo.controles.reloj, nombreTema, setTema, esLocalizacion, localizacion.elegir]);
 
   // Estado de las estaciones en este instante (capítulo de la jornada).
   const paso = pasoOcupacion(demo, t);
@@ -230,20 +257,34 @@ function Escena({ demo, tema: nombreTema, setTema }: { demo: Demo; tema: Tema["n
   }, [demo, red, paso, t]);
   const contexto: Contexto = { demo, red, radio, barrido, k, t, tipoDia, ahora };
 
-  const base = useMemo(() => capasBase(demo.base, tema), [demo, tema]);
+  const detalleVial = esLocalizacion && vista.zoom >= 14;
+  const base = useMemo(
+    () => esLocalizacion ? fondoLocalizacion(demo.base, tema, detalleVial) : capasBase(demo.base, tema),
+    [demo, tema, esLocalizacion, detalleVial],
+  );
+  const barrios = vista.zoom >= 12.9;
   const etiquetas = useMemo(
-    () => capaEtiquetas(demo.base.etiquetas, tema, vista.zoom),
-    // Las etiquetas de barrio aparecen o desaparecen al cruzar el umbral de zoom.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [demo, tema, vista.zoom >= 12.9],
+    () => esLocalizacion
+      ? rotulosLocalizacion(demo.base, tema, barrios)
+      : capaEtiquetas(demo.base.etiquetas, tema, barrios ? 13 : 12),
+    [demo, tema, esLocalizacion, barrios],
   );
   const efectos = useMemo(() => [luces(tema)], [tema]);
-  const datos = capasDatos(demo, { capas, red, radio, k, t, tipoDia, franja, seleccion }, tema);
+  const radioLocal = localizacion.pestana === "redes" && localizacion.filtros.radiosVisibles ? localizacion.filtros.radio : 0;
+  const capasLocal = useMemo(
+    () => esLocalizacion ? capasLocalizacion(localizacion.marcadores, elegidoLocal, radioLocal, tema) : [],
+    [esLocalizacion, localizacion.marcadores, elegidoLocal, radioLocal, tema],
+  );
+  const datos = esLocalizacion ? capasLocal : capasDatos(demo, { capas, red, radio, k, t, tipoDia, franja, seleccion }, tema);
 
   const estacionElegida = seleccion ? red.estaciones.find((s) => s.station_id === seleccion) : undefined;
 
   const alPulsar = (info: PickingInfo) => {
     const id = info.layer?.id ?? "";
+    if (id === "localizacion-puntos" && info.object) {
+      localizacion.elegir((info.object as Marcador).candidato.candidate_id);
+      return;
+    }
     const o = info.object as Estacion | { rango: number } | undefined;
     if (!o) return;
     if (id.startsWith("estaciones")) setSeleccion((o as Estacion).station_id);
@@ -253,7 +294,13 @@ function Escena({ demo, tema: nombreTema, setTema }: { demo: Demo; tema: Tema["n
     }
   };
 
-  const tooltip = (info: PickingInfo) => descripcion(info, demo, capas.demanda, hora, tipoDia, franja, tema);
+  const tooltip = (info: PickingInfo) => {
+    if (info.layer?.id === "localizacion-puntos" && info.object) {
+      const c = (info.object as Marcador).candidato;
+      return { text: (c.via_cercana ?? c.candidate_id) + "\n" + num(c.extremos) + " extremos en el ajuste" };
+    }
+    return descripcion(info, demo, capas.demanda, hora, tipoDia, franja, tema);
+  };
 
   const vistaInicial = () => {
     interaccion.current = { usuario: false, transicion: true };
@@ -307,7 +354,7 @@ function Escena({ demo, tema: nombreTema, setTema }: { demo: Demo; tema: Tema["n
             <span>PIDS · Proyecto 3</span>
             <b>Estaciones de recarga en Roma</b>
           </div>
-          <nav className="mapa-capitulos" aria-label="Capítulos">
+          <nav ref={navegacion} className="mapa-capitulos" aria-label="Capítulos">
             {CAPITULOS.map((c, i) => (
               <a key={c.id} href={`#/mapa/${c.id}`} aria-current={i === indice ? "step" : undefined}>
                 <span>{i + 1}</span>
@@ -322,6 +369,7 @@ function Escena({ demo, tema: nombreTema, setTema }: { demo: Demo; tema: Tema["n
             <h1>{capitulo.titulo}</h1>
             <div className="mapa-cuerpo">{capitulo.cuerpo(contexto)}</div>
 
+            {esLocalizacion && <PanelLocalizacion estado={localizacion} enfocar={enfocar} />}
             {capitulo.controles.red && <SelectorRadio demo={demo} radio={radio} setRadio={setRadio} />}
             {capitulo.controles.k && (
               <div className="mapa-control">
@@ -423,7 +471,7 @@ function Escena({ demo, tema: nombreTema, setTema }: { demo: Demo; tema: Tema["n
         <Leyenda tipo={capitulo.leyenda} demo={demo} tema={tema} radio={radio} capas={capas} tipoDia={tipoDia} />
       )}
 
-      {estacionElegida && (
+      {!esLocalizacion && estacionElegida && (
         <Ficha
           demo={demo}
           red={red}
@@ -435,8 +483,8 @@ function Escena({ demo, tema: nombreTema, setTema }: { demo: Demo; tema: Tema["n
       )}
 
       <div className="mapa-atribucion">
-        {demo.base.atribucion.split(" (")[0]} · Viajes: Helbiz, Roma, febrero de 2021 · Red preliminar (voraz) · ejecución{" "}
-        {demo.manifiesto.run_id}
+        {demo.base.atribucion.split(" (")[0]} · Helbiz, Roma, febrero 2021 ·{" "}
+        {esLocalizacion ? "Catálogo T24 y redes T25 del ajuste" : "Red preliminar T36 · ejecución " + demo.manifiesto.run_id}
       </div>
     </div>
   );

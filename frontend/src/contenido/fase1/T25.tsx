@@ -1,130 +1,136 @@
-import { useState } from "react";
+import { lazy, Suspense, useMemo, useState } from "react";
 import type { Data } from "plotly.js-dist-min";
-import { Bloque } from "../../componentes/Bloque";
 import { Cifras } from "../../componentes/Cifras";
 import { Cargando, Segmentado } from "../../componentes/Controles";
 import { Grafica } from "../../componentes/Grafica";
 import { Seccion } from "../../componentes/Seccion";
 import { useDatos } from "../../datos";
 import { num, pc } from "../../formato";
+import { css } from "../../mapa/tema";
+import { ControlesRed, type FiltrosRed } from "../../localizacion/Controles";
+import {
+  COLORES_LOCALIZACION, comparar, enlaceComparacion, marcadoresT25, METODOS,
+  type DatosT24, type DatosT25, type ResultadoRed,
+} from "../../localizacion/modelo";
 
-type Metodo = "kmedoids" | "kmeans";
-type Indicador = "pct_viajes_cubiertos" | "d_media_m";
-type Red = {
-  network_id: string;
-  metodo: Metodo;
-  radio_m: number;
-  k: number;
-  pct_viajes_cubiertos: number;
-  d_media_m: number;
-  d_origen_p90_m: number;
-  d_destino_p90_m: number;
-  estaciones_con_avisos: number;
-};
-type Datos = {
-  radios: number[];
-  metodos: Record<Metodo, string>;
-  referencias: Record<number, number>;
-  objetivo_pct: number;
-  barrido: Red[];
-  candidatos: { candidate_id: string; x_km: number; y_km: number }[];
-  redes: Record<string, number[]>;
-};
-
-const METODOS: Metodo[] = ["kmedoids", "kmeans"];
-const COLORES: Record<Metodo, string> = { kmedoids: "#246cab", kmeans: "#bc572d" };
+const MapaRoma = lazy(() => import("../../localizacion/MapaRoma"));
+type Indicador = "pct_viajes_cubiertos" | "d_media_m" | "d_p90_m";
 
 export function T25() {
-  const { datos, error } = useDatos<Datos>("fase1/t25_lineas_base");
+  const t25 = useDatos<DatosT25>("fase1/t25_lineas_base");
+  const t24 = useDatos<DatosT24>("fase1/t24_candidatos");
   return (
     <Seccion id="t25" tarea="T25" responsable="Javier Saguar" titulo="Líneas base de localización"
       notebook="movilidad/T25_linea_base_localizacion.ipynb"
-      objetivo="Comparar K-medoids y K-means ajustado a candidatos con varios presupuestos de estaciones."
-      valor="Fija referencias de cobertura y distancia para evaluar los modelos de optimización.">
-      {datos ? <Barrido datos={datos} /> : <Cargando error={error} />}
+      objetivo="Comparar K-medoids y K-means con el mismo catálogo, número de estaciones y radio de acceso."
+      valor="Mide cuántos viajes del ajuste quedan cubiertos en los dos extremos y dónde cambia la red al cambiar de método.">
+      {t25.datos && t24.datos ? <Barrido datos={t25.datos} catalogo={t24.datos} /> : <Cargando error={t25.error ?? t24.error} />}
     </Seccion>
   );
 }
 
-function Barrido({ datos }: { datos: Datos }) {
+function Barrido({ datos, catalogo }: { datos: DatosT25; catalogo: DatosT24 }) {
   const inicial = datos.radios.includes(300) ? 300 : datos.radios[0];
-  const [radio, setRadio] = useState(inicial);
-  const [k, setK] = useState(datos.referencias[inicial]);
-  const [metodo, setMetodo] = useState<Metodo>("kmedoids");
+  const [filtros, cambiar] = useState<FiltrosRed>({ radio: inicial, k: datos.referencias[inicial], modo: "ambos", radiosVisibles: false });
   const [indicador, setIndicador] = useState<Indicador>("pct_viajes_cubiertos");
-  const filas = datos.barrido.filter((r) => r.radio_m === radio);
-  const ks = [...new Set(filas.map((r) => r.k))].sort((a, b) => a - b);
-  const seleccion = filas.find((r) => r.k === k && r.metodo === metodo);
-  if (!seleccion) return <Cargando error="No se ha encontrado la red seleccionada." />;
+  const [id, setId] = useState<string | null>(null);
+  const { radio, k, modo, radiosVisibles } = filtros;
+  const comparacion = useMemo(() => comparar(datos, catalogo, radio, k), [datos, catalogo, radio, k]);
+  const marcadores = useMemo(() => marcadoresT25(comparacion, modo), [comparacion, modo]);
+  const elegido = marcadores.find(({ candidato }) => candidato.candidate_id === id)?.candidato;
+  if (!comparacion) return <Cargando error="No hay redes para esta combinación de radio y estaciones." />;
 
-  const cambiarRadio = (nuevo: string) => {
-    const metros = Number(nuevo);
-    setRadio(metros);
-    setK(datos.referencias[metros]);
-  };
+  const filas = datos.barrido.filter((r) => r.radio_m === radio);
   const cobertura = indicador === "pct_viajes_cubiertos";
-  const ejeY = cobertura ? "Viajes cubiertos (%)" : "Distancia media (m)";
-  const curvas: Data[] = METODOS.map((nombre) => {
-    const puntos = filas.filter((r) => r.metodo === nombre);
+  const unidad = cobertura ? "%" : "m";
+  const ejeY = cobertura ? "Viajes cubiertos (%)" : indicador === "d_media_m" ? "Distancia media (m)" : "P90 por extremo (m)";
+  const curvas: Data[] = METODOS.map((m) => {
+    const puntos = filas.filter((r) => r.metodo === m);
     return {
-      type: "scatter", mode: "lines+markers", name: datos.metodos[nombre],
+      type: "scatter", mode: "lines+markers", name: datos.metodos[m],
       x: puntos.map((r) => r.k), y: puntos.map((r) => r[indicador]),
-      line: { color: COLORES[nombre] }, marker: { size: puntos.map((r) => r.k === k ? 9 : 4) },
-      hovertemplate: `%{x} estaciones<br>%{y:.1f} ${cobertura ? "%" : "m"}<extra>%{fullData.name}</extra>`,
+      line: { color: css(COLORES_LOCALIZACION[m]) }, marker: { size: puntos.map((r) => r.k === k ? 9 : 4) },
+      hovertemplate: `%{x} estaciones<br>%{y:.1f} ${unidad}<extra>%{fullData.name}</extra>`,
     };
   });
-  const puntos = datos.redes[seleccion.network_id].map((i) => datos.candidatos[i]);
-  const mapa: Data[] = [
-    {
-      type: "scatter", mode: "markers", name: "Candidatos",
-      x: datos.candidatos.map((p) => p.x_km), y: datos.candidatos.map((p) => p.y_km),
-      marker: { size: 4, color: "#b3c0c9" }, hoverinfo: "skip",
-    },
-    {
-      type: "scatter", mode: "markers", name: datos.metodos[metodo],
-      x: puntos.map((p) => p.x_km), y: puntos.map((p) => p.y_km), text: puntos.map((p) => p.candidate_id),
-      marker: { size: 6, color: COLORES[metodo] }, hovertemplate: "%{text}<extra></extra>",
-    },
+  const resultados = METODOS.map((m) => comparacion.resultados[m]);
+  const niveles = [
+    { campo: "viajes_cubiertos", nombre: "Ambos", color: "#246cab" },
+    { campo: "viajes_un_extremo", nombre: "Un extremo", color: "#c58a45" },
+    { campo: "viajes_sin_cobertura", nombre: "Ninguno", color: "#8d9bab" },
+  ] as const;
+  const desglose: Data[] = niveles.map(({ campo, nombre, color }) => ({
+    type: "bar", orientation: "h", name: nombre,
+    y: resultados.map((r) => r.metodo === "kmedoids" ? "K-medoids" : "K-means"),
+    x: resultados.map((r) => 100 * r[campo] / r.viajes_ajuste),
+    customdata: resultados.map((r) => r[campo]), marker: { color },
+    hovertemplate: "%{customdata} viajes · %{x:.1f} %<extra>%{fullData.name}</extra>",
+  }));
+  const formatos: [string, (r: ResultadoRed) => string][] = [
+    ["Ambos extremos cubiertos", (r) => `${num(r.viajes_cubiertos)} · ${pc(r.pct_viajes_cubiertos)}`],
+    ["Orígenes cubiertos", (r) => pc(r.pct_origenes_cubiertos)],
+    ["Destinos cubiertos", (r) => pc(r.pct_destinos_cubiertos)],
+    ["Distancia media por extremo", (r) => `${num(r.d_media_m)} m`],
+    ["P90 en origen y destino", (r) => `${num(r.d_origen_p90_m)} / ${num(r.d_destino_p90_m)} m`],
+    ["Emplazamientos con avisos", (r) => num(r.estaciones_con_avisos)],
   ];
   return (
-    <Bloque titulo="Cobertura y distancia según número de estaciones"
-      queMuestra="Dos métodos, evaluados con los extremos de los viajes del 1 al 21 de febrero."
-      porQue="Los mismos candidatos y radios permiten medir cuánto cambia el resultado al variar el método o el presupuesto."
-      comoLeer="Un viaje cuenta como cubierto si sus dos extremos están dentro del radio elegido. Las distancias incluyen todos los viajes."
-      conclusiones={[`La red seleccionada tiene ${num(seleccion.estaciones_con_avisos)} estaciones con avisos cartográficos.`]}
-      fuente="tablas/movilidad/T25_barrido.csv y T25_redes.csv">
-      <div className="controles">
-        <Segmentado etiqueta="Radio de acceso" valor={String(radio)} cambiar={cambiarRadio}
-          opciones={datos.radios.map((r) => ({ valor: String(r), texto: `${r} m` }))} />
-        <Segmentado etiqueta="Indicador del barrido" valor={indicador} cambiar={setIndicador} opciones={[
-          { valor: "pct_viajes_cubiertos", texto: "Viajes cubiertos" }, { valor: "d_media_m", texto: "Distancia media" },
-        ]} />
+    <article className="loc-bloque">
+      <div className="loc-cabecera">
+        <h3>Comparación de redes sobre Roma</h3>
+        <a href={enlaceComparacion(radio, k, modo, elegido?.candidate_id)}>Abrir esta comparación en 3D ↗</a>
       </div>
-      <Grafica descripcion={ejeY + " según el número de estaciones"} trazas={curvas} alto={335} capa={{
-        xaxis: { title: { text: "Estaciones" } }, yaxis: { title: { text: ejeY } },
-        shapes: cobertura ? [{
-          type: "line", xref: "paper", yref: "y", x0: 0, x1: 1, y0: datos.objetivo_pct, y1: datos.objetivo_pct,
-          line: { color: "#677382", dash: "dot", width: 1.2 },
-        }] : [],
-      }} />
-      <div className="controles">
-        <Segmentado etiqueta="Método de la red" valor={metodo} cambiar={setMetodo}
-          opciones={METODOS.map((m) => ({ valor: m, texto: datos.metodos[m] }))} />
-        <label>
-          Estaciones <select aria-label="Estaciones" value={k} onChange={(e) => setK(Number(e.target.value))}>
-            {ks.map((n) => <option key={n} value={n}>{n}</option>)}
-          </select>
-        </label>
-      </div>
+      <ControlesRed datos={datos} filtros={filtros} cambiar={cambiar} />
       <Cifras cifras={[
-        { valor: pc(seleccion.pct_viajes_cubiertos), nombre: "viajes con ambos extremos cubiertos" },
-        { valor: `${num(seleccion.d_media_m)} m`, nombre: "distancia media por extremo" },
-        { valor: `${num(seleccion.d_origen_p90_m)} / ${num(seleccion.d_destino_p90_m)} m`, nombre: "P90 en origen y destino" },
+        { valor: num(comparacion.compartidos), nombre: "emplazamientos compartidos" },
+        { valor: num(k - comparacion.compartidos), nombre: "exclusivos de cada método" },
+        { valor: pc(resultados[0].pct_viajes_cubiertos - resultados[1].pct_viajes_cubiertos).replace(" %", " pp"),
+          nombre: "cobertura de K-medoids frente a K-means" },
       ]} />
-      <Grafica descripcion="Emplazamientos de la red seleccionada" trazas={mapa} alto={400} capa={{
-        xaxis: { title: { text: "Este UTM 33N (km)" }, showgrid: false },
-        yaxis: { title: { text: "Norte UTM 33N (km)" }, scaleanchor: "x", showgrid: false },
-      }} />
-    </Bloque>
+      <Suspense fallback={<p className="loc-mapa loc-estado">Cargando mapa de Roma…</p>}>
+        <MapaRoma catalogo={catalogo.candidatos} marcadores={marcadores} seleccionado={elegido} cambiar={setId}
+          radio={radio} dibujarRadios={radiosVisibles} comparacion={comparacion} metodos={datos.metodos} />
+      </Suspense>
+      <p className="loc-nota">Los círculos muestran distancia en línea recta. La ficha cuenta salidas y llegadas de viajes observados que tienen los dos extremos cubiertos por la red elegida.</p>
+      <div className="loc-graficas">
+        <section>
+          <h3>Rendimiento con cada presupuesto</h3>
+          <Segmentado etiqueta="Indicador del barrido" valor={indicador} cambiar={setIndicador} opciones={[
+            { valor: "pct_viajes_cubiertos", texto: "Cobertura" },
+            { valor: "d_media_m", texto: "Distancia media" },
+            { valor: "d_p90_m", texto: "P90 de acceso" },
+          ]} />
+          <Grafica descripcion={ejeY + " según el número de estaciones"} alto={330} trazas={curvas}
+            capa={{
+              xaxis: { title: { text: "Estaciones por método" } }, yaxis: { title: { text: ejeY } },
+              shapes: cobertura ? [{
+                type: "line", xref: "paper", yref: "y", x0: 0, x1: 1, y0: datos.objetivo_pct, y1: datos.objetivo_pct,
+                line: { color: "#677382", dash: "dot", width: 1.2 },
+              }] : [],
+            }} />
+        </section>
+        <section>
+          <h3>Viajes según cobertura de sus extremos</h3>
+          <p className="loc-nota">{num(k)} estaciones por método y radio de {num(radio)} m.</p>
+          <Grafica descripcion="Proporción de viajes con cobertura en ambos extremos, uno solo y ninguno" alto={265} trazas={desglose}
+            capa={{ barmode: "stack", margin: { l: 84, t: 12 }, xaxis: { range: [0, 100], ticksuffix: " %" } }} />
+        </section>
+      </div>
+      <div className="loc-resultados">
+        <table>
+          <caption>Indicadores con {k} estaciones y {radio} m de radio</caption>
+          <thead><tr><th scope="col">Indicador</th>{METODOS.map((m) => <th scope="col" key={m}>{datos.metodos[m]}</th>)}</tr></thead>
+          <tbody>{formatos.map(([nombre, valor]) => <tr key={nombre}><th scope="row">{nombre}</th>
+            {resultados.map((r) => <td key={r.metodo} className="num">{valor(r)}</td>)}
+          </tr>)}</tbody>
+        </table>
+      </div>
+      <details className="tabla">
+        <summary>Cómo se comparan los métodos</summary>
+        <p>Los métodos se ajustan sobre los pesos por celda del 1 al 21 de febrero. K-medoids busca centros dentro del catálogo. K-means calcula centroides y los asigna a candidatos distintos. Las distancias y la cobertura se calculan después con las coordenadas originales de cada viaje.</p>
+        <p>El P90 es la distancia que deja al 90 % de los extremos por debajo e incluye los viajes fuera de radio. La semana reservada del 22 al 28 de febrero se utiliza en T30, con las redes y criterios ya fijados.</p>
+        <a href="https://github.com/javiersaguar/PIDS-Proyecto3/blob/main/resultados/tablas/movilidad/T25_barrido.csv">Consultar las métricas del barrido</a>
+      </details>
+    </article>
   );
 }

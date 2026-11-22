@@ -57,7 +57,7 @@ responde a una pregunta y deja una tabla o figura que se cita en `docs/conclusio
 | T33 | Rebalanceo nocturno con 0, 100 y 220 movimientos, km y déficit residual | E | | pendiente | |
 | T34 | Curva flota frente a nivel de servicio e indicadores de uso | R | | pendiente | |
 | T35 | Simulación con estado de carga (movilidad + consumo) | E | | pendiente | |
-| T36 | Capas de cobertura y flujos OD para el mapa de la demo | E | Alejandro | en curso | [Notebook](../movilidad/T36_capas_mapa.ipynb) (red preliminar voraz hasta que T25–T28 elijan la red) |
+| T36 | Capas de cobertura y flujos OD para el mapa de la demo | E | Alejandro | en curso | [Red preliminar](../movilidad/T36_capas_mapa.ipynb) · [Capítulo Localización con T24 y T25](https://javiersaguar.github.io/PIDS-Proyecto3/#/mapa/localizacion) |
 | T37 | Medir acceso en las zonas peor cubiertas y comparar una red alternativa | E | | pendiente | |
 | T38 | Comparar la red habitual y una redundante en cinco cierres críticos con derivación de viajes | E | | pendiente | |
 | T39 | Comparar redes finalistas con indicadores de movilidad y recarga | E | | pendiente | |

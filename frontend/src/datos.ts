@@ -6,7 +6,7 @@ const cache = new Map<string, Promise<unknown>>();
 function pedir(ruta: string): Promise<unknown> {
   let promesa = cache.get(ruta);
   if (!promesa) {
-    promesa = fetch(`${import.meta.env.BASE_URL}datos/${ruta}.json`).then((r) => {
+    promesa = fetch(`${import.meta.env.BASE_URL}datos/${ruta}.json`, { cache: "no-cache" }).then((r) => {
       if (!r.ok) throw new Error(`No se pudo leer ${ruta}.json (${r.status})`);
       return r.json();
     });
@@ -17,9 +17,10 @@ function pedir(ruta: string): Promise<unknown> {
 
 export type Estado<T> = { datos: T; error: null } | { datos: null; error: string | null };
 
-export function useDatos<T>(ruta: string): Estado<T> {
+export function useDatos<T>(ruta: string, habilitado = true): Estado<T> {
   const [estado, setEstado] = useState<Estado<T>>({ datos: null, error: null });
   useEffect(() => {
+    if (!habilitado) return;
     let vigente = true;
     pedir(ruta)
       .then((d) => vigente && setEstado({ datos: d as T, error: null }))
@@ -27,6 +28,6 @@ export function useDatos<T>(ruta: string): Estado<T> {
     return () => {
       vigente = false;
     };
-  }, [ruta]);
+  }, [ruta, habilitado]);
   return estado;
 }

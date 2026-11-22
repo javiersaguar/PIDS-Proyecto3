@@ -397,8 +397,9 @@ Sobre la cartografía de OpenStreetMap \cite{osmroma}, \cifra{candidatos_desplaz
 centros en el río se sustituyen por el extremo observado en tierra más próximo
 de su celda. Quedan \cifra{candidatos_avisos} posiciones con avisos cartográficos
 para priorizar la revisión urbana de las finalistas (figura~\ref{fig:candidatos}).
-El catálogo mantiene el identificador de celda, las coordenadas y el peso de la
-demanda. Todos los emplazamientos requieren comprobación urbana.
+El catálogo mantiene el identificador, el contorno y el peso de la demanda de
+cada celda. La ficha cartográfica muestra las coordenadas, la vía de referencia
+y las distancias a elementos sensibles antes de la comprobación urbana.
 
 \subsubsection{Líneas base de localización (T25)}
 Se ajustan K-medoids y K-means ponderados por los extremos de cada celda. Los
@@ -411,7 +412,9 @@ Con \cifra{redes_base_k_ref} estaciones a 300~m, K-medoids cubre el
 \cifra{redes_base_means_ref_pct}\pc{}. Con \cifra{redes_base_k_max_300} estaciones
 la mejor de las dos redes cubre el \cifra{redes_base_mejor_max_pct}\pc{}. Esto da
 una referencia para optimizar la cobertura conjunta de origen y destino
-(figura~\ref{fig:redes-base}). La semana reservada se usará en T30.
+(figura~\ref{fig:redes-base}). El mapa superpone ambas redes y muestra las salidas
+y llegadas por estación de los viajes con ambos extremos cubiertos. Cada extremo
+se asigna a la estación más cercana. La semana reservada se usará en T30.
 
 \begin{figure}[!htb]
   \centering
@@ -584,8 +587,8 @@ para que el óptimo no quede en el borde.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.72\textwidth]{T24_mapa_candidatos}
-  \caption{Candidatos de resolución 9 del ajuste. Los centros desplazados conservan su celda H3. La cartografía de referencia procede de OpenStreetMap.}\label{fig:candidatos}
+  \includegraphics[width=0.88\textwidth]{T24_mapa_candidatos}
+  \caption{Candidatos de resolución 9 en Roma y detalle de la celda desplazada con mayor demanda. La ampliación muestra el centro original y la posición utilizada. Cartografía de OpenStreetMap.}\label{fig:candidatos}
 \end{figure}
 
 \begin{figure}[H]

@@ -270,6 +270,20 @@ function decodificarBase(b: BaseCodificada): Base {
   };
 }
 
+const cacheBase = new Map<string, Promise<Base>>();
+
+export function cargarBaseRoma(ruta = "base/roma.json"): Promise<Base> {
+  let base = cacheBase.get(ruta);
+  if (!base) {
+    base = pedir<BaseCodificada>(ruta).then(decodificarBase).catch((error) => {
+      cacheBase.delete(ruta);
+      throw error;
+    });
+    cacheBase.set(ruta, base);
+  }
+  return base;
+}
+
 type GeoEstaciones = {
   features: { geometry: { coordinates: [number, number] }; properties: Omit<Estacion, "lon" | "lat" | "indice"> }[];
 };
@@ -308,7 +322,7 @@ async function cargarTodo(alAvanzar: (fraccion: number) => void): Promise<Demo> 
       return x;
     });
   const [base, demanda, saldo, barrido, diaCrudo, ...redes] = await Promise.all([
-    contar(pedir<BaseCodificada>(manifiesto.capas.base).then(decodificarBase)),
+    contar(cargarBaseRoma(manifiesto.capas.base)),
     contar(pedir<Demanda>(manifiesto.capas.demanda_res9)),
     contar(pedir<Saldo>(manifiesto.capas.saldo_res8)),
     contar(pedir<Barrido>(manifiesto.barrido)),
