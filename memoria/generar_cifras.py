@@ -266,6 +266,29 @@ def cifras() -> dict[str, str]:
         "redes_base_k_max_300": num(k_max),
         "redes_base_mejor_max_pct": num(barrido300.loc[barrido300["k"].eq(k_max), "pct_viajes_cubiertos"].max(), 1),
     }
+
+    finalistas = leer("movilidad/T28_finalistas.csv")
+    red = fila(finalistas, rol="recomendada")
+    alternativa = fila(finalistas, rol="menos_estaciones")
+    t30_geo = leer("movilidad/T30_validacion_geometrica.csv")
+    t30_pie = leer("movilidad/T30_validacion_peatonal.csv")
+    c |= {
+        "red_estaciones": num(red["k"]),
+        "red_radio": num(red["radio_m"]),
+        "red_alternativa_k": num(alternativa["k"]),
+        "red_alternativa_pct": num(alternativa["pct_viajes_cubiertos"], 2),
+    }
+    for periodo in ("ajuste", "reservada"):
+        geom = fila(t30_geo, network_id=red["network_id"], periodo=periodo)
+        pie = fila(t30_pie, network_id=red["network_id"], periodo=periodo, sector="ambos")
+        c |= {
+            f"red_{periodo}_geo_pct": num(geom["pct_viajes_cubiertos"], 2),
+            f"red_{periodo}_comparables": num(pie["viajes_comparables"]),
+            f"red_{periodo}_linea_pct": num(pie["pct_linea"], 1),
+            f"red_{periodo}_pie_pct": num(pie["pct_a_pie"], 1),
+            f"red_{periodo}_pie_delta": num(pie["delta_pp"], 1),
+            f"red_{periodo}_ruta_p90": num(pie["p90_a_pie_m"]),
+        }
     return c
 
 

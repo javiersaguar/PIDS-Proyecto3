@@ -5,6 +5,7 @@ import { T22 } from "./T22";
 import { T23 } from "./T23";
 import { T24 } from "./T24";
 import { T25 } from "./T25";
+import { T30 } from "./T30";
 
 const SECCIONES = [
   { id: "t20", tarea: "T20", titulo: "Primera matriz OD" },
@@ -13,6 +14,7 @@ const SECCIONES = [
   { id: "t23", tarea: "T23", titulo: "Líneas de deseo" },
   { id: "t24", tarea: "T24", titulo: "Candidatos a estación" },
   { id: "t25", tarea: "T25", titulo: "Líneas base de localización" },
+  { id: "t30", tarea: "T26–T30", titulo: "Selección y validación" },
   { id: "siguientes", tarea: "", titulo: "Lo que falta" },
   { id: "decisiones", tarea: "", titulo: "Decisiones" },
 ];
@@ -42,10 +44,11 @@ export function Fase1() {
       <T23 />
       <T24 />
       <T25 />
+      <T30 />
       <section id="siguientes" className="seccion">
         <header>
           <div>
-            <div className="etiqueta">T26–T39</div>
+            <div className="etiqueta">T31–T39</div>
             <h2>Lo que falta de la fase</h2>
           </div>
           <div>

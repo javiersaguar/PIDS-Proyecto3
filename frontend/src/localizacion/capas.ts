@@ -4,6 +4,7 @@ import { capaEtiquetas, capasBase } from "../mapa/capas";
 import type { Base } from "../mapa/datos";
 import { conAlfa, type Tema } from "../mapa/tema";
 import { COLORES_LOCALIZACION, type Candidato, type Marcador } from "./modelo";
+import { contornoSector, type CasoPeatonal, type SectorMapa } from "./validacion";
 
 export function posicion(c: Candidato): [number, number] {
   return [c.lon, c.lat];
@@ -64,12 +65,32 @@ export function capasLocalizacion(
     getPosition: (m) => posicion(m.candidato),
     getRadius: (m) => {
       if (m.candidato.candidate_id === seleccionado?.candidate_id) return 9;
-      if (m.grupo === "comun" || m.grupo === "kmedoids" || m.grupo === "kmeans") return 5.5;
+      if (m.grupo === "comun" || m.grupo === "kmedoids" || m.grupo === "kmeans" || m.grupo === "finalista") return 5.5;
       return 4 + Math.min(6, Math.sqrt(m.candidato.extremos) / 3);
     },
     radiusUnits: "pixels", getFillColor: (m) => conAlfa(COLORES_LOCALIZACION[m.grupo], 229),
     lineWidthUnits: "pixels", getLineWidth: 1.3, getLineColor: tema.halo,
     parameters: ENCIMA, updateTriggers: { getRadius: seleccionado?.candidate_id, getLineColor: tema.nombre },
   }));
+  return capas;
+}
+
+export function capasValidacion(sectores: SectorMapa[], caso?: CasoPeatonal): Layer[] {
+  const capas: Layer[] = [new PathLayer<SectorMapa>({
+    id: "validacion-sectores", data: sectores, getPath: contornoSector, pickable: true,
+    getColor: [231, 153, 41, 230], getWidth: 2, widthUnits: "pixels", parameters: ENCIMA,
+  })];
+  if (caso) {
+    capas.push(
+      new PathLayer({
+        id: "validacion-recta", data: [caso.recta], getPath: (p) => p,
+        getColor: [172, 176, 187, 230], getWidth: 2, widthUnits: "pixels", parameters: ENCIMA,
+      }),
+      new PathLayer({
+        id: "validacion-camino", data: [caso.camino], getPath: (p) => p,
+        getColor: [59, 214, 155, 245], getWidth: 3.4, widthUnits: "pixels", parameters: ENCIMA,
+      }),
+    );
+  }
   return capas;
 }

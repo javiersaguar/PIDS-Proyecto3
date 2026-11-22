@@ -10,3 +10,8 @@
 ## Qué debe incluir
 
 - Las respuestas tal como llegaron de cada fuente y sus metadatos. No se editan a mano.
+
+El grafo de T29 y T30 se regenera a partir de las respuestas originales comprimidas
+de Overpass y de la API de OpenStreetMap para Tíber y Termini. El archivo de
+metadatos contiene las cajas, consultas, fechas y huellas de cada respuesta.
+[Metadatos peatonales](osm/osm_peatonal.meta.json) · [Licencia ODbL y atribución](https://www.openstreetmap.org/copyright)

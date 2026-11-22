@@ -33,6 +33,11 @@ PASOS = [
     "movilidad/T23_indicadores_lineas_deseo.ipynb",
     "movilidad/T24_candidatos_estacion.ipynb",
     "movilidad/T25_linea_base_localizacion.ipynb",
+    "movilidad/T26_cobertura_parcial.ipynb",
+    "movilidad/T27_pmediana_mclp.ipynb",
+    "movilidad/T28_pareto_eleccion.ipynb",
+    "movilidad/T29_rutas_peatonales.ipynb",
+    "movilidad/T30_validacion_temporal.ipynb",
     "movilidad/T36_capas_mapa.ipynb",
 ]
 

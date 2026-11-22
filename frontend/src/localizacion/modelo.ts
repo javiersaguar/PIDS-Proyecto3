@@ -46,7 +46,7 @@ export type DatosT24 = {
 export type Metodo = "kmedoids" | "kmeans";
 export type ModoComparacion = "ambos" | Metodo;
 export type VistaCandidatos = "todos" | "avisos" | "desplazados";
-export type GrupoMapa = "candidato" | "aviso" | "desplazado" | Metodo | "comun";
+export type GrupoMapa = "candidato" | "aviso" | "desplazado" | Metodo | "comun" | "finalista";
 export type Marcador = { candidato: Candidato; grupo: GrupoMapa };
 export type Perfil = [salidas: number, llegadas: number];
 
@@ -95,6 +95,7 @@ export const COLORES_LOCALIZACION: Record<GrupoMapa, RGB> = {
   kmedoids: [36, 108, 171],
   kmeans: [185, 77, 33],
   comun: [17, 112, 91],
+  finalista: [66, 167, 193],
 };
 export const GRUPOS = {
   candidato: "Demanda por celda",
@@ -103,6 +104,7 @@ export const GRUPOS = {
   kmedoids: "Solo K-medoids",
   kmeans: "Solo K-means",
   comun: "En ambas redes",
+  finalista: "Estaciones de la red",
 };
 
 export const AVISOS = [

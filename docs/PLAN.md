@@ -267,9 +267,11 @@ La demo representa una jornada de la simulación. Abre en el mapa de Roma con un
 
 El [capítulo Localización](https://javiersaguar.github.io/PIDS-Proyecto3/#/mapa/localizacion) ya usa el catálogo T24 y las redes T25. Permite comparar métodos con el mismo número de estaciones y radio, inspeccionar una celda en la cartografía de Roma y consultar salidas y llegadas potenciales de los viajes observados. El cálculo de cobertura es geométrico y el inventario de referencia sigue identificado como T36.
 
+El [capítulo Validación](https://javiersaguar.github.io/PIDS-Proyecto3/#/mapa/validacion) muestra las finalistas de T28 con sus emplazamientos congelados. Los controles cambian de periodo y sector. La ficha separa el indicador geométrico de toda Roma de la comparación emparejada a pie en Tíber y Termini.
+
 | Orden | Datos que incorporar | Mejora que se verá en la web |
 |---|---|---|
-| 1 | Redes finalistas de T26–T28, rutas a pie de T29 y validación del 22 al 28/02 de T30 | Alternar redes manteniendo presupuesto y radio comparables. Ver cobertura de ambos extremos, P90 de acceso y pérdida o ganancia de cobertura en la semana reservada. |
+| 1 | Redes finalistas de T26–T28, rutas a pie de T29 y validación del 22 al 28/02 de T30 | Disponible en Validación. Se puede cambiar la red y el periodo, consultar los denominadores y abrir un ejemplo de recorrido. |
 | 2 | Asignaciones y flujos estación a estación de T31 | Elegir una estación y ver de dónde vienen sus viajes, a qué estaciones van y cuántas solicitudes quedan fuera de cobertura. Abrir la evidencia del periodo y la red desde la propia ficha. |
 | 3 | Inventario, rechazos y recolocaciones de T32–T35 | Sustituir la referencia de capacidad por las series del simulador. Localizar a qué hora faltan patinetes o anclajes, con el día y la demanda fijos al comparar escenarios. |
 | 4 | Energía por viaje de T44 y curvas de potencia de T50 | Sincronizar el reloj del mapa con la ficha de recarga. Mostrar la demanda calculada, la producción fotovoltaica y el balance de batería en la estación dimensionada. |

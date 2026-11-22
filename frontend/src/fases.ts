@@ -33,9 +33,8 @@ export const FASES: Fase[] = [
     estado: "en curso",
     tareas: "T20–T39",
     previsto: [
-      "Optimización de las ubicaciones y contraste de distancias por red peatonal.",
-      "Frente de Pareto entre número de estaciones y demanda cubierta para las redes candidatas.",
-      "Mapa de la red elegida con su cobertura y validación con la semana reservada.",
+      "Asignación de cada viaje a estaciones y matriz de flujos de la red elegida.",
+      "Stock, anclajes y rebalanceo por estación en los escenarios de inventario.",
       "Curva de flota frente a nivel de servicio a partir de la simulación de inventario.",
     ],
   },

@@ -389,6 +389,43 @@ y se publican los conteos por estación de los viajes con cobertura completa. La
 de salidas y la de llegadas coinciden por separado con el total de viajes cubiertos.
 [Barrido](../resultados/tablas/movilidad/T25_barrido.csv) · [Redes](../resultados/tablas/movilidad/T25_redes.csv) · [Comparación 3D](https://javiersaguar.github.io/PIDS-Proyecto3/#/mapa/localizacion)
 
+## T26–T28. Optimización y elección de red
+
+La cobertura parcial fija el 80 % de viajes con ambos extremos accesibles y minimiza
+el número de estaciones. MCLP fija el presupuesto y maximiza ese mismo recuento.
+La p-mediana minimiza la distancia ponderada por la demanda de las celdas.
+Los tres métodos evalúan la red final con los extremos originales del ajuste.
+Las tablas conservan la procedencia de la solución factible, la cota y la brecha.
+La cota de p-mediana usa una relajación de las asignaciones más lejanas, y el coste
+factible usa la distancia completa. [T26](../resultados/tablas/movilidad/T26_resultados.csv) · [T27](../resultados/tablas/movilidad/T27_resultados.csv) · [Solver de SciPy](https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.milp.html)
+
+El criterio de T28 elige entre los radios de 200, 250 y 300 m la red evaluada con
+menos estaciones que alcanza el 80 % en el ajuste. El P90 de los extremos sirve
+de primer desempate. Con ese criterio se congelaron **159 estaciones a 300 m**,
+con **80,03 %** de cobertura en recta. La opción de 158 estaciones a 300 m deja
+la cobertura del ajuste en 79,80 %. El frente incluye además la distancia P90.
+[Finalistas](../resultados/tablas/movilidad/T28_finalistas.csv) · [Emplazamientos](../resultados/tablas/movilidad/T28_estaciones.csv)
+
+## T29–T30. Validación temporal y acceso a pie
+
+La misma red pasa del **80,03 % al 75,62 %** de cobertura geométrica en toda Roma.
+Los periodos contienen 16 710 y 6 582 viajes respectivamente. El objetivo de
+ajuste era 80 % y la semana reservada queda 4,38 puntos por debajo.
+
+| Periodo | Viajes comparables en Tíber y Termini | Ambos extremos en recta | Ambos extremos a pie | Cambio |
+|---|---:|---:|---:|---:|
+| Ajuste | 966 | 85,9 % | 44,4 % | −41,5 pp |
+| Semana reservada | 427 | 82,2 % | 44,0 % | −38,2 pp |
+
+Los dos extremos del viaje deben caer en el mismo núcleo. Se excluyeron de los
+porcentajes emparejados 6 viajes del ajuste y 2 de la semana reservada por falta
+de dos rutas medibles. También se publica la cobertura peatonal verificable
+sobre todos los viajes del sector. El grafo respeta sentidos peatonales y
+restricciones explícitas. Los conectores de hasta 60 m evitan cruzar ejes de río
+y ferrocarril. Se usa cartografía archivada de noviembre de 2026 para evaluar
+la demanda observada de febrero de 2021. Los resultados peatonales corresponden
+a estos dos sectores. [Cobertura geométrica](../resultados/tablas/movilidad/T30_validacion_geometrica.csv) · [Prueba peatonal](../resultados/tablas/movilidad/T30_validacion_peatonal.csv) · [Etiquetas de acceso peatonal de OpenStreetMap](https://wiki.openstreetmap.org/wiki/Key:foot)
+
 ## Preguntas de la exploración ya respondidas
 
 - ¿Coincide el saldo de T14 con las entregas netas del operador de T11? **Sí** (T14):

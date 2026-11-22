@@ -24,3 +24,12 @@
 - [T24](T24_candidatos_estacion.ipynb) construye el [catálogo de candidatos](../resultados/tablas/movilidad/T24_candidatos.csv) con la demanda del ajuste y las comprobaciones cartográficas. `candidate_id` identifica la celda H3 y `incluido_barrido` indica si su posición entra en los modelos.
 - [T25](T25_linea_base_localizacion.ipynb) compara K-medoids y K-means ajustado a candidatos. [El barrido](../resultados/tablas/movilidad/T25_barrido.csv) mide cobertura y distancias en los viajes de ajuste. [El catálogo de redes](../resultados/tablas/movilidad/T25_redes.csv) conserva las estaciones de cada `network_id` para reproducir la comparación.
 - Los dos notebooks exportan los datos del [capítulo Localización](https://javiersaguar.github.io/PIDS-Proyecto3/#/mapa/localizacion). T24 publica el contorno H3, coordenadas y avisos de cada posición. T25 exporta las salidas y llegadas de viajes con cobertura completa en el mismo orden de estaciones que la red de cada radio y presupuesto.
+
+## Selección y validación
+
+- [T26](T26_cobertura_parcial.ipynb) resuelve la cobertura parcial de viajes completos y deja el número de estaciones factible y su cota.
+- [T27](T27_pmediana_mclp.ipynb) compara p-mediana, MCLP y el voraz por extremos a presupuestos comunes. Regenera la lista de viajes excluidos por red MCLP en `datos/procesados/T27_viajes_excluidos.parquet`.
+- [T28](T28_pareto_eleccion.ipynb) genera el frente y fija [los emplazamientos de las finalistas](../resultados/tablas/movilidad/T28_estaciones.csv).
+- [T29](T29_rutas_peatonales.ipynb) mide rutas en dos sectores con barreras. [T30](T30_validacion_temporal.ipynb) evalúa las mismas redes en la semana reservada y genera el [capítulo Validación](https://javiersaguar.github.io/PIDS-Proyecto3/#/mapa/validacion).
+
+`python ejecutar_todo.py --desde movilidad/T26_cobertura_parcial.ipynb` regenera estas etapas desde los resultados de T24 y T25 y la cartografía archivada. Las soluciones bajo límite de tiempo registran su cota y procedencia. T30 verifica la huella de las estaciones congeladas antes de usar los resultados peatonales del ajuste.

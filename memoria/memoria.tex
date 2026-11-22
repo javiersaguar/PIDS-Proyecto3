@@ -81,7 +81,7 @@
     \textbf{Grupo} & G\cifra{grupo} \\
     \textbf{Autores} & Cuevas, Alejandro \\
                      & Saguar, Javier \\
-    \textbf{Versión} & Fase 0 y líneas base de movilidad \\
+    \textbf{Versión} & Fase 0 y validación de la red \\
     \textbf{Fecha} & \fechaversion \\
     \textbf{Curso académico} & 2026/2027 \\
   \end{tabular}
@@ -115,7 +115,7 @@
     \toprule
     Integrante & Fase 0: datos y exploración & Fase 1: movilidad & Fase 2: consumo & Fase 3: estación \\
     \midrule
-    Javier Saguar (líder) & Entorno reproducible, web, limpieza (T10), recolocaciones (T11), patrones temporales (T12), análisis de viento (T17), tarifa (T18) y cierre de la exploración (T19) & Revisión de T20. Matrices y flujos (T21--T23), candidatos y líneas base (T24--T25) & -- & -- \\
+    Javier Saguar (líder) & Entorno reproducible, web, limpieza (T10), recolocaciones (T11), patrones temporales (T12), análisis de viento (T17), tarifa (T18) y cierre de la exploración (T19) & Revisión de T20. Matrices y flujos (T21--T23), localización y validación de redes (T24--T30) & -- & -- \\
     \addlinespace
     Alejandro Cuevas & Densidad en H3 (T13), saldo por celda (T14), recorridos y radios (T15), energía de referencia (T16), meteorología (T17) y conclusiones de estos análisis (T19) & Primera matriz O-D en H3 (T20) & -- & -- \\
     \bottomrule
@@ -124,10 +124,10 @@
 
 \section*{Estado de esta versión}
 \addcontentsline{toc}{section}{Estado de esta versión}
-Esta versión cierra la exploración e incorpora el análisis origen-destino y las
-primeras redes de estaciones de la fase~1 (T20--T25). Incluye las matrices, el
-catálogo de emplazamientos y la comparación de las dos líneas base. Los apartados
-pendientes recogen el método previsto. El detalle de la exploración está en los anexos.
+Esta versión cierra la exploración e incorpora el análisis origen-destino, la
+localización de estaciones y la evaluación temporal de la fase~1 (T20--T30).
+Incluye la cobertura calculada en línea recta y una comparación a pie en dos sectores.
+El detalle de la exploración está en los anexos.
 
 \newpage
 {\setstretch{1}\setlength{\parskip}{0pt}
@@ -423,9 +423,27 @@ se asigna a la estación más cercana. La semana reservada se usará en T30.
 \end{figure}
 \FloatBarrier
 
-\pendiente{Cobertura de conjuntos LSCP (T26), $p$-mediana y cobertura máxima MCLP
-(T27), con los mismos candidatos y viajes y el rango de la tabla~\ref{tab:radios}.
-Frente de Pareto con estaciones, cobertura y distancia de acceso (T28).}
+\subsubsection{Optimización y frente de Pareto (T26--T28)}
+El modelo de cobertura parcial minimiza el número de estaciones para cubrir los
+dos extremos del 80\pc{} de los viajes. La cobertura máxima fija el presupuesto
+y maximiza ese recuento. La $p$-mediana minimiza la distancia ponderada de los
+extremos de cada celda. Todas las redes se evalúan con los viajes originales.
+Las tablas de T26 y T27 indican la mejor solución factible, las cotas y sus brechas.
+
+Para los radios de 200, 250 y 300~m se priorizó el menor número de estaciones
+entre las redes evaluadas que alcanzaban el objetivo en recta, con el P90 como
+primer desempate. La red elegida tiene \cifra{red_estaciones} estaciones a
+\cifra{red_radio}~m y cubre el \cifra{red_ajuste_geo_pct}\pc{} en el ajuste. La
+alternativa de menor presupuesto, con \cifra{red_alternativa_k} estaciones del
+mismo radio, cubre el \cifra{red_alternativa_pct}\pc{}. El frente considera a la
+vez cobertura, estaciones y P90 (figura~\ref{fig:pareto}).
+
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=0.90\textwidth]{T28_pareto}
+  \caption{Redes del ajuste por radio y frente no dominado en estaciones, cobertura y P90. La estrella señala la red elegida.}\label{fig:pareto}
+\end{figure}
+\FloatBarrier
 
 \subsection{Flota frente a nivel de servicio}
 \pendiente{Asignación de cada viaje a sus estaciones y matriz estación-estación (T31).
@@ -433,9 +451,32 @@ Simulación de inventario por franjas con rebalanceo nocturno de \cifra{rebalanc
 patinetes al día (\cifra{rebalanceo_sensibilidad} como sensibilidad) para fijar el stock
 inicial y los anclajes (T32, T33) y curva de flota frente a nivel de servicio (T34).}
 
-\subsection{Red recomendada}
-\pendiente{Estaciones, anclajes, patinetes, cobertura y distancias a pie de la red elegida, y
-su validación con la semana reservada (T30).}
+\subsection{Red elegida y validación (T29--T30)}
+Los emplazamientos y radios se fijaron antes de evaluar los viajes del
+22 al 28 de febrero. Para toda Roma, la cobertura geométrica de ambos extremos
+en la semana reservada baja al \cifra{red_reservada_geo_pct}\pc{}.
+
+En Tíber y Termini se midió la ruta más corta por vías transitables, con cartografía
+de OpenStreetMap archivada en noviembre de 2026 \cite{osmroma}. Cada extremo y
+estación se conecta a un tramo a un máximo de 60~m. El acceso usa puentes y pasos
+presentes en el grafo. La comparación empareja los viajes con ambos extremos
+dentro de un núcleo y dos rutas medibles.
+
+En los \cifra{red_ajuste_comparables} viajes comparables del ajuste, se pasa del
+\cifra{red_ajuste_linea_pct}\pc{} en recta al \cifra{red_ajuste_pie_pct}\pc{}
+a pie (\cifra{red_ajuste_pie_delta} puntos porcentuales). En la semana
+reservada, los \cifra{red_reservada_comparables} viajes comparables pasan del
+\cifra{red_reservada_linea_pct}\pc{} al \cifra{red_reservada_pie_pct}\pc{}
+(\cifra{red_reservada_pie_delta} puntos). El P90 a pie de sus extremos es de
+\cifra{red_reservada_ruta_p90}~m. Los resultados peatonales corresponden a ambos
+sectores (figura~\ref{fig:validacion-red}). La asignación de solicitudes, el
+stock y los anclajes se estudian en T31--T34.
+
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=0.91\textwidth]{T30_validacion}
+  \caption{Validación de la red congelada. La cobertura geométrica de toda Roma y la comparación peatonal usan sus respectivos denominadores.}\label{fig:validacion-red}
+\end{figure}
 
 % ------------------------------------------------------------------------------------------
 \section{Consumo}
@@ -532,9 +573,9 @@ parámetros compartidos se leen de \nb{config.yaml}.
 \section{Limitaciones y trabajo futuro}
 Limitaciones conocidas hasta ahora:
 \begin{itemize}
-  \item Sin trayectorias: las distancias a pie se estiman con el factor de rodeo del patinete
-        y una velocidad a pie supuesta; se contrastarán con la red peatonal en las redes
-        finalistas (T29).
+  \item Los trayectos peatonales se han estimado con una instantánea de OpenStreetMap
+        en dos sectores. La extrapolación a toda Roma requiere ampliar la red y
+        comprobar los emplazamientos sobre el terreno.
   \item Un solo mes de invierno, con crecimiento dentro del mes y una semana de validación más
         cálida, seca y con más demanda.
   \item La demanda observada es la de un servicio sin estaciones; parte de ella no tendría

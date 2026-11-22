@@ -246,9 +246,73 @@
   text-decoration: underline;
 }
 
+.val-indicadores {
+  display: grid;
+  gap: 0.8rem;
+  margin: 0.8rem 0;
+}
+
+.val-contexto {
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.val-contexto p,
+.val-geo p,
+.val-peatonal p {
+  margin: 0.25rem 0 0;
+  font-size: 0.77rem;
+  font-weight: 400;
+  color: var(--m-tinta-2, var(--tenue));
+}
+
+.val-geo,
+.val-peatonal {
+  border-top: 1px solid var(--m-linea-fuerte, var(--linea-fuerte));
+  padding: 0.6rem 0 0.15rem;
+}
+
+.val-geo strong,
+.val-cifras dd {
+  font-size: 1.32rem;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+  margin: 0;
+}
+
+.val-geo span {
+  margin-left: 0.5rem;
+  font-size: 0.8rem;
+}
+
+.val-zona {
+  font-weight: 600;
+  font-size: 0.83rem;
+}
+
+.val-cifras {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.4rem;
+  margin: 0.45rem 0 0.2rem;
+}
+
+.val-cifras dt {
+  font-size: 0.75rem;
+  color: var(--m-tinta-2, var(--tenue));
+}
+
+.val-evidencia {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 1.3rem;
+  align-items: start;
+}
+
 @media (max-width: 760px) {
   .loc-explorador,
-  .loc-graficas {
+  .loc-graficas,
+  .val-evidencia {
     grid-template-columns: minmax(0, 1fr);
   }
 

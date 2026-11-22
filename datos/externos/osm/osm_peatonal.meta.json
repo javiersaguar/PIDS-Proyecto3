@@ -1,0 +1,195 @@
+{
+  "fuente": "OpenStreetMap",
+  "licencia": "ODbL 1.0",
+  "atribucion": "https://www.openstreetmap.org/copyright",
+  "formato": "Respuestas JSON originales comprimidas con gzip. Cajas en orden oeste, sur, este, norte.",
+  "sectores": {
+    "tiber": {
+      "nombre": "Tiber - Trastevere",
+      "recorte": [
+        12.446,
+        41.868,
+        12.503,
+        41.912
+      ],
+      "nucleo": [
+        12.463,
+        41.883,
+        12.488,
+        41.899
+      ],
+      "ficheros": [
+        {
+          "fichero": "osm_peatonal_tiber.json.gz",
+          "fuente": "https://overpass-api.de/api/interpreter",
+          "consulta": {
+            "data": "[out:json][timeout:32];(way[\"highway\"](41.868,12.446,41.912,12.503);node[\"barrier\"](41.868,12.446,41.912,12.503););out geom qt;"
+          },
+          "sha256": "923ef998aa2c70bc93f61f6e659e2a64f34b6d734fcae342c8ce134db1f07c2c",
+          "snapshot": "2026-11-22T14:10:06Z"
+        }
+      ]
+    },
+    "termini": {
+      "nombre": "Termini - corredor ferroviario",
+      "recorte": [
+        12.4928,
+        41.8829,
+        12.5282,
+        41.9111
+      ],
+      "nucleo": [
+        12.499,
+        41.888,
+        12.522,
+        41.906
+      ],
+      "ficheros": [
+        {
+          "fichero": "osm_peatonal_termini_0_0.json.gz",
+          "fuente": "https://api.openstreetmap.org/api/0.6/map.json",
+          "consulta": {
+            "bbox": "12.4928,41.8829,12.5017,41.89"
+          },
+          "sha256": "4eef70409aef4ad341e411a70a6990f9244d8c59defeeec9b9fc8d8a18dbcf51",
+          "snapshot": "Sun, 22 Nov 2026 14:23:24 GMT"
+        },
+        {
+          "fichero": "osm_peatonal_termini_0_1.json.gz",
+          "fuente": "https://api.openstreetmap.org/api/0.6/map.json",
+          "consulta": {
+            "bbox": "12.4928,41.89,12.5017,41.897"
+          },
+          "sha256": "51585c6e409a93e1881197c72ecdf7eb137b2d7c33e64536e18d2c5eb43f1917",
+          "snapshot": "Sun, 22 Nov 2026 14:23:24 GMT"
+        },
+        {
+          "fichero": "osm_peatonal_termini_0_2.json.gz",
+          "fuente": "https://api.openstreetmap.org/api/0.6/map.json",
+          "consulta": {
+            "bbox": "12.4928,41.897,12.5017,41.904"
+          },
+          "sha256": "be7158e9250cc6755862144e3fef175b14b381f479f05d28ab69665be1257b31",
+          "snapshot": "Sun, 22 Nov 2026 14:23:26 GMT"
+        },
+        {
+          "fichero": "osm_peatonal_termini_0_3.json.gz",
+          "fuente": "https://api.openstreetmap.org/api/0.6/map.json",
+          "consulta": {
+            "bbox": "12.4928,41.904,12.5017,41.9111"
+          },
+          "sha256": "47e3349ecb1b0777a0c3c3ea1c9c19544bd6a4148f65ab00257d0c8a0e9caa56",
+          "snapshot": "Sun, 22 Nov 2026 14:23:26 GMT"
+        },
+        {
+          "fichero": "osm_peatonal_termini_1_0.json.gz",
+          "fuente": "https://api.openstreetmap.org/api/0.6/map.json",
+          "consulta": {
+            "bbox": "12.5017,41.8829,12.5105,41.89"
+          },
+          "sha256": "b68778e62d6e99d3a10e710c7cfcf10c2cc1f9bd377d69a784d7cd0e4d963adb",
+          "snapshot": "Sun, 22 Nov 2026 14:23:28 GMT"
+        },
+        {
+          "fichero": "osm_peatonal_termini_1_1.json.gz",
+          "fuente": "https://api.openstreetmap.org/api/0.6/map.json",
+          "consulta": {
+            "bbox": "12.5017,41.89,12.5105,41.897"
+          },
+          "sha256": "7a6200cb405e501153f324777fd8e8f705e25f99862f3c46e0a4d23ae9cc0e01",
+          "snapshot": "Sun, 22 Nov 2026 14:23:28 GMT"
+        },
+        {
+          "fichero": "osm_peatonal_termini_1_2.json.gz",
+          "fuente": "https://api.openstreetmap.org/api/0.6/map.json",
+          "consulta": {
+            "bbox": "12.5017,41.897,12.5105,41.904"
+          },
+          "sha256": "4cb75adbb21a1d7873b960c9073c4e2d934bbfcdf8cd61efe1d914d5ce014a99",
+          "snapshot": "Sun, 22 Nov 2026 14:23:30 GMT"
+        },
+        {
+          "fichero": "osm_peatonal_termini_1_3.json.gz",
+          "fuente": "https://api.openstreetmap.org/api/0.6/map.json",
+          "consulta": {
+            "bbox": "12.5017,41.904,12.5105,41.9111"
+          },
+          "sha256": "3f7845dbddf4781c8c91439f91a4980bcc72896135b9b6aa8647c6d9fdb7697b",
+          "snapshot": "Sun, 22 Nov 2026 14:23:39 GMT"
+        },
+        {
+          "fichero": "osm_peatonal_termini_2_0.json.gz",
+          "fuente": "https://api.openstreetmap.org/api/0.6/map.json",
+          "consulta": {
+            "bbox": "12.5105,41.8829,12.5194,41.89"
+          },
+          "sha256": "588b81410ca83198784b9f1d5e14c0da723689a3c6c4a32896200d5e66b85851",
+          "snapshot": "Sun, 22 Nov 2026 14:23:31 GMT"
+        },
+        {
+          "fichero": "osm_peatonal_termini_2_1.json.gz",
+          "fuente": "https://api.openstreetmap.org/api/0.6/map.json",
+          "consulta": {
+            "bbox": "12.5105,41.89,12.5194,41.897"
+          },
+          "sha256": "a21d9b4c6f5e0b75465d4faa796acd1fd92761944ec9045683643cbfa3b188e0",
+          "snapshot": "Sun, 22 Nov 2026 14:23:33 GMT"
+        },
+        {
+          "fichero": "osm_peatonal_termini_2_2.json.gz",
+          "fuente": "https://api.openstreetmap.org/api/0.6/map.json",
+          "consulta": {
+            "bbox": "12.5105,41.897,12.5194,41.904"
+          },
+          "sha256": "24cabc040d2b8353b017ebc0db9211f7671346cdb517599309ca9032808d73a9",
+          "snapshot": "Sun, 22 Nov 2026 14:23:35 GMT"
+        },
+        {
+          "fichero": "osm_peatonal_termini_2_3.json.gz",
+          "fuente": "https://api.openstreetmap.org/api/0.6/map.json",
+          "consulta": {
+            "bbox": "12.5105,41.904,12.5194,41.9111"
+          },
+          "sha256": "cb747b0f0340aac550af0e1b10ab594462f27d3c8ca19af10ab46fe4cc1a2720",
+          "snapshot": "Sun, 22 Nov 2026 14:23:36 GMT"
+        },
+        {
+          "fichero": "osm_peatonal_termini_3_0.json.gz",
+          "fuente": "https://api.openstreetmap.org/api/0.6/map.json",
+          "consulta": {
+            "bbox": "12.5194,41.8829,12.5282,41.89"
+          },
+          "sha256": "b1ee7fdff0ec5845ea672d769daa26e92932cdc946b1ce226c975cb4145ee3a5",
+          "snapshot": "Sun, 22 Nov 2026 14:23:37 GMT"
+        },
+        {
+          "fichero": "osm_peatonal_termini_3_1.json.gz",
+          "fuente": "https://api.openstreetmap.org/api/0.6/map.json",
+          "consulta": {
+            "bbox": "12.5194,41.89,12.5282,41.897"
+          },
+          "sha256": "bb4550e8343f156886cd5e0db2f4b8e86f5cd514dc12ab8422638069b828f235",
+          "snapshot": "Sun, 22 Nov 2026 14:23:38 GMT"
+        },
+        {
+          "fichero": "osm_peatonal_termini_3_2.json.gz",
+          "fuente": "https://api.openstreetmap.org/api/0.6/map.json",
+          "consulta": {
+            "bbox": "12.5194,41.897,12.5282,41.904"
+          },
+          "sha256": "2e9c1bed39bce7351cb05cc6c48ed3a3dfe79dcc9d0d3ccdcc3089c90903a22c",
+          "snapshot": "Sun, 22 Nov 2026 14:23:41 GMT"
+        },
+        {
+          "fichero": "osm_peatonal_termini_3_3.json.gz",
+          "fuente": "https://api.openstreetmap.org/api/0.6/map.json",
+          "consulta": {
+            "bbox": "12.5194,41.904,12.5282,41.9111"
+          },
+          "sha256": "f06f8491c95005279b0708f2d056f0f1229883766f618214e7875cadbb1aeff1",
+          "snapshot": "Sun, 22 Nov 2026 14:23:41 GMT"
+        }
+      ]
+    }
+  }
+}

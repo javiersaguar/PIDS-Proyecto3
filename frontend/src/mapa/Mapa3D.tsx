@@ -1,16 +1,18 @@
 // Mapa 3D de Roma para la defensa: un relato por capítulos sobre los datos del notebook
 // movilidad/T36_capas_mapa.ipynb. Ruta: #/mapa/<capítulo>.
-import { FlyToInterpolator, type MapViewState, type PickingInfo } from "@deck.gl/core";
+import { FlyToInterpolator, WebMercatorViewport, type MapViewState, type PickingInfo } from "@deck.gl/core";
 import DeckGL from "@deck.gl/react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { num } from "../formato";
-import { capasLocalizacion, fondoLocalizacion, rotulosLocalizacion } from "../localizacion/capas";
+import { capasLocalizacion, capasValidacion, fondoLocalizacion, rotulosLocalizacion } from "../localizacion/capas";
 import { PanelLocalizacion, useLocalizacionDemo } from "../localizacion/DemoLocalizacion";
 import type { Candidato, Marcador } from "../localizacion/modelo";
+import { PanelValidacion } from "../localizacion/PanelValidacion";
+import { contornoSector, SECTORES, useValidacionRed, type SectorMapa } from "../localizacion/validacion";
 import { useRuta } from "../ruta";
 import { capaEtiquetas, capasBase, capasDatos, luces, maximosDe, pasoOcupacion, valorDemanda, valorSaldo } from "./capas";
 import { CAPITULOS, type Capas, type Contexto, type TipoDia } from "./capitulos";
-import { horaDelDia, horaReloj, useDemo, type CeldaDemanda, type CeldaSaldo, type Demo, type Estacion } from "./datos";
+import { horaDelDia, horaReloj, useDemo, type CeldaDemanda, type CeldaSaldo, type Demo, type Estacion, type Punto } from "./datos";
 import { Ficha } from "./Ficha";
 import { CurvaCobertura } from "./Graficas";
 import "./mapa.css";
@@ -84,7 +86,10 @@ function Escena({ demo, tema: nombreTema, setTema }: { demo: Demo; tema: Tema["n
   const indice = Math.max(0, CAPITULOS.findIndex((c) => c.id === idRuta));
   const capitulo = CAPITULOS[indice];
   const esLocalizacion = capitulo.id === "localizacion";
+  const esValidacion = capitulo.id === "validacion";
+  const esEstudio = esLocalizacion || esValidacion;
   const localizacion = useLocalizacionDemo(esLocalizacion, parametros.join("/"));
+  const validacion = useValidacionRed(esValidacion, parametros.join("/"));
   const reducido = useMemo(movimientoReducido, []);
 
   const radioDefecto = demo.manifiesto.networks.find((r) => r.network_id === demo.manifiesto.network_por_defecto)!.radio_m;
@@ -117,14 +122,14 @@ function Escena({ demo, tema: nombreTema, setTema }: { demo: Demo; tema: Tema["n
         zoom: v.zoom - (estrecho ? 0.9 : 0),
         maxPitch: 75,
         minZoom: 10.5,
-        maxZoom: esLocalizacion ? 19 : 17,
+        maxZoom: esEstudio ? 19 : 17,
         padding: { left: panelVisible && !estrecho ? 430 : 0, right: 0, top: 0, bottom: estrecho ? 220 : 0 },
         ...(conTransicion && !reducido
           ? { transitionDuration: 2200, transitionInterpolator: new FlyToInterpolator({ speed: 1.3 }) }
           : {}),
       };
     },
-    [capitulo, esLocalizacion, estrecho, panelVisible, reducido],
+    [capitulo, esEstudio, estrecho, panelVisible, reducido],
   );
   const [vista, setVista] = useState<Vista>(() => vistaDe(contextoVista, false));
   const interaccion = useRef({ usuario: false, transicion: false });
@@ -138,6 +143,20 @@ function Escena({ demo, tema: nombreTema, setTema }: { demo: Demo; tema: Tema["n
       transitionDuration: 0,
     }));
   }, [estrecho, panelVisible]);
+
+  const enfocarArea = (puntos: Punto[]) => {
+    if (!puntos.length) return;
+    const padding = { left: panelVisible && !estrecho ? 430 : 0, right: 0, top: 0, bottom: estrecho ? 220 : 0 };
+    const bounds: [Punto, Punto] = [
+      [Math.min(...puntos.map(([lon]) => lon)), Math.min(...puntos.map(([, lat]) => lat))],
+      [Math.max(...puntos.map(([lon]) => lon)), Math.max(...puntos.map(([, lat]) => lat))],
+    ];
+    const { latitude, longitude, zoom } = new WebMercatorViewport({
+      width: Math.max(180, window.innerWidth - padding.left), height: Math.max(180, window.innerHeight - padding.bottom),
+    }).fitBounds(bounds, { padding: 52, maxZoom: 17 });
+    interaccion.current = { usuario: true, transicion: false };
+    setVista((v) => ({ ...v, latitude, longitude, zoom, padding, bearing: 0, pitch: 0, transitionDuration: 0 }));
+  };
 
   // Al entrar en un capítulo: cámara, reloj, k y selección.
   useEffect(() => {
@@ -174,10 +193,10 @@ function Escena({ demo, tema: nombreTema, setTema }: { demo: Demo; tema: Tema["n
     navegacion.current?.querySelector('[aria-current="step"]')?.scrollIntoView({ block: "nearest", inline: "nearest" });
   }, [indice, panelVisible]);
 
-  const elegidoLocal = localizacion.elegido;
+  const elegidoLocal = esValidacion ? validacion.elegido : localizacion.elegido;
   useEffect(() => {
-    if (esLocalizacion && elegidoLocal) enfocar(elegidoLocal);
-  }, [esLocalizacion, elegidoLocal, enfocar]);
+    if (esEstudio && elegidoLocal) enfocar(elegidoLocal);
+  }, [esEstudio, elegidoLocal, enfocar]);
 
   // Al cambiar de radio, la red de referencia de ese radio.
   useEffect(() => {
@@ -224,7 +243,8 @@ function Escena({ demo, tema: nombreTema, setTema }: { demo: Demo; tema: Tema["n
       if (!enControl && (e.key === "ArrowRight" || e.key === "PageDown")) ir(indice + 1);
       else if (!enControl && (e.key === "ArrowLeft" || e.key === "PageUp")) ir(indice - 1);
       else if (e.key === "Escape") {
-        if (esLocalizacion) localizacion.elegir(null);
+        if (esValidacion) validacion.elegir(null);
+        else if (esLocalizacion) localizacion.elegir(null);
         else setSeleccion(null);
       }
       else if (!enControl && e.key === " " && capitulo.controles.reloj) {
@@ -239,7 +259,8 @@ function Escena({ demo, tema: nombreTema, setTema }: { demo: Demo; tema: Tema["n
     };
     window.addEventListener("keydown", tecla);
     return () => window.removeEventListener("keydown", tecla);
-  }, [indice, ir, capitulo.controles.reloj, nombreTema, setTema, esLocalizacion, localizacion.elegir]);
+  }, [indice, ir, capitulo.controles.reloj, nombreTema, setTema, esLocalizacion, esValidacion,
+      localizacion.elegir, validacion.elegir]);
 
   // Estado de las estaciones en este instante (capítulo de la jornada).
   const paso = pasoOcupacion(demo, t);
@@ -257,32 +278,44 @@ function Escena({ demo, tema: nombreTema, setTema }: { demo: Demo; tema: Tema["n
   }, [demo, red, paso, t]);
   const contexto: Contexto = { demo, red, radio, barrido, k, t, tipoDia, ahora };
 
-  const detalleVial = esLocalizacion && vista.zoom >= 14;
+  const detalleVial = esEstudio && vista.zoom >= 14;
   const base = useMemo(
-    () => esLocalizacion ? fondoLocalizacion(demo.base, tema, detalleVial) : capasBase(demo.base, tema),
-    [demo, tema, esLocalizacion, detalleVial],
+    () => esEstudio ? fondoLocalizacion(demo.base, tema, detalleVial) : capasBase(demo.base, tema),
+    [demo, tema, esEstudio, detalleVial],
   );
   const barrios = vista.zoom >= 12.9;
   const etiquetas = useMemo(
-    () => esLocalizacion
+    () => esEstudio
       ? rotulosLocalizacion(demo.base, tema, barrios)
       : capaEtiquetas(demo.base.etiquetas, tema, barrios ? 13 : 12),
-    [demo, tema, esLocalizacion, barrios],
+    [demo, tema, esEstudio, barrios],
   );
   const efectos = useMemo(() => [luces(tema)], [tema]);
-  const radioLocal = localizacion.pestana === "redes" && localizacion.filtros.radiosVisibles ? localizacion.filtros.radio : 0;
+  const radioLocal = esLocalizacion && localizacion.pestana === "redes" && localizacion.filtros.radiosVisibles
+    ? localizacion.filtros.radio : 0;
+  const marcadores = esValidacion ? validacion.marcadores : localizacion.marcadores;
   const capasLocal = useMemo(
-    () => esLocalizacion ? capasLocalizacion(localizacion.marcadores, elegidoLocal, radioLocal, tema) : [],
-    [esLocalizacion, localizacion.marcadores, elegidoLocal, radioLocal, tema],
+    () => esEstudio ? capasLocalizacion(marcadores, elegidoLocal, radioLocal, tema) : [],
+    [esEstudio, marcadores, elegidoLocal, radioLocal, tema],
   );
-  const datos = esLocalizacion ? capasLocal : capasDatos(demo, { capas, red, radio, k, t, tipoDia, franja, seleccion }, tema);
+  const capasRutas = useMemo(
+    () => esValidacion ? capasValidacion(validacion.visibles, validacion.caso) : [],
+    [esValidacion, validacion.visibles, validacion.caso],
+  );
+  const datos = esEstudio ? [...capasRutas, ...capasLocal] : capasDatos(demo, { capas, red, radio, k, t, tipoDia, franja, seleccion }, tema);
 
   const estacionElegida = seleccion ? red.estaciones.find((s) => s.station_id === seleccion) : undefined;
 
   const alPulsar = (info: PickingInfo) => {
     const id = info.layer?.id ?? "";
     if (id === "localizacion-puntos" && info.object) {
-      localizacion.elegir((info.object as Marcador).candidato.candidate_id);
+      (esValidacion ? validacion.elegir : localizacion.elegir)((info.object as Marcador).candidato.candidate_id);
+      return;
+    }
+    if (id === "validacion-sectores" && info.object) {
+      const s = info.object as SectorMapa;
+      validacion.cambiarSector(s.id);
+      enfocarArea(contornoSector(s));
       return;
     }
     const o = info.object as Estacion | { rango: number } | undefined;
@@ -295,6 +328,9 @@ function Escena({ demo, tema: nombreTema, setTema }: { demo: Demo; tema: Tema["n
   };
 
   const tooltip = (info: PickingInfo) => {
+    if (info.layer?.id === "validacion-sectores" && info.object) {
+      return { text: SECTORES[(info.object as SectorMapa).id] };
+    }
     if (info.layer?.id === "localizacion-puntos" && info.object) {
       const c = (info.object as Marcador).candidato;
       return { text: (c.via_cercana ?? c.candidate_id) + "\n" + num(c.extremos) + " extremos en el ajuste" };
@@ -370,6 +406,7 @@ function Escena({ demo, tema: nombreTema, setTema }: { demo: Demo; tema: Tema["n
             <div className="mapa-cuerpo">{capitulo.cuerpo(contexto)}</div>
 
             {esLocalizacion && <PanelLocalizacion estado={localizacion} enfocar={enfocar} />}
+            {esValidacion && <PanelValidacion estado={validacion} enfocar={enfocar} enfocarArea={enfocarArea} />}
             {capitulo.controles.red && <SelectorRadio demo={demo} radio={radio} setRadio={setRadio} />}
             {capitulo.controles.k && (
               <div className="mapa-control">
@@ -471,7 +508,7 @@ function Escena({ demo, tema: nombreTema, setTema }: { demo: Demo; tema: Tema["n
         <Leyenda tipo={capitulo.leyenda} demo={demo} tema={tema} radio={radio} capas={capas} tipoDia={tipoDia} />
       )}
 
-      {!esLocalizacion && estacionElegida && (
+      {!esEstudio && estacionElegida && (
         <Ficha
           demo={demo}
           red={red}
@@ -484,7 +521,8 @@ function Escena({ demo, tema: nombreTema, setTema }: { demo: Demo; tema: Tema["n
 
       <div className="mapa-atribucion">
         {demo.base.atribucion.split(" (")[0]} · Helbiz, Roma, febrero 2021 ·{" "}
-        {esLocalizacion ? "Catálogo T24 y redes T25 del ajuste" : "Red preliminar T36 · ejecución " + demo.manifiesto.run_id}
+        {esValidacion ? "Validación T26–T30" : esLocalizacion
+          ? "Catálogo T24 y redes T25 del ajuste" : "Red preliminar T36 · ejecución " + demo.manifiesto.run_id}
       </div>
     </div>
   );
