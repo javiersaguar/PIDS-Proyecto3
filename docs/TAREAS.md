@@ -34,8 +34,8 @@ responde a una pregunta y deja una tabla o figura que se cita en `docs/conclusio
 | T15 | Recorridos: distancia, duración, velocidad, rodeo y radios de acceso | R | Alejandro | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/3b8f594b3f47a6516ec7ab12da9af5ae1a3ba174) · [Notebook](https://github.com/javiersaguar/PIDS-Proyecto3/commit/19ffdcb1bd5233d38151985db2b5918cb5909fe5) |
 | T16 | Kilómetros y energía de referencia por patinete y día | R | Alejandro | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/dbb1b7911b64e8a4b35a72d83bf8bbde93495cd7) · [Notebook](https://github.com/javiersaguar/PIDS-Proyecto3/commit/19ffdcb1bd5233d38151985db2b5918cb5909fe5) |
 | T17 | Meteorología frente a demanda y días anómalos | E | Alejandro | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/aba574d0bcaf45023cb66aaa73f23ed4b0b08dec) · [Notebook](https://github.com/javiersaguar/PIDS-Proyecto3/commit/19ffdcb1bd5233d38151985db2b5918cb5909fe5) |
-| T18 | Modelo de tarifa e ingresos | E | Javier | en curso | |
-| T19 | Conclusiones de la exploración (`docs/conclusiones_eda.md`) y seguimiento del 23/11 | R | Los dos | en curso | [Parte de Alejandro](https://github.com/javiersaguar/PIDS-Proyecto3/commit/582fcba0ad9bd11fe2898c06c4ce125d093c77e8) |
+| T18 | Modelo de tarifa e ingresos | E | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/af9efdc77e0f7c3f07e3f5cdb1d7d45626d65070) · [Notebook](../exploracion/T18_tarifa_ingresos.ipynb) · [Web](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase0/t18) |
+| T19 | Conclusiones de la exploración (`docs/conclusiones_eda.md`) y seguimiento del 23/11 | R | Los dos | revisión | [Conclusiones cerradas](conclusiones_eda.md#t19-cierre-de-la-exploración) · [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/af9efdc77e0f7c3f07e3f5cdb1d7d45626d65070) · [Parte de Alejandro](https://github.com/javiersaguar/PIDS-Proyecto3/commit/582fcba0ad9bd11fe2898c06c4ce125d093c77e8) · Preparado para el seguimiento del 23/11 |
 
 ## Fase 1. Movilidad (60 %)
 
@@ -45,8 +45,8 @@ responde a una pregunta y deja una tabla o figura que se cita en `docs/conclusio
 | T21 | Matrices O-D por zonas administrativas | R | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/c7b3d4065c8c24026abfe129cdc68223b95a1c39) · [Notebook](../movilidad/T21_matrices_od_administrativas.ipynb) · [Web](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase1/t21) |
 | T22 | Matrices por franja horaria y laborable/fin de semana | R | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/7a0b270582a792ba146f5bbacc253f9ea56a7a97) · [Notebook](../movilidad/T22_matrices_od_temporales.ipynb) · [Web](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase1/t22) |
 | T23 | Indicadores O-D y mapa de líneas de deseo | R | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/7a0b270582a792ba146f5bbacc253f9ea56a7a97) · [Notebook](../movilidad/T23_indicadores_lineas_deseo.ipynb) · [Web](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase1/t23) |
-| T24 | Candidatos a estación | R | Javier | en curso | |
-| T25 | Línea base K-medoids / K-means con barrido de k | R | Javier | en curso | |
+| T24 | Candidatos a estación | R | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/af9efdc77e0f7c3f07e3f5cdb1d7d45626d65070) · [Notebook](../movilidad/T24_candidatos_estacion.ipynb) · [Web](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase1/t24) |
+| T25 | Línea base K-medoids / K-means con barrido de k | R | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/af9efdc77e0f7c3f07e3f5cdb1d7d45626d65070) · [Notebook](../movilidad/T25_linea_base_localizacion.ipynb) · [Web](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase1/t25) |
 | T26 | Cobertura de conjuntos (LSCP) con MILP | R | | pendiente | |
 | T27 | p-mediana y cobertura máxima de viajes completos con ambos extremos cubiertos | R | | pendiente | |
 | T28 | Frente de Pareto y elección de la red | R | | pendiente | |
