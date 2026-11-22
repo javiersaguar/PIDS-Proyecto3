@@ -18,3 +18,8 @@
 - [T21](T21_matrices_od_administrativas.ipynb) genera las matrices de municipios y zonas urbanísticas de Roma del mes, del ajuste y de la semana reservada. Las tablas completas y su catálogo están en [resultados/tablas/movilidad/](../resultados/tablas/movilidad). La asignación por viaje se regenera en `datos/procesados/T21_viajes_zonificados.parquet`.
 - [T22](T22_matrices_od_temporales.ipynb) segmenta las tres divisiones por hora local de salida y por tipo de día. El CSV de matrices es disperso. Cada fila representa un par con viajes.
 - [T23](T23_indicadores_lineas_deseo.ipynb) usa esas matrices para calcular la concentración y la asimetría. El mapa muestra los pares H3 con más viajes entre celdas.
+
+## Localización de estaciones
+
+- [T24](T24_candidatos_estacion.ipynb) construye el [catálogo de candidatos](../resultados/tablas/movilidad/T24_candidatos.csv) con la demanda del ajuste y las comprobaciones cartográficas. `candidate_id` identifica la celda H3 y `incluido_barrido` indica si su posición entra en los modelos.
+- [T25](T25_linea_base_localizacion.ipynb) compara K-medoids y K-means ajustado a candidatos. [El barrido](../resultados/tablas/movilidad/T25_barrido.csv) mide cobertura y distancias en los viajes de ajuste. [El catálogo de redes](../resultados/tablas/movilidad/T25_redes.csv) conserva las estaciones de cada `network_id` para reproducir la comparación.

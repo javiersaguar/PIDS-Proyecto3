@@ -3,12 +3,16 @@ import { T20 } from "./T20";
 import { T21 } from "./T21";
 import { T22 } from "./T22";
 import { T23 } from "./T23";
+import { T24 } from "./T24";
+import { T25 } from "./T25";
 
 const SECCIONES = [
   { id: "t20", tarea: "T20", titulo: "Primera matriz OD" },
   { id: "t21", tarea: "T21", titulo: "Matrices por zonas administrativas" },
   { id: "t22", tarea: "T22", titulo: "Matrices por franja" },
   { id: "t23", tarea: "T23", titulo: "Líneas de deseo" },
+  { id: "t24", tarea: "T24", titulo: "Candidatos a estación" },
+  { id: "t25", tarea: "T25", titulo: "Líneas base de localización" },
   { id: "siguientes", tarea: "", titulo: "Lo que falta" },
   { id: "decisiones", tarea: "", titulo: "Decisiones" },
 ];
@@ -16,6 +20,8 @@ const SECCIONES = [
 const DECISIONES = [
   ["Viajes intrazonales", "21,4 % en resolución 8; con radios de 300 m o más, parte empezarían y acabarían en la misma estación", "T20"],
   ["Desequilibrio interzonal", "Comparar el saldo por par y franja antes de decidir el rebalanceo", "T23"],
+  ["Catálogo de estaciones", "Partir de los candidatos de T24 y revisar los avisos cartográficos de las redes finalistas", "T24"],
+  ["Líneas base", "Comparar cobertura de viajes completos y distancia en cada extremo con el mismo presupuesto y radio", "T25"],
 ];
 
 export function Fase1() {
@@ -34,10 +40,12 @@ export function Fase1() {
       <T21 />
       <T22 />
       <T23 />
+      <T24 />
+      <T25 />
       <section id="siguientes" className="seccion">
         <header>
           <div>
-            <div className="etiqueta">T24–T39</div>
+            <div className="etiqueta">T26–T39</div>
             <h2>Lo que falta de la fase</h2>
           </div>
           <div>

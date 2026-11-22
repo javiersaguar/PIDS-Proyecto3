@@ -81,7 +81,7 @@
     \textbf{Grupo} & G\cifra{grupo} \\
     \textbf{Autores} & Cuevas, Alejandro \\
                      & Saguar, Javier \\
-    \textbf{Versión} & Fase 0 y análisis origen-destino \\
+    \textbf{Versión} & Fase 0 y líneas base de movilidad \\
     \textbf{Fecha} & \fechaversion \\
     \textbf{Curso académico} & 2026/2027 \\
   \end{tabular}
@@ -115,20 +115,19 @@
     \toprule
     Integrante & Fase 0: datos y exploración & Fase 1: movilidad & Fase 2: consumo & Fase 3: estación \\
     \midrule
-    Javier Saguar (líder) & Entorno reproducible, paquete \nb{comun/} y \nb{config.yaml}; limpieza (T10), recolocaciones (T11), patrones temporales (T12); web de resultados; viento frente a lluvia (T17, apartado 6); esta memoria & Revisión de T20, matrices administrativas y temporales, indicadores y líneas de deseo (T21--T23) & -- & -- \\
+    Javier Saguar (líder) & Entorno reproducible, web, limpieza (T10), recolocaciones (T11), patrones temporales (T12), análisis de viento (T17), tarifa (T18) y cierre de la exploración (T19) & Revisión de T20. Matrices y flujos (T21--T23), candidatos y líneas base (T24--T25) & -- & -- \\
     \addlinespace
-    Alejandro Cuevas & Densidad en H3 (T13), saldo por celda (T14), recorridos y radios (T15), energía de referencia (T16), meteorología (T17) & Primera matriz O-D en H3 (T20) & -- & -- \\
+    Alejandro Cuevas & Densidad en H3 (T13), saldo por celda (T14), recorridos y radios (T15), energía de referencia (T16), meteorología (T17) y conclusiones de estos análisis (T19) & Primera matriz O-D en H3 (T20) & -- & -- \\
     \bottomrule
   \end{tabularx}
 \end{table}
 
 \section*{Estado de esta versión}
 \addcontentsline{toc}{section}{Estado de esta versión}
-Esta versión recoge la fase~0 y el análisis origen-destino de la fase~1 (T20--T23).
-Incluye matrices en H3 y divisiones administrativas, cortes por franja y tipo de día e
-indicadores de los principales flujos. Los siguientes apartados describen el método
-previsto hasta que se incorporen sus resultados. El detalle de la exploración está en
-los anexos.
+Esta versión cierra la exploración e incorpora el análisis origen-destino y las
+primeras redes de estaciones de la fase~1 (T20--T25). Incluye las matrices, el
+catálogo de emplazamientos y la comparación de las dos líneas base. Los apartados
+pendientes recogen el método previsto. El detalle de la exploración está en los anexos.
 
 \newpage
 {\setstretch{1}\setlength{\parskip}{0pt}
@@ -312,15 +311,25 @@ circulares, así que el simulador admite origen y destino en la misma estación.
 La lluvia explica los días con pocos viajes (figura~\ref{fig:lluvia},
 \nb{exploracion/T17_meteorologia.ipynb}): en las horas con lluvia hubo el
 \cifra{cociente_lluvia}\pc{} de los viajes de la misma hora sin lluvia en los días de
-alrededor, y solo el \cifra{cociente_lluvia_finde}\pc{} en fin de semana. El domingo 07/02
-(\cifra{viajes_0702} viajes, \cifra{lluvia_0702}~mm) es demanda real: no se excluye, pero no
-es día de diseño. El viento fuerte reduce por sí mismo los viajes del fin de semana (un
-\cifra{viento_finde_pct}\pc{} por cada 10~km/h, descontada la lluvia;
-figura~\ref{fig:viento} del anexo~\ref{anx:figuras}), aunque la prueba es un solo episodio, el
-13--14/02, que tampoco son días de diseño. La semana reservada tiene un
-\cifra{reservada_mas_pct}\pc{} más de viajes al día: fue seca, más cálida y menos ventosa, y
-el tiempo explica parte de ese crecimiento, no todo. \textbf{Se validarán las cuotas} (reparto
-de viajes entre estaciones, pares y franjas), que no dependen del volumen.
+alrededor, y solo el \cifra{cociente_lluvia_finde}\pc{} en fin de semana. Se conservan
+las jornadas del 07/02 (\cifra{viajes_0702} viajes con \cifra{lluvia_0702}~mm de lluvia)
+y del 13--14/02 (viento fuerte y frío), marcadas como tiempo adverso al elegir días
+representativos. Controlando la lluvia, 10~km/h más de viento se asocian con un
+\cifra{viento_finde_pct}\pc{} menos de viajes de fin de semana. El resultado se apoya
+en un único episodio ventoso (figura~\ref{fig:viento}). La semana reservada fue seca
+y registró un \cifra{reservada_mas_pct}\pc{} más de viajes diarios. La validación
+comparará ese volumen observado y el reparto entre estaciones, pares y franjas.
+
+\subsection{Tarifa e importe nominal (T18)}
+La regla de \cifra{tarifa_desbloqueo}~\texteuro{} por desbloqueo y
+\cifra{tarifa_minuto}~\texteuro{} por minuto, aplicada sobre los segundos registrados,
+da \cifra{tarifa_discrepancias} discrepancias por encima de la tolerancia de T10.
+Los viajes elegibles suman \cifra{tarifa_importe_elegible}~\texteuro{} en el mes.
+Los registros excluidos representan el \cifra{tarifa_importe_excluido_pct}\pc{} del
+importe bruto. Solo los de más de dos horas suman
+\cifra{tarifa_importe_largos}~\texteuro{}. Este importe nominal permite comparar
+escenarios a partir de los viajes atendidos con la misma tarifa
+(\nb{exploracion/T18_tarifa_ingresos.ipynb}).
 
 % ------------------------------------------------------------------------------------------
 \section{Movilidad}
@@ -353,13 +362,11 @@ resume intercambios territoriales y la división fina conserva los flujos locale
 para el mes y para cada periodo de análisis.
 
 \subsubsection{Franjas horarias y tipos de día (T22)}
-Se construyeron \cifra{od_matrices_temporales} matrices entre las tres divisiones, los
-tres periodos, las cinco franjas y los dos tipos de día. La clasificación se hace por
-la hora local de salida. Cada recuento se divide por el número de días de su tipo para
-comparar demanda diaria. En el ajuste, de 7 a 10~h se registran
-\cifra{od_manana_lab_dia} viajes por laborable y \cifra{od_manana_fds_dia} por día de fin
-de semana (figura~\ref{fig:od-franjas}). El simulador de inventario usará perfiles
-separados. Las matrices completas salen de \nb{movilidad/T22_matrices_od_temporales.ipynb}.
+Las \cifra{od_matrices_temporales} matrices combinan tres divisiones, tres periodos,
+cinco franjas de salida en hora local y dos tipos de día. En el ajuste, de 7 a 10~h
+hay \cifra{od_manana_lab_dia} viajes por laborable y \cifra{od_manana_fds_dia} por
+día de fin de semana. El simulador usará ambos perfiles (figura~\ref{fig:od-franjas},
+\nb{movilidad/T22_matrices_od_temporales.ipynb}).
 
 \begin{figure}[!htb]
   \centering
@@ -368,28 +375,54 @@ separados. Las matrices completas salen de \nb{movilidad/T22_matrices_od_tempora
 \end{figure}
 
 \subsubsection{Indicadores y líneas de deseo (T23)}
-En H3, los diez pares de celdas con más viajes, sumando ambos sentidos, concentran el
-\cifra{od_top10_inter_pct}\pc{} de los \cifra{od_interzonales_ajuste} viajes entre
-celdas del ajuste. La suma de saldos absolutos por par equivale al
+Los diez pares H3 con más viajes, sumando ambos sentidos, concentran el
+\cifra{od_top10_inter_pct}\pc{} de los \cifra{od_interzonales_ajuste} viajes
+entre celdas en el ajuste. La suma de saldos absolutos por par equivale al
 \cifra{od_asimetria_obs_pct}\pc{} de esos viajes, frente al
-\cifra{od_asimetria_azar_pct}\pc{} esperado si los sentidos son equiprobables,
-manteniendo fijo el total de cada par. La diferencia agregada es pequeña. Los
-desequilibrios locales y el momento en que aparecen se conservan en
-\nb{movilidad/T23_indicadores_lineas_deseo.ipynb} para estudiar el inventario. La
-figura~\ref{fig:lineas-deseo} representa flujos agregados entre centros de celda.
+\cifra{od_asimetria_azar_pct}\pc{} esperado con sentidos equiprobables y el
+mismo total por par. La figura~\ref{fig:lineas-deseo} muestra los flujos principales.
+Los saldos por franja se calculan en \nb{movilidad/T23_indicadores_lineas_deseo.ipynb}.
 
-\begin{figure}[!htb]
+\begin{figure}[H]
   \centering
-  \includegraphics[width=0.64\textwidth]{T23_lineas_deseo}
+  \includegraphics[width=0.60\textwidth]{T23_lineas_deseo}
   \caption{Líneas de deseo de los pares H3 con más viajes entre celdas en el ajuste. El grosor suma ambos sentidos y la flecha indica el predominante.}\label{fig:lineas-deseo}
 \end{figure}
 \FloatBarrier
 
 \subsection{Alternativas de localización}
-\pendiente{Candidatos en las celdas de resolución~9 con demanda (T24). K-medoids como línea
-base (T25), cobertura de conjuntos LSCP (T26), $p$-mediana y cobertura máxima MCLP (T27), con
-el mismo conjunto de candidatos y viajes y $k$ en el rango de la tabla~\ref{tab:radios}.
-Frente de Pareto entre número de estaciones y distancia a pie en origen y destino (T28).}
+\subsubsection{Catálogo de candidatos (T24)}
+Los extremos del ajuste dan \cifra{candidatos_n} candidatos en H3 de resolución~9.
+Sobre la cartografía de OpenStreetMap \cite{osmroma}, \cifra{candidatos_desplazados}
+centros en el río se sustituyen por el extremo observado en tierra más próximo
+de su celda. Quedan \cifra{candidatos_avisos} posiciones con avisos cartográficos
+para priorizar la revisión urbana de las finalistas (figura~\ref{fig:candidatos}).
+El catálogo mantiene el identificador de celda, las coordenadas y el peso de la
+demanda. Todos los emplazamientos requieren comprobación urbana.
+
+\subsubsection{Líneas base de localización (T25)}
+Se ajustan K-medoids y K-means ponderados por los extremos de cada celda. Los
+centroides de K-means se asignan a candidatos distintos. Se calculan
+\cifra{redes_base_n} redes y se evalúan \cifra{redes_base_eval_n} combinaciones de
+red y radio sobre los extremos originales del ajuste. Un viaje cuenta como
+cubierto si ambos extremos están dentro del radio de acceso de alguna estación.
+Con \cifra{redes_base_k_ref} estaciones a 300~m, K-medoids cubre el
+\cifra{redes_base_medoids_ref_pct}\pc{} de los viajes y K-means el
+\cifra{redes_base_means_ref_pct}\pc{}. Con \cifra{redes_base_k_max_300} estaciones
+la mejor de las dos redes cubre el \cifra{redes_base_mejor_max_pct}\pc{}. Esto da
+una referencia para optimizar la cobertura conjunta de origen y destino
+(figura~\ref{fig:redes-base}). La semana reservada se usará en T30.
+
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=0.86\textwidth]{T25_cobertura}
+  \caption{Cobertura geométrica de ambos extremos en el ajuste. La línea horizontal marca el 80\pc{} para comparar los métodos.}\label{fig:redes-base}
+\end{figure}
+\FloatBarrier
+
+\pendiente{Cobertura de conjuntos LSCP (T26), $p$-mediana y cobertura máxima MCLP
+(T27), con los mismos candidatos y viajes y el rango de la tabla~\ref{tab:radios}.
+Frente de Pareto con estaciones, cobertura y distancia de acceso (T28).}
 
 \subsection{Flota frente a nivel de servicio}
 \pendiente{Asignación de cada viaje a sus estaciones y matriz estación-estación (T31).
@@ -467,9 +500,10 @@ criterio de autonomía para elegir uno (T55); carga inteligente frente a carga i
 consume la flota; y qué paneles y batería necesita la estación elegida, con las cifras de la
 ejecución validada (T61).}
 
-\subsection{Decisiones de la exploración}
-Las decisiones de la tabla~\ref{tab:decisiones} están en \nb{config.yaml} y las leen todas
-las tareas.
+\subsection{Decisiones de la exploración (T19)}
+La tabla~\ref{tab:decisiones} recoge lo que la exploración fija para el diseño. El
+detalle para el seguimiento del 23/11 está en \nb{docs/conclusiones_eda.md}. Los
+parámetros compartidos se leen de \nb{config.yaml}.
 
 \begin{table}[H]
   \centering\small
@@ -546,6 +580,12 @@ para que el óptimo no quede en el borde.
   \centering
   \includegraphics[width=\textwidth]{T21_od_administrativa}
   \caption{Matrices del ajuste por municipios y por las zonas urbanísticas con más extremos. Cada panel tiene su propia escala.}\label{fig:od-administrativa}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.72\textwidth]{T24_mapa_candidatos}
+  \caption{Candidatos de resolución 9 del ajuste. Los centros desplazados conservan su celda H3. La cartografía de referencia procede de OpenStreetMap.}\label{fig:candidatos}
 \end{figure}
 
 \begin{figure}[H]

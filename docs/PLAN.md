@@ -115,6 +115,7 @@ Cada pregunta de la exploración alimenta una decisión de las fases siguientes.
 | ¿Cómo son los recorridos? | `dis_m`, `tt_s`, `vel_kmh`, rodeo frente a línea recta y viajes circulares | Radios de acceso del barrido y demanda que dejaría de tener sentido con estaciones | T15 |
 | ¿Cuánta energía mueve cada patinete? | km y Wh por viaje, patinete y día con 13,5 Wh/km | Frecuencia de recarga y orden de magnitud de la demanda por estación | T16 |
 | ¿Hay días anómalos? | Viajes diarios frente a lluvia y temperatura | Si se excluye algún día y si la semana reservada es comparable | T17 |
+| ¿Qué importe representa la demanda observada? | Tarifa por desbloqueo y minuto, importe elegible y diferencia con el bruto | Comparar el importe nominal de los viajes atendidos entre escenarios con la misma tarifa | T18 |
 
 **Conclusiones de la fase 0.** `docs/conclusiones_eda.md` recoge, para cada decisión, el valor propuesto, la tabla o figura que lo justifica, el periodo sobre el que se ha calculado y lo que cambia en este plan. Es el documento que se lleva al seguimiento del 23/11. Los parámetros acordados pasan a `config.yaml`.
 
@@ -131,6 +132,8 @@ Cada pregunta de la exploración alimenta una decisión de las fases siguientes.
 ### Candidatos y optimización
 
 Formar candidatos a partir de celdas con demanda en el periodo de ajuste. Levantar un catálogo de coordenadas y comprobar sobre el mapa casos sensibles como extremos junto al río, vías de acceso restringido y concentraciones de candidatos muy próximas. Anotar el estado de verificación del emplazamiento. Los centros de celda dan candidatos analíticos y requieren una comprobación urbana antes de interpretar el diseño como instalable.
+
+T24 deja el [catálogo compartido de candidatos](../resultados/tablas/movilidad/T24_candidatos.csv). T25 guarda las [redes de referencia](../resultados/tablas/movilidad/T25_redes.csv) y su [barrido en el ajuste](../resultados/tablas/movilidad/T25_barrido.csv). Las evaluaciones posteriores pueden reutilizar los mismos identificadores, radios y métricas.
 
 | Método | Decisión que permite tomar | Evidencia |
 | --- | --- | --- |

@@ -6,6 +6,7 @@ import { T14 } from "./T14";
 import { T15 } from "./T15";
 import { T16 } from "./T16";
 import { T17 } from "./T17";
+import { T18 } from "./T18";
 
 const SECCIONES = [
   { id: "t10", tarea: "T10", titulo: "Limpieza" },
@@ -16,7 +17,8 @@ const SECCIONES = [
   { id: "t15", tarea: "T15", titulo: "Recorridos y radios" },
   { id: "t16", tarea: "T16", titulo: "Energía de referencia" },
   { id: "t17", tarea: "T17", titulo: "Meteorología" },
-  { id: "decisiones", tarea: "", titulo: "Decisiones de la fase" },
+  { id: "t18", tarea: "T18", titulo: "Tarifa e importe" },
+  { id: "decisiones", tarea: "T19", titulo: "Decisiones de la fase" },
 ];
 
 const DECISIONES = [
@@ -39,8 +41,9 @@ const DECISIONES = [
   ["Frecuencia de recarga", "Cada varios días con el uso observado (autonomía mediana de 45,6 días); se repite con la flota simulada", "T16"],
   ["Energía por estación", "De décimas de kWh a 1 kWh al día; más de la mitad llega de 16 a 24 h", "T16"],
   ["Días excluidos", "Ninguno: el 07/02 (lluvia) y el 13–14/02 (viento fuerte y frío) son días reales de tiempo adverso; se marcan y no se usan como días de diseño", "T17"],
-  ["Viento", "Reduce por sí mismo los viajes del fin de semana (−14 % por cada 10 km/h), casi nada los laborables; no entra en el simulador porque la prueba es un solo episodio", "T17"],
+  ["Viento", "Se asocia con menos viajes de fin de semana en un episodio. El simulador conserva la demanda observada.", "T17"],
   ["Semana reservada", "18 % más de viajes, sin lluvia, más cálida y con menos viento: la validación es más exigente que el ajuste", "T17"],
+  ["Importe nominal", "Comparar la demanda atendida con la tarifa observada y sobre los mismos viajes elegibles", "T18"],
 ];
 
 export function Fase0() {
@@ -62,10 +65,11 @@ export function Fase0() {
       <T15 />
       <T16 />
       <T17 />
+      <T18 />
       <section id="decisiones" className="seccion">
         <header>
           <div>
-            <div className="etiqueta">Resumen</div>
+            <div className="etiqueta">T19 · Cierre de la exploración</div>
             <h2>Decisiones de la fase 0</h2>
           </div>
           <div>

@@ -238,6 +238,34 @@ def cifras() -> dict[str, str]:
         "od_asimetria_obs_pct": num(100 * flujo["asimetria"], 1),
         "od_asimetria_azar_pct": num(100 * flujo["asimetria_azar"], 1),
     }
+
+    t18 = fila(leer("exploracion/T18_resumen.csv"), periodo="mes")
+    tarifa = cfg["limpieza"]["tarifa"]
+    t24 = leer("movilidad/T24_resumen.csv").iloc[0]
+    t25 = leer("movilidad/T25_barrido.csv")
+    ref25 = leer("movilidad/T25_resumen.csv")
+    medoids = fila(ref25, radio_m=300, metodo="kmedoids")
+    means = fila(ref25, radio_m=300, metodo="kmeans")
+    barrido300 = t25[t25["radio_m"].eq(300)]
+    k_max = barrido300["k"].max()
+    c |= {
+        "tarifa_desbloqueo": num(tarifa["desbloqueo_eur"]),
+        "tarifa_minuto": num(tarifa["minuto_eur"], 2),
+        "tarifa_discrepancias": num(t18["precios_fuera_tolerancia"]),
+        "tarifa_importe_elegible": num(t18["importe_elegible_eur"], 2),
+        "tarifa_importe_excluido_pct": num(t18["pct_importe_excluido"], 1),
+        "tarifa_importe_largos": num(t18["importe_viajes_largos_eur"], 2),
+        "candidatos_n": num(t24["candidatos"]),
+        "candidatos_desplazados": num(t24["desplazados"]),
+        "candidatos_avisos": num(t24["candidatos_con_avisos"]),
+        "redes_base_n": num(t25["network_id"].nunique()),
+        "redes_base_eval_n": num(len(t25)),
+        "redes_base_k_ref": num(medoids["k_referencia"]),
+        "redes_base_medoids_ref_pct": num(medoids["pct_viajes_cubiertos_ref"], 1),
+        "redes_base_means_ref_pct": num(means["pct_viajes_cubiertos_ref"], 1),
+        "redes_base_k_max_300": num(k_max),
+        "redes_base_mejor_max_pct": num(barrido300.loc[barrido300["k"].eq(k_max), "pct_viajes_cubiertos"].max(), 1),
+    }
     return c
 
 

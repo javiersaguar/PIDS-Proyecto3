@@ -506,7 +506,7 @@ function BloqueViento() {
   return (
     <Bloque
       titulo="6. Viento frente a lluvia"
-      queMuestra="Si el viento reduce los viajes por sí mismo o solo porque llega con la lluvia: los viajes de los 8 días de fin de semana frente al viento máximo, y el efecto de 10 km/h más de viento en los viajes de cada hora descontando la lluvia."
+      queMuestra="La asociación entre viajes y viento máximo en los ocho días de fin de semana. El modelo horario estima el cambio asociado con 10 km/h más de viento, controlando la lluvia."
       porQue="En el fin de semana el viento máximo se asocia con los viajes más que la lluvia, pero son 8 días. Decide si el viento entra en el simulador o en la elección de los días de diseño."
       comoLeer="En la vista por días, los puntos huecos son días con lluvia. En la vista por horas, cada punto es el cambio de los viajes por hora con 10 km/h más de viento y la barra, su intervalo al 95 %. «Entre días» compara la misma hora en días distintos; «mismo día» solo compara horas de un mismo día."
       conclusiones={[
@@ -525,9 +525,8 @@ function BloqueViento() {
         `En fin de semana, las ${secas.horas} horas secas con al menos ${v.umbrales.viento_kmh} km/h tuvieron el ${pc(100 * secas.cociente, 0)} de los viajes de las horas secas en calma (menos de ${v.umbrales.calma_kmh} km/h) a la misma hora. Todas son del ${diasSecas.join(" y el ")}.`,
         `El límite es que la prueba descansa en un episodio: el fin de semana del 13–14/02, frío y con rachas de casi 70 km/h. El 14/02 no llovió y tuvo ${d14.viajes} viajes, frente a ${Math.min(...calmos)}–${Math.max(...calmos)} de los fines de semana secos y en calma. El modelo por horas descuenta la temperatura y el efecto se mantiene.`,
         <>
-          <strong>Conclusión.</strong> El viento fuerte reduce por sí mismo la demanda de ocio del fin de semana, menos que la lluvia pero claramente, y
-          casi no afecta a los laborables. No entra en el simulador: con un episodio no se puede ajustar y el dimensionado se hace con días normales. El
-          13 y el 14/02 se tratan como el 07/02: se quedan en los datos, se marcan como tiempo adverso y no se usan como días de diseño.
+          En este mes, la asociación entre viento y menos viajes de fin de semana se apoya en un solo episodio. El simulador conserva la demanda
+          observada. El 07/02 y el 13–14/02 se marcan como tiempo adverso al elegir los días de diseño.
         </>,
       ]}
       fuente="tablas/exploracion/T17_viento_diario.csv, T17_viento_horario.csv y T17_viento_horas_secas.csv"

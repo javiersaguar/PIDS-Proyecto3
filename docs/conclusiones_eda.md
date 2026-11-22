@@ -252,15 +252,11 @@ Lluvia, temperatura y viento de Roma centro según la API histórica de Open-Met
 Con 28 días, las correlaciones son orientativas. La celda del reanálisis está a 6,1 km del punto
 pedido (`T17_resumen.csv`).
 
-**Viento frente a lluvia (apartado 6 del notebook).** En el fin de semana el viento máximo se
-asocia con los viajes más que la lluvia (−0,88 frente a −0,46). No es un reflejo de la lluvia:
-los dos apenas van juntos, la correlación del viento casi no cambia al descontar la lluvia y
-el modelo por horas, con lluvia, viento, temperatura y tendencia a la vez, da un efecto propio
-del viento en el fin de semana y casi ninguno en laborables. La prueba descansa en un solo
-episodio: el fin de semana frío y ventoso del 13–14/02 (el 14/02, sin lluvia, tuvo 717
-viajes, frente a 889–1 048 en los fines de semana secos y en calma). **Conclusión: el viento
-fuerte reduce por sí mismo la demanda de ocio del fin de semana, menos que la lluvia, y casi
-no afecta a los laborables.** No entra en el simulador; el 13 y el 14/02 se tratan como el 07/02.
+**Viento frente a lluvia (apartado 6 del notebook).** La asociación del viento con menos
+viajes de fin de semana se mantiene al controlar la lluvia, la temperatura y la tendencia.
+El resultado depende del episodio frío y ventoso del 13–14/02. El 14/02 tuvo 717 viajes
+sin lluvia, frente a 889–1 048 en los fines de semana secos y en calma. El simulador
+conserva la demanda observada y marca ese episodio y el 07/02 como tiempo adverso.
 
 **Respuesta a la pregunta abierta sobre el 07/02 y el crecimiento.** La lluvia explica el 07/02 y parte del crecimiento: al
 añadir lluvia y temperatura, la pendiente del mes baja de 10,5 a 7,5 viajes/día cada día, pero
@@ -269,9 +265,42 @@ no desaparece.
 | Decisión | Valor propuesto | Evidencia | Periodo | Limitaciones | Qué cambia en el plan |
 |---|---|---|---|---|---|
 | ¿Excluir algún día? | **No excluir ninguno** de la localización ni de las matrices. El 07/02 (lluvia) y el 13–14/02 (viento fuerte y frío) son demanda real de tiempo adverso: se marcan y no se usan como días de diseño ni como días tipo | `T17_dias_anomalos.csv`, `T17_viento_fines_de_semana.csv` | Mes | Solo el 07/02 baja del 70 % de la mediana; el 13 y el 14/02 se quedan en el 82–83 % | Marcarlos como días de tiempo adverso en el simulador |
-| ¿Entra el viento en el simulador? | **No.** Reduce la demanda del fin de semana por sí mismo (−14 % por cada 10 km/h), pero la prueba es un solo episodio y el dimensionado se hace con días normales | `T17_viento_diario.csv`, `T17_viento_horario.csv`, `T17_viento_horas_secas.csv` | Mes | Un episodio; los errores típicos suponen horas independientes | Ninguno: se cita como limitación en la memoria |
+| ¿Entra el viento en el simulador? | Se conserva la demanda observada. Los 10 km/h adicionales se asocian con un 14 % menos de viajes de fin de semana en el modelo que controla la lluvia. | `T17_viento_diario.csv`, `T17_viento_horario.csv`, `T17_viento_horas_secas.csv` | Mes | Un episodio. Los errores típicos suponen horas independientes. | Marcar los días adversos para elegir jornadas representativas. |
 | ¿Es comparable la semana reservada? | **Con cautela.** Tiene un 18,2 % más de viajes, no llovió, fue más cálida (10,9 °C frente a 9,3 °C) y con menos viento. El tiempo explica parte de la diferencia, no toda | `T17_resumen.csv`, `T17_tendencia.csv`, `T17_cociente_semana.csv` | Mes | n = 28 con cuatro variables | La validación de T30 es más exigente que el ajuste; hay que decirlo al presentarla |
 | Restricciones por COVID en Lacio | No se afirma nada: no hemos podido leer el texto oficial de las medidas de febrero de 2021 | — | — | — | Pregunta abierta |
+
+## T18. Tarifa e importe nominal
+
+La tarifa de **1 € por desbloqueo y 0,15 €/min**, calculada sobre los segundos
+registrados, reproduce los **25 186 precios** dentro de la tolerancia de T10.
+Los 23 292 viajes elegibles suman **62 040,68 €** de los 76 419,57 € registrados.
+El **18,8 % del importe bruto** queda en registros excluidos. Los 122 registros
+de más de dos horas suman 10 335,96 €, la mayor parte de esa diferencia.
+En el ajuste el importe elegible es de **2 104,70 €/día** y en la semana reservada
+de **2 548,86 €/día**. Para comparar escenarios, se sumará el precio nominal de los
+viajes elegibles atendidos. Los cobros, descuentos y costes quedan fuera de este cálculo.
+[Notebook](../exploracion/T18_tarifa_ingresos.ipynb) · [Resumen](../resultados/tablas/exploracion/T18_resumen.csv)
+
+## T19. Cierre de la exploración
+
+Conclusiones preparadas para el seguimiento del 23/11. La fase de diseño usa la
+limpieza principal y las decisiones de ajuste fijadas del 1 al 21 de febrero.
+La semana del 22 al 28 queda reservada para evaluar las redes elegidas con las
+mismas reglas y comparar a la vez volumen y cuotas.
+
+| Decisión para las siguientes fases | Evidencia de la exploración | Aplicación en el diseño |
+|---|---|---|
+| Ajustar sobre **16 710** viajes y reservar **6 582** | T10 deja 23 292 viajes elegibles de 25 186. La limpieza permisiva altera poco las medianas y la concentración. | Mantener la limpieza principal y repetir la sensibilidad con los indicadores de la red elegida. |
+| Modelar cinco franjas y dos tipos de día | T12 muestra perfiles de salida distintos. El máximo simultáneo observado fue de 41 viajes. | Separar perfiles del simulador. Calcular el stock y los anclajes por estación con la secuencia de salidas y llegadas. |
+| Usar H3 de resolución 9 para emplazamientos y 8 para diagnóstico espacial | T13 sitúa la arista media de resolución 9 cerca de 201 m. T15 compara radios de 200, 250 y 300 m y añade 400 m como sensibilidad. | Construir T24 sobre el ajuste. Barrer los rangos de T13 con margen del 20 % y medir acceso en cada extremo del viaje. |
+| Simular rebalanceo nocturno de 100 patinetes por día | T11 detecta recolocaciones y T14 encuentra saldos zonales persistentes. | Comparar 0, 100 y 220 movimientos con la misma red y medir rechazos, distancia y déficit residual. |
+| Conservar los días de tiempo adverso | T17 identifica el 07/02 por lluvia y el 13–14/02 por viento y frío. La semana reservada tuvo un 18,2 % más de viajes diarios. | Marcar esos días al elegir jornadas representativas y mantenerlos en los recuentos. Evaluar la semana reservada con su demanda observada. |
+| Mantener referencias de energía e importe por viaje | T16 estima 22,1 kWh/día de tracción con la flota observada en el ajuste. T18 verifica el precio nominal por desbloqueo y tiempo. | Recalcular las dos magnitudes sobre los viajes atendidos y usar la energía por estación para dimensionar la recarga. |
+
+Los radios describen acceso geométrico. La elección de red exige comprobar rutas
+a pie donde haya barreras, además de simular inventario. La comparación de la
+semana reservada se hará después de congelar la localización y los criterios de
+evaluación. [Parámetros](../config.yaml) · [Plan de movilidad](PLAN.md#4-movilidad-y-flota)
 
 ## T20. Primera matriz O-D en H3 (Alejandro)
 
@@ -327,6 +356,29 @@ par fueran equiprobables. El simulador podrá usar los saldos por par y franja
 para estimar dónde y cuándo hace falta rebalancear. El mapa conecta los
 centros de celda y ajusta el grosor al volumen total de ida y vuelta.
 [Notebook de T23](../movilidad/T23_indicadores_lineas_deseo.ipynb) · [Indicadores por corte](../resultados/tablas/movilidad/T23_indicadores.csv)
+
+## T24. Catálogo de candidatos para localización
+
+Los **33 420 extremos** del ajuste se reparten en **600 celdas H3 de resolución 9**.
+Siete centros caen en agua cartografiada y se sustituyen por el extremo observado
+en tierra más cercano al centro de la misma celda. Las 600 posiciones pasan al
+barrido. Hay **65** con avisos cartográficos, entre cercanía al río (20) y cercanía
+a vías con restricciones (47), con dos coincidencias. La separación mínima
+entre posiciones es de 236 m. El catálogo conserva las coordenadas originales,
+la corrección y el estado de revisión urbana.
+[Catálogo](../resultados/tablas/movilidad/T24_candidatos.csv) · [Fuente cartográfica](../datos/externos/osm/osm_roma_2026-11-19.meta.json)
+
+## T25. Líneas base comparables en el ajuste
+
+Se calcularon **118 redes** de K-medoids y K-means ajustado a candidatos, que
+dan **166** evaluaciones al cruzar tamaños y radios. A 300 m con 141 estaciones,
+K-medoids cubre ambos extremos del **58,6 %** de los viajes y K-means del
+**58,4 %**. Con 207 estaciones la mejor de las dos redes llega al **75,6 %**.
+El umbral del 80 % se alcanza desde 350 estaciones ensayadas a 200 m y desde
+280 a 250 m con ambos métodos. El número de estaciones estimado por área en
+T13 sirve para acotar el barrido. La cobertura conjunta de un viaje se mide
+directamente sobre sus dos extremos y será el objetivo de la comparación de T26–T28.
+[Barrido](../resultados/tablas/movilidad/T25_barrido.csv) · [Resumen](../resultados/tablas/movilidad/T25_resumen.csv) · [Redes](../resultados/tablas/movilidad/T25_redes.csv)
 
 ## Preguntas de la exploración ya respondidas
 

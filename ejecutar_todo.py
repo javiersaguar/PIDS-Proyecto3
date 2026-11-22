@@ -25,11 +25,14 @@ PASOS = [
     "exploracion/T15_recorridos.ipynb",
     "exploracion/T16_energia_referencia.ipynb",
     "exploracion/T17_meteorologia.ipynb",
+    "exploracion/T18_tarifa_ingresos.ipynb",
     # Fase 1. Movilidad
     "movilidad/T20_matrices_od.ipynb",
     "movilidad/T21_matrices_od_administrativas.ipynb",
     "movilidad/T22_matrices_od_temporales.ipynb",
     "movilidad/T23_indicadores_lineas_deseo.ipynb",
+    "movilidad/T24_candidatos_estacion.ipynb",
+    "movilidad/T25_linea_base_localizacion.ipynb",
     "movilidad/T36_capas_mapa.ipynb",
 ]
 

@@ -18,6 +18,9 @@
 | `T15_recorridos.ipynb` | Recorridos, rodeo y radios de acceso | Alejandro |
 | `T16_energia_referencia.ipynb` | Kilómetros y energía de referencia | Alejandro |
 | `T17_meteorologia.ipynb` | Meteorología frente a demanda y días anómalos | Alejandro |
+| `T18_tarifa_ingresos.ipynb` | Verificación de la tarifa e importe nominal por día y periodo | Javier |
+
+Las [conclusiones de T19](../docs/conclusiones_eda.md#t19-cierre-de-la-exploración) reúnen las decisiones que pasan a las siguientes fases.
 
 Todos siguen la misma estructura:
 
