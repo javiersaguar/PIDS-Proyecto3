@@ -7,7 +7,7 @@ import h3
 import numpy as np
 import pandas as pd
 
-from alternativas import intercambiar
+from alternativas import blindar, intercambiar
 from bateria import Carga
 from comun.config import cargar_config, ruta
 from comun.datos import cargar_viajes
@@ -60,14 +60,25 @@ def rebalanceo(esc, limites):
     return tabla, resumen(detalle, "T33_noches")
 
 
+# Casos de T35: (nombre, reserva %, factor de consumo, recarga en anclaje). Los dos últimos son
+# pruebas de estrés: el doble de consumo y una flota que no carga en las estaciones.
+CASOS_BATERIA = (("inventario", None, 1, True), ("carga", 0, 1, True), ("reserva20", 20, 1, True),
+                 ("consumo_doble", 20, 2, True), ("sin_recarga", 20, 1, False))
+
+
 def bateria(esc, energia, limite, cfg):
     filas = []
-    for periodo in esc.demandas:
-        for caso, reserva in (("inventario", None), ("carga", 0), ("reserva20", 20)):
-            carga = Carga(energia[periodo], cfg["bateria_wh"], cfg["tiempo_recarga_h"], reserva) if reserva is not None else None
+    for periodo, dem in esc.demandas.items():
+        t_ini = dem.t_o.min()
+        for caso, reserva, factor, recarga_anclaje in CASOS_BATERIA:
+            carga = (Carga(energia[periodo] * factor, cfg["bateria_wh"], cfg["tiempo_recarga_h"], reserva,
+                           recarga_anclaje) if reserva is not None else None)
             r = esc.simular(periodo, limite, carga=carga)
-            filas.append({"periodo": periodo, "caso": caso, "reserva_pct": reserva,
-                          **r.resumen, "n_sin_bateria": r.resumen.get("n_sin_bateria", 0)})
+            sin = r.viajes["resultado"].eq("sin_bateria").to_numpy()
+            primero = (dem.t_o[sin].min() - t_ini) / DIA_S if sin.any() else None
+            filas.append({"periodo": periodo, "caso": caso, "reserva_pct": reserva, "factor_consumo": factor,
+                          "recarga_en_anclaje": recarga_anclaje, **r.resumen,
+                          "dias_hasta_primer_rechazo": primero})
     return resumen(filas, "T35_carga")
 
 
@@ -164,7 +175,12 @@ def comparar_cierres(escenarios, normales, caso, limite):
 
 
 def recarga(t_llegada, destino, wh, n, cfg):
-    """Demanda equivalente en W medios por cuarto de hora, con cola de carga."""
+    """Demanda equivalente en kW medios por cuarto de hora y estación.
+
+    Cada viaje atendido repone su energía en la estación de destino desde la hora de
+    llegada, a la potencia nominal del cargador. Las sesiones se solapan sin límite de
+    potencia ni cola: es la demanda que tendría que cubrir la estación de recarga.
+    """
     paso = 900
     p_w = cfg["bateria_wh"] / cfg["tiempo_recarga_h"]
     desde = t_llegada - (t_llegada.min() // paso) * paso
@@ -252,11 +268,13 @@ def publicar():
     indices = problema.indices(base.red.ids)
     protegidas = problema.indices([base.red.ids[s] for s, _ in caso[2]])
     cambios = []
-    for nombre, w, objetivo, fijas in (
-        ("equidad", pesos, 1, ()), ("redundante", np.ones(len(pesos)), 2, protegidas),
-    ):
-        minimo = ceil(len(pesos) * OBJETIVO_PCT / 100) if nombre == "redundante" else None
-        nuevos, pasos = intercambiar(modelo, indices, w, objetivo, 5, fijas, minimo)
+    for nombre in ("equidad", "redundante"):
+        if nombre == "equidad":
+            nuevos, pasos = intercambiar(modelo, indices, pesos, 1, 5)
+        else:
+            # Sitios que maximizan la cobertura que queda al cerrar cada estación crítica por
+            # separado, sin retirarlas y sin bajar del objetivo de cobertura. Se para al no mejorar.
+            nuevos, pasos = blindar(modelo, indices, list(protegidas), 30, ceil(len(pesos) * OBJETIVO_PCT / 100))
         posiciones = problema.estaciones(nuevos, nombre)
         guardar(posiciones, "T37_equidad" if nombre == "equidad" else "T38_redundante")
         escenarios[nombre] = crear(posiciones, base.red.radio)

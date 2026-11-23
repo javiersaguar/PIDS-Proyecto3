@@ -1,4 +1,8 @@
-"""Baterías por vehículo con carga lineal mientras la unidad ocupa un anclaje."""
+"""Baterías por vehículo con carga lineal mientras la unidad ocupa un anclaje.
+
+Con `recarga_en_anclaje=False` las baterías no se recargan en todo el periodo
+(prueba de estrés: cuánto aguanta la flota sin cargar en las estaciones).
+"""
 
 from dataclasses import dataclass
 
@@ -11,6 +15,7 @@ class Carga:
     capacidad_wh: float
     horas_recarga: float
     reserva_pct: float = 0
+    recarga_en_anclaje: bool = True
 
 
 class FlotaElectrica:
@@ -23,7 +28,7 @@ class FlotaElectrica:
         self.consumo = consumo
         self.capacidad = carga.capacidad_wh
         self.reserva = self.capacidad * carga.reserva_pct / 100
-        self.wh_por_s = self.capacidad / (3600 * carga.horas_recarga)
+        self.wh_por_s = self.capacidad / (3600 * carga.horas_recarga) if carga.recarga_en_anclaje else 0.
         self.energia = np.full(stock.sum(), self.capacidad, dtype=float)
         self.desde = np.full(stock.sum(), inicio, dtype=np.int64)
         cortes = np.r_[0, stock.cumsum()]

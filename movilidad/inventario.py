@@ -424,7 +424,7 @@ def simular(dem, red, stock, anclajes, rebalanceo_max, *, desvio=True, hora_cort
     resumen = {
         "flota": flota, "anclajes": int(cap.sum()), "rebalanceo_max": rebalanceo_max, "desvio": desvio,
         "solicitudes": dem.n, "cubiertas": cubiertos,
-        **{f"n_{c}": int(cuenta[c]) for c in CAUSAS},
+        **{f"n_{c}": int(cuenta[c]) for c in causas},
         "pct_atendidos_cubiertos": 100 * cuenta["atendido"] / max(cubiertos, 1),
         "pct_atendidos_total": 100 * cuenta["atendido"] / dem.n,
         "viajes_con_desvio": int(((extra_o > 0) | (extra_d > 0))[atendido].sum()),

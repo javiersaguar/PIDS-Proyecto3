@@ -85,11 +85,22 @@ def test_carga_fraccionaria_y_recuperacion_en_anclaje():
     assert np.isclose(r.resumen["traccion_kwh"], r.resumen["recargada_kwh"] + r.resumen["pendiente_kwh"])
 
 
+def test_sin_recarga_en_anclaje_agota_la_bateria():
+    # Sin recarga, la segunda salida ya no tiene energía aunque pasen horas en el anclaje.
+    dem = demanda([(T0, T0 + 60, [0], [0]), (T0 + 7200, T0 + 7260, [0], [0])])
+    r = sim(dem, red(1), [1], [1], carga=Carga(np.array([70., 40.]), 100, 1, recarga_en_anclaje=False))
+    assert r.viajes["resultado"].tolist() == ["atendido", "sin_bateria"]
+    assert r.resumen["n_sin_bateria"] == 1
+    assert np.isclose(r.resumen["recargada_kwh"], 0)
+    assert np.isclose(r.resumen["pendiente_kwh"], 0.07)
+
+
 def test_cierre_conserva_reserva_y_desvia_nuevas_asignaciones():
     dem = demanda([(T0, T0 + 600, [0], [1]), (T0 + 100, T0 + 200, [0], [1, 2]),
                    (T0 + 100, T0 + 200, [1], [0])])
     r = sim(dem, red(3), [2, 0, 0], [2, 1, 2], cierre=(1, T0 + 60, T0 + 700))
     assert r.viajes["resultado"].tolist() == ["atendido", "atendido", "sin_estacion"]
+    assert r.resumen["n_sin_estacion"] == 1
     assert r.viajes["estacion_destino"].tolist() == ["E1", "E2", ""]
     assert r.estaciones["stock_final"].tolist() == [0, 1, 1]
     assert r.estaciones.loc[1, "pct_llena_ventana"] == 100

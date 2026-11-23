@@ -35,9 +35,11 @@ const DECISIONES = [
   ["Asignación por viaje", "Estación más cercana a 300 m en cada extremo y resultado de la simulación; las 16 756 solicitudes cuadran con T32 y la tabla alimenta consumo", "T31"],
   ["Stock y anclajes", "Anclajes = P90 diario de stock y subida de cada estación (966 en total); el stock inicial reparte la flota elegida en proporción al P90 (474 de diseño)", "T32"],
   ["Tamaño de la flota", "400 patinetes con los 966 anclajes de T32 atienden el 95,1 % (criterio del 95 %); el máximo, 95,9 %, está en 475 y queda como alternativa", "T34"],
-  ["Rebalanceo", "100 movimientos como tope y prioridad al déficit. Es la política ensayada con menos kilómetros que supera el 95 % de los viajes cubiertos en ajuste.", "T33"],
-  ["Batería", "La carga lineal en anclajes permite mantener el servicio con una reserva del 20 %. Recarga evaluará la potencia disponible.", "T35"],
-  ["Comparación de redes", "La red elegida conserva la referencia de operación. Las variantes permiten valorar acceso territorial y respuesta ante cierres con los mismos recursos.", "T39"],
+  ["Rebalanceo", "100 movimientos como tope y prioridad al déficit: la opción con menos kilómetros que supera el 95 % en ajuste. La regla marginal empata (mejor en reserva) y merece una prueba operativa.", "T33"],
+  ["Batería", "Con carga en cada anclaje no limita, ni con reserva del 20 % ni con el doble de consumo. Sin carga en las estaciones el servicio cae a la mitad: la carga en la estación es imprescindible.", "T35"],
+  ["Acceso territorial", "Cinco cambios de emplazamiento suben 6,31 puntos la cobertura de las ocho zonas peor servidas sin perder servicio global. Alternativa si se prioriza el acceso.", "T37"],
+  ["Cierres", "Una variante con 13 cambios alrededor de las estaciones críticas reduce a la mitad los viajes perdidos por cierres (24 frente a 48 en reserva).", "T38"],
+  ["Comparación de redes", "Las redes de 159 estaciones a 300 m empatan en servicio. La elegida sigue como referencia para consumo y recarga; adoptar la redundante queda como decisión de equipo.", "T39"],
 ];
 
 export function Fase1() {

@@ -55,7 +55,7 @@ No debe quedar ningún rastro de herramientas de IA en el repositorio.
 | `resultados/` | Tablas, gráficas y mapas generados |
 | `frontend/` | Web de resultados (GitHub Pages); sus datos los exportan los notebooks |
 | `memoria/` | Memoria y conclusiones (10 %) |
-| `presentacion/` | Presentación final en PDF |
+| `presentacion/` | Presentación final en HTML (`presentacion.html`) y sus fuentes React en `diapositivas/` |
 | `docs/` | Enunciado resumido, datos, plan y lista de tareas |
 
 `datos/brutos/rome_u_journeys.csv` no se modifica nunca. Antes de empezar una tarea se

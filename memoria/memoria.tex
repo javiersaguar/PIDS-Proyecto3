@@ -636,16 +636,23 @@ unidad adicional evite déficit. Ambas usan el donante con excedente más cercan
 Se mantienen \cifra{rebalanceo_base} movimientos como límite con la regla por
 déficit. Es la opción ensayada que alcanza el 95\pc{} de servicio de los
 viajes cubiertos en ajuste con menos kilómetros equivalentes
-(\cifra{cierre_km_ajuste}~km). En reserva la regla marginal recupera
-\cifra{cierre_extra_reb} viajes y ahorra \cifra{cierre_km_ahorro}~km.
+(\cifra{cierre_km_ajuste}~km), aunque por muy poco frente a la regla marginal.
+En reserva la regla marginal recupera \cifra{cierre_extra_reb} viajes y ahorra
+\cifra{cierre_km_ahorro}~km: las dos reglas empatan a efectos prácticos.
 La distancia suma traslados individuales corregidos con el rodeo de T15.
 
 T35 simula el consumo por viaje, la carga continua en anclaje y la reserva
 de batería tras un viaje. Con carga desde el inicio y una reserva del
 20\pc{}, hay \cifra{cierre_bat_rechazos} rechazos por batería en reserva y
-quedan \cifra{cierre_bat_pendiente}~kWh por reponer al cierre. La prueba de
-carga disponible por anclaje justifica conservar el inventario de referencia
-para evaluar potencia y gestión de carga en la fase siguiente.
+quedan \cifra{cierre_bat_pendiente}~kWh por reponer al cierre. Es lo esperable,
+porque un viaje gasta de media el 5\pc{} de la batería, así que se añaden dos
+pruebas de estrés. Con el doble de consumo hay \cifra{cierre_bat_doble_aj}
+rechazos en ajuste y \cifra{cierre_bat_doble_res} en reserva. Sin recarga en
+los anclajes, los rechazos empiezan a los \cifra{cierre_sinrec_dias} días, suman
+\cifra{cierre_sinrec_rechazos} en ajuste y el servicio cae al
+\cifra{cierre_sinrec_pct}\pc{} de los viajes cubiertos. La carga en la propia
+estación es, por tanto, imprescindible; su potencia y gestión se evalúan en la
+fase de recarga.
 
 \subsection{Acceso territorial y cierres (T36--T38)}
 El mapa 3D muestra cobertura OD y servicio por celda de origen, y flujos
@@ -657,17 +664,23 @@ ante un objetivo explícito de acceso. Las ubicaciones y zonas se fijan con
 el ajuste.
 
 Se prueban cinco cierres independientes de emplazamientos críticos. La
-variante redundante mantiene al menos el 80\pc{} de cobertura en ajuste e
-incrementa los viajes con dos opciones en ambos extremos. En reserva pierde
-\cifra{cierre_fallos_redundante} viajes netos en la suma de las ventanas frente
-a \cifra{cierre_fallos_habitual} de la habitual. La redundancia global ensayada
-aporta opciones, pero apenas modifica la respuesta a los cinco cierres
-seleccionados. El desglose de los desvíos y la saturación vecina queda en la web.
+variante redundante conserva esos cinco sitios y al menos el 80\pc{} de
+cobertura en ajuste, y elige \cifra{cierre_red_intercambios} intercambios que
+maximizan los viajes del ajuste que siguen cubiertos al cerrar cada sitio
+crítico. En reserva pierde \cifra{cierre_fallos_redundante} viajes netos en la
+suma de las ventanas frente a \cifra{cierre_fallos_habitual} de la habitual: la
+mitad. Una redundancia global (dos opciones en cada extremo) apenas cambiaba esa
+respuesta, porque la red elegida está casi en el límite del 80\pc{}. El
+desvío puede saturar la estación vecina; el desglose queda en la web.
 
 \subsection{Comparación operativa y recarga equivalente (T39)}
 Se contrastan las finalistas de T28 y las dos variantes con flota, anclajes y
-presupuesto de traslados fijos. La red habitual atiende más viajes en ajuste
-(\cifra{cierre_atendidos_aj}). Las sesiones de reposición se asignan al
+presupuesto de traslados fijos. Las tres redes de 159 estaciones a 300~m
+empatan en servicio: la elegida atiende \cifra{cierre_atendidos_aj} viajes en
+ajuste y la redundante, \cifra{cierre_red_atendidos_aj} (\cifra{cierre_atendidos_res}
+y \cifra{cierre_red_atendidos_res} en reserva). La elegida se mantiene como
+referencia porque se fijó en T28 antes de medir el servicio y sobre ella se
+dimensionaron T31--T34; adoptar la redundante es una decisión pendiente del equipo. Las sesiones de reposición se asignan al
 destino real de los viajes atendidos, con solape por cuarto de hora.
 Para la red elegida, la demanda equivalente en batería aumenta de
 \cifra{cierre_kwh_dia_aj} a \cifra{cierre_kwh_dia_res}~kWh/día en reserva.

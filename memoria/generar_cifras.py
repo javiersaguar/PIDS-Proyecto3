@@ -480,7 +480,13 @@ def cifras() -> dict[str, str]:
     factibles = t33.loc[t33["periodo"].eq("ajuste") & t33["pct_atendidos_cubiertos"].ge(95)]
     assert factibles.loc[factibles["km_rebalanceo"].idxmin(), "limite"] == base_reb
     assert factibles.loc[factibles["km_rebalanceo"].idxmin(), "politica"] == "deficit"
-    t35 = fila(leer("movilidad/T35_carga.csv"), periodo="reservada", caso="reserva20")
+    t35_todo = leer("movilidad/T35_carga.csv")
+    t35 = fila(t35_todo, periodo="reservada", caso="reserva20")
+    doble_aj, doble_res = (fila(t35_todo, periodo=p, caso="consumo_doble") for p in ("ajuste", "reservada"))
+    sin_rec = fila(t35_todo, periodo="ajuste", caso="sin_recarga")
+    red_red_a = fila(leer("movilidad/T39_redes.csv"), red="redundante", periodo="ajuste")
+    red_red_r = fila(leer("movilidad/T39_redes.csv"), red="redundante", periodo="reservada")
+    intercambios = leer("movilidad/T37_T38_intercambios.csv").query("red == 'redundante'")
     t37 = leer("movilidad/T37_zonas.csv").query("prioritaria and periodo == 'reservada'")
     tasas = t37.groupby("red")["pct"].mean()
     cierres = leer("movilidad/T38_cierres.csv").query("periodo == 'reservada'").groupby("red")[["perdidos", "recuperados"]].sum()
@@ -493,6 +499,14 @@ def cifras() -> dict[str, str]:
         "cierre_extra_reb": num(alterna["n_atendido"] - base_reserva["n_atendido"]),
         "cierre_bat_rechazos": num(t35["n_sin_bateria"]),
         "cierre_bat_pendiente": num(t35["pendiente_kwh"], 3),
+        "cierre_bat_doble_aj": num(doble_aj["n_sin_bateria"]),
+        "cierre_bat_doble_res": num(doble_res["n_sin_bateria"]),
+        "cierre_sinrec_rechazos": num(sin_rec["n_sin_bateria"]),
+        "cierre_sinrec_dias": num(sin_rec["dias_hasta_primer_rechazo"], 1),
+        "cierre_sinrec_pct": num(sin_rec["pct_atendidos_cubiertos"], 1),
+        "cierre_red_intercambios": num(len(intercambios)),
+        "cierre_red_atendidos_aj": num(red_red_a["n_atendido"]),
+        "cierre_red_atendidos_res": num(red_red_r["n_atendido"]),
         "cierre_zonas": num(t37["zona"].nunique()),
         "cierre_equidad_pp": num(tasas["equidad"] - tasas["habitual"], 2),
         "cierre_fallos_habitual": num(cierres.loc["habitual", "perdidos"] - cierres.loc["habitual", "recuperados"]),

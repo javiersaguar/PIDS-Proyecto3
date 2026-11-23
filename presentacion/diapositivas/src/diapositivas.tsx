@@ -422,6 +422,28 @@ export const DIAPOSITIVAS: Diapositiva[] = [
     },
   },
   {
+    id: "operacion",
+    titulo: "Operación de la red",
+    contenido: (d) => (
+      <>
+        <Cabecera
+          etiqueta="Fase 1 · Cierre de movilidad (T33–T39)"
+          titulo="La red aguanta la operación"
+          entradilla="Con la misma flota y anclajes se prueban el rebalanceo, la batería, el acceso de las zonas peor servidas y el cierre de estaciones críticas."
+        />
+        <Tarjetas
+          retardo={0.5}
+          items={[
+            ["Rebalanceo (T33)", <>{d.cierre.limite} traslados por noche suben el servicio del {pc(d.cierre.sin_reb_pct)} al {pc(d.cierre.reb_pct)}. Las dos reglas probadas empatan.</>],
+            ["Batería (T35)", <>Con carga en cada anclaje no limita: {num(d.cierre.doble_rechazos)} rechazos con el doble de consumo. Sin cargar en la estación, el servicio cae al {pc(d.cierre.sin_recarga_pct)} en {num(d.cierre.sin_recarga_dias, 1)} días.</>],
+            ["Acceso y cierres (T37–T38)", <>Cambiar 5 estaciones sube {num(d.cierre.equidad_pp, 1)} puntos las zonas peor servidas; cambiar 13 deja en {num(d.cierre.perdida_redundante)} los viajes perdidos por cierres, frente a {num(d.cierre.perdida_elegida)}.</>],
+            ["Recarga (T39)", <>La red elegida pide {num(d.cierre.kwh_dia, 1)} kWh al día y {num(d.cierre.pico_kw, 1)} kW de pico en toda la red: demanda pequeña y repartida.</>],
+          ]}
+        />
+      </>
+    ),
+  },
+  {
     id: "siguiente",
     titulo: "Lo que queda",
     contenido: (d) => (
@@ -431,7 +453,7 @@ export const DIAPOSITIVAS: Diapositiva[] = [
           retardo={0.5}
           items={[
             ["Flota decidida", <>{num(d.flota.minima)} patinetes (criterio del {d.flota.objetivo} %). La de {num(d.flota.diseno)} queda como alternativa con más margen si crece la demanda.</>],
-            ["Consumo (10 %)", "Energía de cada viaje con 13,5 Wh/km y con el modelo físico, sumada por patinete y por estación a partir de la asignación."],
+            ["Consumo (10 %)", "La energía por viaje con 13,5 Wh/km ya está (T40). Falta el modelo físico, su calibración y la suma por patinete y por estación."],
             ["Estación de recarga (20 %)", "Potencia y energía demandadas en cada estación, paneles con PVWatts y baterías para casar la generación con la recarga."],
             ["Demo 3D", "Un día de operación sobre el mapa de Roma, con las estaciones, los flujos y la maqueta de una estación."],
           ]}

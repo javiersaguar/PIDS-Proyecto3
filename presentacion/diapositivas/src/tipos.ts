@@ -31,6 +31,19 @@ export type Datos = {
     curvas: { rebalanceo: number; puntos: { flota: number; pct: number; uso: number }[] }[];
     reservada: { flota: number; pct: number }[];
   };
+  cierre: {
+    limite: number;
+    reb_pct: number;
+    sin_reb_pct: number;
+    doble_rechazos: number;
+    sin_recarga_pct: number;
+    sin_recarga_dias: number;
+    equidad_pp: number;
+    perdida_elegida: number;
+    perdida_redundante: number;
+    kwh_dia: number;
+    pico_kw: number;
+  };
 };
 
 // Miles con espacio fino también en números de cuatro cifras (12 865), como en la memoria.

@@ -632,7 +632,9 @@ sirve para ordenar movimientos y el servicio se vuelve a medir con restricciones
 
 Se conserva **mayor déficit con límite de 100**. Es la combinación que menos
 kilómetros requiere entre las que superan el 95 % de los 13 409 viajes
-cubiertos del ajuste. Con 220 y la misma regla se recuperan 40 viajes en el
+cubiertos del ajuste, aunque por poco: la regla marginal recorre 13,41 km más
+y atiende 6 viajes más. En reserva la regla marginal es mejor en las dos cosas
+(4 viajes más y 75,88 km menos), así que la elección es casi un empate. Con 220 y la misma regla se recuperan 40 viajes en el
 ajuste y 11 en reserva, a cambio de 572,08 y 179,59 km adicionales. La regla
 marginal a 100 merece una prueba operativa por el ahorro de distancia en reserva.
 Sin embargo, su mejora de servicio es pequeña y en esa semana deja 10,17
@@ -653,9 +655,23 @@ El balance suma energía repuesta y déficit final y coincide con la tracción.
 Los dos casos con carga conservan los **12 750 y 4 670 viajes atendidos** y
 registran **cero rechazos por batería**. Con reserva del 20 %, la tracción es
 349,535 y 131,301 kWh en los dos periodos y quedan 0,107 y 0,067 kWh por
-reponer al final. Se conserva una política de despacho con comprobación de
-energía para la futura integración. La prueba supone carga disponible en cada
-anclaje y stock inicialmente cargado. La potencia de suministro, las pérdidas
+reponer al final. Este resultado es casi obligado: un viaje gasta 22 Wh de
+mediana (4 % de la batería) y cada patinete hace unos 1,5 viajes al día. Por
+eso se añaden dos pruebas de estrés con la reserva del 20 %:
+
+| Caso | Atendidos en ajuste | Sin batería en ajuste | Atendidos en reserva | Sin batería en reserva |
+|---|---:|---:|---:|---:|
+| Carga en anclaje | 12 750 | 0 | 4 670 | 0 |
+| Doble de consumo (27 Wh/km) | 12 747 | 2 | 4 669 | 1 |
+| Sin recarga en anclaje | 6 964 | 6 183 | 4 474 | 303 |
+
+Con carga en los anclajes hay margen de sobra, incluso con el doble de
+consumo. Sin ella, los primeros rechazos por batería llegan a los 1,8 días y
+el servicio del ajuste cae del 95,1 % al 51,9 % de los viajes cubiertos: **la
+carga en la propia estación es imprescindible**, o haría falta cambio de
+baterías cada uno o dos días. Se conserva una política de despacho con
+comprobación de energía para la futura integración. La prueba supone carga
+disponible en cada anclaje y stock inicialmente cargado. La potencia de suministro, las pérdidas
 del cargador y las políticas FV se evaluarán en recarga. [Energía por viaje](../resultados/tablas/consumo/T40_energia_viaje.csv) · [Simulación y balance](../resultados/tablas/movilidad/T35_carga.csv) · [Web](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase1/t35)
 
 ## T36. Evidencia de cobertura y flujos en 3D
@@ -702,14 +718,26 @@ Se suspenden las asignaciones nuevas en el sitio cerrado, se conservan
 las devoluciones reservadas y se permiten desvíos dentro del radio. Cada
 red tiene su propio control sin cierre con los mismos recursos.
 
-La variante conserva los cinco sitios y el objetivo del 80 % en ajuste.
-Dentro de ese límite se aceptan dos sustituciones que mejoran el recuento
-de viajes con dos opciones en cada extremo. Pasa de 2 003 a 2 040 en ajuste
-y de 798 a 801 en reserva. La pérdida neta sumada de los cinco casos
-durante la punta pasa de 52 a 51 en ajuste y **se mantiene en 48 en reserva**.
-En reserva, el receptor de devoluciones desviadas de uno de los cierres
-pasa del 0 % al 54,24 % de la ventana lleno, contando reservas. La
-redundancia global probada no justifica cambiar la red de referencia.
+Una primera variante que maximizaba los viajes con dos opciones en cada
+extremo solo admitía dos sustituciones sin bajar del 80 % de cobertura (la
+red elegida está a 4 viajes del límite) y dejaba la pérdida igual: 48 viajes
+en reserva. La redundancia útil es la local, alrededor de los sitios
+críticos. La variante final conserva los cinco sitios y el 80 % en ajuste, y
+elige los intercambios que más viajes del ajuste dejan cubiertos al cerrar
+cada sitio crítico por separado. La búsqueda se detiene tras 13 intercambios,
+cuando ninguno mejora; la cobertura con todas abiertas sube de 13 409 a 13 419.
+
+| Periodo | Pérdida neta en la punta, red elegida | Pérdida neta, redundante | Recogidas y devoluciones desviadas (elegida → redundante) |
+|---|---:|---:|---:|
+| Ajuste | 52 | 25 | 5 → 14 |
+| Reservada | 48 | **24** | 11 → 27 |
+
+En reserva, fuera de la muestra con la que se eligió, la variante **reduce a
+la mitad** los viajes perdidos por los cinco cierres porque más viajes
+encuentran otra estación dentro del radio. El destino que recibe más
+devoluciones desviadas en uno de los cierres pasa del 0 % al 54,24 % del
+tiempo lleno en las dos redes: el desvío funciona, pero puede saturar la
+estación vecina.
 La pérdida de la semana completa, los metros de desvío y la concentración
 vecina quedan desglosados por cierre. [Casos completos](../resultados/tablas/movilidad/T38_cierres.csv) · [Web](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase1/t38)
 
@@ -728,15 +756,22 @@ y una devolución posibles en la misma estación.
 | Menos estaciones | 12 710 | 4 669 | 18,75 | 3,46 | 16,77 % |
 | Menor radio | 12 148 | 4 370 | 17,50 | 3,47 | 15,04 % |
 | Territorial | 12 741 | 4 684 | 19,06 | 3,57 | 16,33 % |
-| Redundante | 12 735 | 4 677 | 18,79 | 3,47 | 16,69 % |
+| Redundante | 12 761 | 4 686 | 18,87 | 3,49 | 16,53 % |
 
 Se calcula el solape de cada sesión equivalente en intervalos de 15 minutos
 desde la devolución. Los kWh por estación suman la energía de los viajes
 atendidos. La potencia se expresa en el lado batería. El mayor pico
-individual de la red habitual es 0,48 kW en reserva. La red habitual
-atiende más viajes en ajuste bajo las reglas comparadas y pasa a recarga
-como referencia. Las diferencias de demanda eléctrica de otras redes
-deben leerse junto con los cambios de servicio. [Redes](../resultados/tablas/movilidad/T39_redes.csv) · [Estaciones](../resultados/tablas/movilidad/T39_estaciones.csv) · [Web](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase1/t39)
+individual de la red habitual es 0,48 kW en reserva.
+
+Las tres redes de 159 estaciones a 300 m **empatan en servicio**: se separan
+menos de 0,3 puntos en ajuste y en reserva. La redundante es la que más
+atiende en los dos periodos (11 y 16 viajes más que la elegida) y la
+territorial atiende 14 más en reserva pero 9 menos en ajuste. La elegida pasa
+a recarga como referencia porque se fijó en T28 antes de medir el servicio y
+sobre ella se dimensionaron T31, T32 y T34. Cambiarla por la redundante,
+que pierde la mitad de viajes en los cierres, es una decisión de equipo que
+obligaría a repetir esas tareas. Las diferencias de demanda eléctrica de otras
+redes deben leerse junto con los cambios de servicio. [Redes](../resultados/tablas/movilidad/T39_redes.csv) · [Estaciones](../resultados/tablas/movilidad/T39_estaciones.csv) · [Web](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase1/t39)
 
 ## Cierre de la fase 1
 
@@ -746,7 +781,8 @@ La localización alcanza el 80 % en ajuste con el menor presupuesto
 factible ensayado. T32 dimensiona el stock y las plazas por estación y
 T34 fija la menor flota probada que supera el 95 % de servicio entre
 viajes cubiertos en ajuste. El contraste de políticas de T33 conserva
-esa referencia por sus kilómetros equivalentes.
+esa referencia por sus kilómetros equivalentes, aunque la ventaja sobre la
+regla marginal es mínima.
 
 En la reserva, **5 001 de 6 614** solicitudes tienen cobertura geométrica
 y se atienden **4 670** en la simulación (**70,61 % de todas las solicitudes,
@@ -755,8 +791,12 @@ pareada en reserva es 44,3 %. Esas tres métricas responden a alcance
 geométrico, servicio con recursos limitados y acceso por calles en una
 muestra local, respectivamente.
 
-La red territorial queda como alternativa cuantificada y los cierres
-muestran dónde los rodeos y las plazas vecinas siguen siendo limitantes.
+La batería no limita el servicio mientras cada anclaje cargue: incluso con el
+doble de consumo apenas hay rechazos, y sin carga en las estaciones el
+servicio cae a la mitad. Las variantes territorial y redundante empatan en
+servicio con la elegida. La territorial mejora 6,31 puntos las zonas peor
+servidas y la redundante reduce a la mitad la pérdida por cierres; las dos
+quedan como alternativas cuantificadas para decidir en equipo.
 La fase de Consumo recibe la energía por viaje y la asignación operativa
 de T31–T32. La fase de Recarga recibe energía de tracción agregada por
 estación y los picos equivalentes, y dimensionará potencia y energía

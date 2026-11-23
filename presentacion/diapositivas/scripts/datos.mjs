@@ -43,9 +43,16 @@ const t31 = json("fase1/t31_asignacion.json");
 const t32 = json("fase1/t32_inventario.json");
 const t34 = json("fase1/t34_flota.json");
 const perfil = json("fase0/t12_perfil_horario.json");
+const cierre = json("fase1/cierre_movilidad.json");
 
 const finalistas = pareto.filter((f) => f.rol);
 const recomendada = finalistas.find((f) => f.rol === "recomendada");
+const busca = (filas, filtro) => filas.find((f) => Object.entries(filtro).every(([k, v]) => f[k] === v));
+const perdida = (red) => cierre.cierres.filter((f) => f.periodo === "reservada" && f.red === red).reduce((s, f) => s + f.perdidos - f.recuperados, 0);
+const zonas = (red) => {
+  const z = cierre.zonas.filter((f) => f.periodo === "reservada" && f.prioritaria && f.red === red);
+  return z.reduce((s, f) => s + f.pct, 0) / z.length;
+};
 const ind31 = Object.fromEntries(t31.indicadores.map((f) => [f.indicador, f.atendidos]));
 
 const datos = {
@@ -99,6 +106,19 @@ const datos = {
       puntos: t34.curva.filter((f) => f.rebalanceo_max === reb).map((f) => ({ flota: f.flota, pct: f.pct_atendidos_cubiertos, uso: f.viajes_por_patinete_dia })),
     })),
     reservada: t34.comparacion.filter((f) => f.periodo === "reservada").map((f) => ({ flota: f.flota, pct: f.pct_atendidos_cubiertos })),
+  },
+  cierre: {
+    limite: cierre.limite,
+    reb_pct: busca(cierre.rebalanceo, { periodo: "ajuste", politica: "deficit", limite: cierre.limite }).pct_atendidos_cubiertos,
+    sin_reb_pct: busca(cierre.rebalanceo, { periodo: "ajuste", politica: "deficit", limite: 0 }).pct_atendidos_cubiertos,
+    doble_rechazos: busca(cierre.bateria, { periodo: "ajuste", caso: "consumo_doble" }).n_sin_bateria,
+    sin_recarga_pct: busca(cierre.bateria, { periodo: "ajuste", caso: "sin_recarga" }).pct_atendidos_cubiertos,
+    sin_recarga_dias: busca(cierre.bateria, { periodo: "ajuste", caso: "sin_recarga" }).dias_hasta_primer_rechazo,
+    equidad_pp: zonas("equidad") - zonas("habitual"),
+    perdida_elegida: perdida("habitual"),
+    perdida_redundante: perdida("redundante"),
+    kwh_dia: busca(cierre.redes, { periodo: "reservada", red: "habitual" }).kwh_dia,
+    pico_kw: busca(cierre.redes, { periodo: "reservada", red: "habitual" }).pico_red_kw,
   },
 };
 
