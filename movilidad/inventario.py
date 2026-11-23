@@ -22,6 +22,7 @@ import numpy as np
 import pandas as pd
 
 from comun.config import cargar_config
+from bateria import FlotaElectrica
 from redes import distancias, extremos
 
 # Hora local del rebalanceo nocturno y del cambio de «día de servicio». De 3 a 5 h salen
@@ -214,11 +215,15 @@ class Resultado:
 
 
 def simular(dem, red, stock, anclajes, rebalanceo_max, *, desvio=True, hora_corte=HORA_CORTE,
-            factor_rodeo=None, objetivo=None):
+            factor_rodeo=None, objetivo=None, prioridad=None, carga=None, cierre=None, observacion=None):
     """Simula el mes con patinetes y anclajes limitados.
 
     `stock` es el inventario de arranque y el objetivo del rebalanceo nocturno (salvo que
     se dé `objetivo`). `rebalanceo_max` es el máximo de patinetes que se mueven cada noche.
+    `prioridad[s, stock]` da el beneficio marginal estimado de añadir una unidad.
+    `cierre` es (índice de estación, inicio incluido, fin excluido) en segundos locales.
+    Durante el cierre se suspenden nuevas asignaciones y se mantienen las reservas.
+    `observacion` acota una ventana para medir saturación con las mismas reglas.
     """
     if factor_rodeo is None:
         factor_rodeo = cargar_config()["movilidad"]["factor_rodeo"]
@@ -230,12 +235,23 @@ def simular(dem, red, stock, anclajes, rebalanceo_max, *, desvio=True, hora_cort
     n_est, flota = red.n, int(stock.sum())
     inv, res = stock.copy(), np.zeros(n_est, int)
     t_ini, t_fin, cortes = horizonte(dem, hora_corte)
+    if cierre is not None and not 0 <= cierre[0] < n_est:
+        raise ValueError("La estación cerrada no pertenece a la red.")
+    ventana = observacion if observacion is not None else cierre[1:] if cierre is not None else None
+    if ventana is not None and not t_ini <= ventana[0] < ventana[1] <= t_fin:
+        raise ValueError("La ventana de observación debe quedar dentro del horizonte.")
+    electrica = FlotaElectrica(carga, stock, t_ini, dem.n) if carga is not None else None
+    if prioridad is not None:
+        prioridad = np.asarray(prioridad, float)
+        if prioridad.ndim != 2 or prioridad.shape[0] != n_est or prioridad.shape[1] <= objetivo.max():
+            raise ValueError("La prioridad debe cubrir todas las estaciones y el stock objetivo.")
 
     # Acumuladores de ocupación ponderados por tiempo.
     ultimo = np.full(n_est, t_ini, np.int64)
     area_inv = np.zeros(n_est)
     t_vacia = np.zeros(n_est)
     t_llena = np.zeros(n_est)
+    t_llena_ventana = np.zeros(n_est)
 
     def tocar(s, t):
         dt = t - ultimo[s]
@@ -245,13 +261,15 @@ def simular(dem, red, stock, anclajes, rebalanceo_max, *, desvio=True, hora_cort
                 t_vacia[s] += dt
             if inv[s] + res[s] >= cap[s]:
                 t_llena[s] += dt
+                if ventana is not None:
+                    t_llena_ventana[s] += max(0, min(t, ventana[1]) - max(ultimo[s], ventana[0]))
             ultimo[s] = t
 
     def comprobar(s):
         if inv[s] < 0 or inv[s] + res[s] > cap[s]:
             raise AssertionError(f"Estación {s}: inventario {inv[s]}, reservas {res[s]}, anclajes {cap[s]}")
 
-    llegadas = []   # (t, n.º de orden, estación)
+    llegadas = []   # (t, n.º de orden, estación, unidad si se simula carga)
     resultado = np.full(dem.n, "", dtype=object)
     est_o = np.full(dem.n, -1)
     est_d = np.full(dem.n, -1)
@@ -259,10 +277,12 @@ def simular(dem, red, stock, anclajes, rebalanceo_max, *, desvio=True, hora_cort
     extra_d = np.zeros(dem.n)
     noches = []
 
-    def llegar(t, s):
+    def llegar(t, s, unidad):
         tocar(s, t)
         res[s] -= 1
         inv[s] += 1
+        if electrica is not None:
+            electrica.llegar(unidad, s, t)
         comprobar(s)
 
     def rebalancear(t):
@@ -272,14 +292,25 @@ def simular(dem, red, stock, anclajes, rebalanceo_max, *, desvio=True, hora_cort
         sobra = np.maximum(inv - objetivo, 0)
         falta = np.minimum(np.maximum(objetivo - inv, 0), cap - inv - res)
         antes = int(falta.sum())
+        if cierre is not None and cierre[1] <= t < cierre[2]:
+            sobra[cierre[0]] = 0
+            falta[cierre[0]] = 0
+        excluido = antes - int(falta.sum())
         while movidos < rebalanceo_max and falta.any() and sobra.any():
-            destino = int(np.argmax(falta))
+            destinos = np.flatnonzero(falta)
+            if prioridad is None:
+                destino = int(np.argmax(falta))
+            else:
+                orden = np.lexsort((-falta[destinos], -prioridad[destinos, inv[destinos]]))
+                destino = int(destinos[orden[0]])
             candidatas = np.flatnonzero(sobra > 0)
             origen = int(candidatas[np.argmin(red.entre[destino, candidatas])])
             inv[origen] -= 1
             inv[destino] += 1
             sobra[origen] -= 1
             falta[destino] -= 1
+            if electrica is not None:
+                electrica.mover(origen, destino, t)
             movidos += 1
             metros += red.entre[origen, destino] * factor_rodeo
         for s in range(n_est):
@@ -287,7 +318,7 @@ def simular(dem, red, stock, anclajes, rebalanceo_max, *, desvio=True, hora_cort
         if int(inv.sum() + res.sum()) != flota:
             raise AssertionError("El total de patinetes no se conserva en el rebalanceo.")
         noches.append({"corte": t, "patinetes_movidos": movidos, "km": metros / 1000,
-                       "deficit_antes": antes, "deficit_despues": int(falta.sum()),
+                       "deficit_antes": antes, "deficit_despues": int(falta.sum()) + excluido,
                        "en_viaje": int(res.sum())})
 
     pendientes = list(cortes)
@@ -298,8 +329,8 @@ def simular(dem, red, stock, anclajes, rebalanceo_max, *, desvio=True, hora_cort
             t_lleg = llegadas[0][0] if llegadas else None
             t_cor = pendientes[0] if pendientes else None
             if t_lleg is not None and t_lleg <= hasta and (t_cor is None or t_lleg <= t_cor):
-                t, _, s = heapq.heappop(llegadas)
-                llegar(t, s)
+                t, _, s, unidad = heapq.heappop(llegadas)
+                llegar(t, s, unidad)
             elif t_cor is not None and t_cor <= hasta:
                 rebalancear(pendientes.pop(0))
             else:
@@ -313,17 +344,28 @@ def simular(dem, red, stock, anclajes, rebalanceo_max, *, desvio=True, hora_cort
             resultado[i] = "sin_cobertura"
             continue
         limite_o = len(opc_o) if desvio else 1
-        k_o = next((k for k in range(limite_o) if inv[opc_o[k]] > 0), None)
+        limite_d = len(opc_d) if desvio else 1
+        cerrada = cierre[0] if cierre is not None and cierre[1] <= t < cierre[2] else -1
+        origenes = [k for k in range(limite_o) if opc_o[k] != cerrada]
+        destinos = [k for k in range(limite_d) if opc_d[k] != cerrada]
+        if not origenes or not destinos:
+            resultado[i] = "sin_estacion"
+            continue
+        con_stock = [k for k in origenes if inv[opc_o[k]] > 0]
+        k_o = next(iter(con_stock), None)
+        unidad = None
+        if electrica is not None and con_stock:
+            aptas = ((k, electrica.elegir(int(opc_o[k]), i, t)) for k in con_stock)
+            k_o, unidad = next(((k, u) for k, u in aptas if u is not None), (None, None))
         if k_o is None:
-            resultado[i] = "sin_patinete"
+            resultado[i] = "sin_bateria" if con_stock else "sin_patinete"
             continue
         o = int(opc_o[k_o])
-        limite_d = len(opc_d) if desvio else 1
 
         def libre(s):
             return cap[s] - inv[s] - res[s] + (1 if s == o else 0)
 
-        k_d = next((k for k in range(limite_d) if libre(int(opc_d[k])) > 0), None)
+        k_d = next((k for k in destinos if libre(int(opc_d[k])) > 0), None)
         if k_d is None:
             resultado[i] = "sin_anclaje"
             continue
@@ -334,7 +376,9 @@ def simular(dem, red, stock, anclajes, rebalanceo_max, *, desvio=True, hora_cort
         res[d] += 1
         comprobar(o)
         comprobar(d)
-        heapq.heappush(llegadas, (int(dem.t_d[i]), int(i), d))
+        if electrica is not None:
+            electrica.viajar(unidad, o, t, i)
+        heapq.heappush(llegadas, (int(dem.t_d[i]), int(i), d, unidad))
         resultado[i] = "atendido"
         est_o[i], est_d[i] = o, d
         extra_o[i] = dem.dist_o[i][k_o] - dem.dist_o[i][0]
@@ -369,7 +413,10 @@ def simular(dem, red, stock, anclajes, rebalanceo_max, *, desvio=True, hora_cort
         "pct_tiempo_llena": 100 * t_llena / duracion,
         "stock_final": inv.copy(),
     })
-    cuenta = pd.Series(resultado).value_counts().reindex(CAUSAS, fill_value=0)
+    if ventana is not None:
+        estaciones["pct_llena_ventana"] = 100 * t_llena_ventana / (ventana[1] - ventana[0])
+    causas = CAUSAS + (("sin_bateria",) if electrica is not None else ()) + (("sin_estacion",) if cierre is not None else ())
+    cuenta = pd.Series(resultado).value_counts().reindex(causas, fill_value=0)
     cubiertos = dem.n - int(cuenta["sin_cobertura"])
     horas_viaje = float((dem.t_d[atendido] - dem.t_o[atendido]).sum()) / 3600
     noches = pd.DataFrame(noches, columns=["corte", "patinetes_movidos", "km", "deficit_antes",
@@ -389,4 +436,6 @@ def simular(dem, red, stock, anclajes, rebalanceo_max, *, desvio=True, hora_cort
         "patinetes_movidos": int(noches["patinetes_movidos"].sum()),
         "km_rebalanceo": float(noches["km"].sum()),
     }
+    if electrica is not None:
+        resumen.update(electrica.balance(t_fin, inv))
     return Resultado(viajes, estaciones, noches, resumen)

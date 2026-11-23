@@ -10,6 +10,7 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).parent))
 from inventario import Demanda, Red, dimensionar, referencia, repartir, repartir_flota, simular  # noqa: E402
+from bateria import Carga  # noqa: E402
 
 DIA = 86_400
 T0 = 10 * DIA + 8 * 3600   # un día cualquiera a las 8 h
@@ -73,6 +74,25 @@ def test_sin_cobertura_no_toca_el_inventario():
     r = sim(dem, red(1), [1], [2])
     assert list(r.viajes["resultado"]) == ["sin_cobertura", "sin_cobertura"]
     assert r.estaciones.loc[0, "stock_final"] == 1
+
+
+def test_carga_fraccionaria_y_recuperacion_en_anclaje():
+    dem = demanda([(T0, T0 + 60, [0], [0]), (T0 + 60, T0 + 120, [0], [0]),
+                   (T0 + 420, T0 + 480, [0], [0])])
+    r = sim(dem, red(1), [1], [1], carga=Carga(np.array([70.25, 30.5, 30.5]), 100, 1))
+    assert r.viajes["resultado"].tolist() == ["atendido", "sin_bateria", "atendido"]
+    assert np.isclose(r.resumen["traccion_kwh"], 0.10075)
+    assert np.isclose(r.resumen["traccion_kwh"], r.resumen["recargada_kwh"] + r.resumen["pendiente_kwh"])
+
+
+def test_cierre_conserva_reserva_y_desvia_nuevas_asignaciones():
+    dem = demanda([(T0, T0 + 600, [0], [1]), (T0 + 100, T0 + 200, [0], [1, 2]),
+                   (T0 + 100, T0 + 200, [1], [0])])
+    r = sim(dem, red(3), [2, 0, 0], [2, 1, 2], cierre=(1, T0 + 60, T0 + 700))
+    assert r.viajes["resultado"].tolist() == ["atendido", "atendido", "sin_estacion"]
+    assert r.viajes["estacion_destino"].tolist() == ["E1", "E2", ""]
+    assert r.estaciones["stock_final"].tolist() == [0, 1, 1]
+    assert r.estaciones.loc[1, "pct_llena_ventana"] == 100
 
 
 def test_rebalanceo_limitado_y_conservacion():

@@ -1,0 +1,201 @@
+zona,viajes,cubiertos,pct,prioritaria,red,periodo,nombre
+11A,215,162,75.348837209,False,habitual,ajuste,Ostiense
+11B,100,46,46.000000000,True,habitual,ajuste,Valco S. Paolo
+11C,657,456,69.406392694,False,habitual,ajuste,Garbatella
+11D,66,47,71.212121212,False,habitual,ajuste,Navigatori
+11E,664,575,86.596385542,False,habitual,ajuste,Tormarancia
+11F,8,0,0.000000000,False,habitual,ajuste,Tre Fontane
+12A,501,231,46.107784431,True,habitual,ajuste,Eur
+12B,23,0,0.000000000,False,habitual,ajuste,Villaggio Giuliano
+12C,4,0,0.000000000,False,habitual,ajuste,Torrino
+12D,40,0,0.000000000,False,habitual,ajuste,Laurentino
+15A,243,143,58.847736626,True,habitual,ajuste,Marconi
+15B,3,3,100.000000000,False,habitual,ajuste,Portuense
+15C,5,0,0.000000000,False,habitual,ajuste,Pian Due Torri
+15D,1,0,0.000000000,False,habitual,ajuste,Trullo
+16A,104,88,84.615384615,False,habitual,ajuste,Colli Portuensi
+16D,1464,1303,89.002732240,False,habitual,ajuste,Gianicolense
+16X,7,5,71.428571429,False,habitual,ajuste,Villa Pamphili
+17A,594,500,84.175084175,False,habitual,ajuste,Prati
+17B,483,378,78.260869565,False,habitual,ajuste,Della Vittoria
+17C,268,206,76.865671642,False,habitual,ajuste,Eroi
+18A,172,106,61.627906977,True,habitual,ajuste,Aurelio Sud
+18D,11,5,45.454545455,False,habitual,ajuste,Aurelio Nord
+19A,56,38,67.857142857,False,habitual,ajuste,Medaglie d' Oro
+1A,1777,1574,88.576252110,False,habitual,ajuste,Centro Storico
+1B,670,587,87.611940299,False,habitual,ajuste,Trastevere
+1C,406,329,81.034482759,False,habitual,ajuste,Aventino
+1D,413,380,92.009685230,False,habitual,ajuste,Testaccio
+1E,1500,1338,89.200000000,False,habitual,ajuste,Esquilino
+1F,384,331,86.197916667,False,habitual,ajuste,XX Settembre
+1G,244,215,88.114754098,False,habitual,ajuste,Celio
+1X,117,67,57.264957265,True,habitual,ajuste,Zona Archeologica
+20A,66,5,7.575757576,False,habitual,ajuste,Tor di Quinto
+20D,186,66,35.483870968,True,habitual,ajuste,Farnesina
+20X,42,21,50.000000000,False,habitual,ajuste,Foro Italico
+2A,39,5,12.820512821,False,habitual,ajuste,Villaggio Olimpico
+2B,183,87,47.540983607,True,habitual,ajuste,Parioli
+2C,315,228,72.380952381,False,habitual,ajuste,Flaminio
+2D,435,286,65.747126437,False,habitual,ajuste,Salario
+2E,461,328,71.149674620,False,habitual,ajuste,Trieste
+2X,153,96,62.745098039,True,habitual,ajuste,Villa Borghese
+2Y,21,13,61.904761905,False,habitual,ajuste,Villa Ada
+3A,507,359,70.808678501,False,habitual,ajuste,Nomentano
+3B,39,35,89.743589744,False,habitual,ajuste,S. Lorenzo
+3X,54,9,16.666666667,False,habitual,ajuste,Università
+3Y,1,1,100.000000000,False,habitual,ajuste,Verano
+4H,1,1,100.000000000,False,habitual,ajuste,Sacco Pastore
+6A,22,11,50.000000000,False,habitual,ajuste,Torpignattara
+9A,895,821,91.731843575,False,habitual,ajuste,Tuscolano Nord
+9B,637,571,89.638932496,False,habitual,ajuste,Tuscolano Sud
+9D,859,783,91.152502910,False,habitual,ajuste,Appio
+9E,628,561,89.331210191,False,habitual,ajuste,Latino
+SIN_ASIGNAR,12,9,75.000000000,False,habitual,ajuste,Sin zona asignada
+11A,60,42,70.000000000,False,habitual,reservada,Ostiense
+11B,53,17,32.075471698,True,habitual,reservada,Valco S. Paolo
+11C,199,133,66.834170854,False,habitual,reservada,Garbatella
+11D,25,11,44.000000000,False,habitual,reservada,Navigatori
+11E,219,175,79.908675799,False,habitual,reservada,Tormarancia
+11F,3,0,0.000000000,False,habitual,reservada,Tre Fontane
+12A,196,98,50.000000000,True,habitual,reservada,Eur
+12B,11,0,0.000000000,False,habitual,reservada,Villaggio Giuliano
+12D,15,0,0.000000000,False,habitual,reservada,Laurentino
+15A,103,57,55.339805825,True,habitual,reservada,Marconi
+15B,4,3,75.000000000,False,habitual,reservada,Portuense
+15C,2,0,0.000000000,False,habitual,reservada,Pian Due Torri
+16A,45,38,84.444444444,False,habitual,reservada,Colli Portuensi
+16D,523,460,87.954110899,False,habitual,reservada,Gianicolense
+16X,8,7,87.500000000,False,habitual,reservada,Villa Pamphili
+17A,293,232,79.180887372,False,habitual,reservada,Prati
+17B,181,131,72.375690608,False,habitual,reservada,Della Vittoria
+17C,102,72,70.588235294,False,habitual,reservada,Eroi
+18A,52,31,59.615384615,True,habitual,reservada,Aurelio Sud
+18D,5,1,20.000000000,False,habitual,reservada,Aurelio Nord
+19A,16,7,43.750000000,False,habitual,reservada,Medaglie d' Oro
+1A,782,676,86.445012788,False,habitual,reservada,Centro Storico
+1B,199,163,81.909547739,False,habitual,reservada,Trastevere
+1C,171,136,79.532163743,False,habitual,reservada,Aventino
+1D,132,124,93.939393939,False,habitual,reservada,Testaccio
+1E,669,575,85.949177877,False,habitual,reservada,Esquilino
+1F,160,133,83.125000000,False,habitual,reservada,XX Settembre
+1G,105,95,90.476190476,False,habitual,reservada,Celio
+1X,72,27,37.500000000,True,habitual,reservada,Zona Archeologica
+20A,31,0,0.000000000,False,habitual,reservada,Tor di Quinto
+20D,73,22,30.136986301,True,habitual,reservada,Farnesina
+20X,15,7,46.666666667,False,habitual,reservada,Foro Italico
+2A,34,4,11.764705882,False,habitual,reservada,Villaggio Olimpico
+2B,87,41,47.126436782,True,habitual,reservada,Parioli
+2C,120,87,72.500000000,False,habitual,reservada,Flaminio
+2D,178,111,62.359550562,False,habitual,reservada,Salario
+2E,216,139,64.351851852,False,habitual,reservada,Trieste
+2X,64,34,53.125000000,True,habitual,reservada,Villa Borghese
+2Y,6,0,0.000000000,False,habitual,reservada,Villa Ada
+3A,177,117,66.101694915,False,habitual,reservada,Nomentano
+3B,7,6,85.714285714,False,habitual,reservada,S. Lorenzo
+3X,37,7,18.918918919,False,habitual,reservada,Università
+6A,14,4,28.571428571,False,habitual,reservada,Torpignattara
+9A,333,289,86.786786787,False,habitual,reservada,Tuscolano Nord
+9B,280,237,84.642857143,False,habitual,reservada,Tuscolano Sud
+9D,315,284,90.158730159,False,habitual,reservada,Appio
+9E,218,165,75.688073394,False,habitual,reservada,Latino
+SIN_ASIGNAR,4,3,75.000000000,False,habitual,reservada,Sin zona asignada
+11A,215,162,75.348837209,False,equidad,ajuste,Ostiense
+11B,100,52,52.000000000,True,equidad,ajuste,Valco S. Paolo
+11C,657,457,69.558599696,False,equidad,ajuste,Garbatella
+11D,66,47,71.212121212,False,equidad,ajuste,Navigatori
+11E,664,575,86.596385542,False,equidad,ajuste,Tormarancia
+11F,8,0,0.000000000,False,equidad,ajuste,Tre Fontane
+12A,501,231,46.107784431,True,equidad,ajuste,Eur
+12B,23,0,0.000000000,False,equidad,ajuste,Villaggio Giuliano
+12C,4,0,0.000000000,False,equidad,ajuste,Torrino
+12D,40,0,0.000000000,False,equidad,ajuste,Laurentino
+15A,243,164,67.489711934,True,equidad,ajuste,Marconi
+15B,3,3,100.000000000,False,equidad,ajuste,Portuense
+15C,5,0,0.000000000,False,equidad,ajuste,Pian Due Torri
+15D,1,0,0.000000000,False,equidad,ajuste,Trullo
+16A,104,88,84.615384615,False,equidad,ajuste,Colli Portuensi
+16D,1464,1306,89.207650273,False,equidad,ajuste,Gianicolense
+16X,7,5,71.428571429,False,equidad,ajuste,Villa Pamphili
+17A,594,500,84.175084175,False,equidad,ajuste,Prati
+17B,483,378,78.260869565,False,equidad,ajuste,Della Vittoria
+17C,268,211,78.731343284,False,equidad,ajuste,Eroi
+18A,172,106,61.627906977,True,equidad,ajuste,Aurelio Sud
+18D,11,5,45.454545455,False,equidad,ajuste,Aurelio Nord
+19A,56,38,67.857142857,False,equidad,ajuste,Medaglie d' Oro
+1A,1777,1580,88.913899831,False,equidad,ajuste,Centro Storico
+1B,670,589,87.910447761,False,equidad,ajuste,Trastevere
+1C,406,309,76.108374384,False,equidad,ajuste,Aventino
+1D,413,377,91.283292978,False,equidad,ajuste,Testaccio
+1E,1500,1304,86.933333333,False,equidad,ajuste,Esquilino
+1F,384,331,86.197916667,False,equidad,ajuste,XX Settembre
+1G,244,212,86.885245902,False,equidad,ajuste,Celio
+1X,117,86,73.504273504,True,equidad,ajuste,Zona Archeologica
+20A,66,5,7.575757576,False,equidad,ajuste,Tor di Quinto
+20D,186,88,47.311827957,True,equidad,ajuste,Farnesina
+20X,42,21,50.000000000,False,equidad,ajuste,Foro Italico
+2A,39,6,15.384615385,False,equidad,ajuste,Villaggio Olimpico
+2B,183,87,47.540983607,True,equidad,ajuste,Parioli
+2C,315,232,73.650793651,False,equidad,ajuste,Flaminio
+2D,435,287,65.977011494,False,equidad,ajuste,Salario
+2E,461,328,71.149674620,False,equidad,ajuste,Trieste
+2X,153,98,64.052287582,True,equidad,ajuste,Villa Borghese
+2Y,21,13,61.904761905,False,equidad,ajuste,Villa Ada
+3A,507,359,70.808678501,False,equidad,ajuste,Nomentano
+3B,39,35,89.743589744,False,equidad,ajuste,S. Lorenzo
+3X,54,9,16.666666667,False,equidad,ajuste,Università
+3Y,1,1,100.000000000,False,equidad,ajuste,Verano
+4H,1,1,100.000000000,False,equidad,ajuste,Sacco Pastore
+6A,22,11,50.000000000,False,equidad,ajuste,Torpignattara
+9A,895,822,91.843575419,False,equidad,ajuste,Tuscolano Nord
+9B,637,570,89.481946625,False,equidad,ajuste,Tuscolano Sud
+9D,859,753,87.660069849,False,equidad,ajuste,Appio
+9E,628,559,89.012738854,False,equidad,ajuste,Latino
+SIN_ASIGNAR,12,9,75.000000000,False,equidad,ajuste,Sin zona asignada
+11A,60,44,73.333333333,False,equidad,reservada,Ostiense
+11B,53,19,35.849056604,True,equidad,reservada,Valco S. Paolo
+11C,199,129,64.824120603,False,equidad,reservada,Garbatella
+11D,25,11,44.000000000,False,equidad,reservada,Navigatori
+11E,219,176,80.365296804,False,equidad,reservada,Tormarancia
+11F,3,0,0.000000000,False,equidad,reservada,Tre Fontane
+12A,196,98,50.000000000,True,equidad,reservada,Eur
+12B,11,0,0.000000000,False,equidad,reservada,Villaggio Giuliano
+12D,15,0,0.000000000,False,equidad,reservada,Laurentino
+15A,103,68,66.019417476,True,equidad,reservada,Marconi
+15B,4,3,75.000000000,False,equidad,reservada,Portuense
+15C,2,0,0.000000000,False,equidad,reservada,Pian Due Torri
+16A,45,39,86.666666667,False,equidad,reservada,Colli Portuensi
+16D,523,460,87.954110899,False,equidad,reservada,Gianicolense
+16X,8,7,87.500000000,False,equidad,reservada,Villa Pamphili
+17A,293,232,79.180887372,False,equidad,reservada,Prati
+17B,181,131,72.375690608,False,equidad,reservada,Della Vittoria
+17C,102,75,73.529411765,False,equidad,reservada,Eroi
+18A,52,31,59.615384615,True,equidad,reservada,Aurelio Sud
+18D,5,1,20.000000000,False,equidad,reservada,Aurelio Nord
+19A,16,7,43.750000000,False,equidad,reservada,Medaglie d' Oro
+1A,782,673,86.061381074,False,equidad,reservada,Centro Storico
+1B,199,168,84.422110553,False,equidad,reservada,Trastevere
+1C,171,124,72.514619883,False,equidad,reservada,Aventino
+1D,132,121,91.666666667,False,equidad,reservada,Testaccio
+1E,669,559,83.557548580,False,equidad,reservada,Esquilino
+1F,160,133,83.125000000,False,equidad,reservada,XX Settembre
+1G,105,96,91.428571429,False,equidad,reservada,Celio
+1X,72,48,66.666666667,True,equidad,reservada,Zona Archeologica
+20A,31,0,0.000000000,False,equidad,reservada,Tor di Quinto
+20D,73,27,36.986301370,True,equidad,reservada,Farnesina
+20X,15,7,46.666666667,False,equidad,reservada,Foro Italico
+2A,34,4,11.764705882,False,equidad,reservada,Villaggio Olimpico
+2B,87,41,47.126436782,True,equidad,reservada,Parioli
+2C,120,88,73.333333333,False,equidad,reservada,Flaminio
+2D,178,111,62.359550562,False,equidad,reservada,Salario
+2E,216,139,64.351851852,False,equidad,reservada,Trieste
+2X,64,34,53.125000000,True,equidad,reservada,Villa Borghese
+2Y,6,0,0.000000000,False,equidad,reservada,Villa Ada
+3A,177,117,66.101694915,False,equidad,reservada,Nomentano
+3B,7,6,85.714285714,False,equidad,reservada,S. Lorenzo
+3X,37,7,18.918918919,False,equidad,reservada,Università
+6A,14,4,28.571428571,False,equidad,reservada,Torpignattara
+9A,333,289,86.786786787,False,equidad,reservada,Tuscolano Nord
+9B,280,238,85.000000000,False,equidad,reservada,Tuscolano Sud
+9D,315,278,88.253968254,False,equidad,reservada,Appio
+9E,218,174,79.816513761,False,equidad,reservada,Latino
+SIN_ASIGNAR,4,3,75.000000000,False,equidad,reservada,Sin zona asignada

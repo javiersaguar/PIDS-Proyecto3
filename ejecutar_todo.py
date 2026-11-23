@@ -44,6 +44,9 @@ PASOS = [
     "movilidad/T31_asignacion_estaciones.ipynb",
     "movilidad/T34_curva_flota.ipynb",
     "movilidad/T36_capas_mapa.ipynb",
+    "consumo/modelo_a.py",
+    "movilidad/cierre.py",
+    "movilidad/T33_T39_cierre.ipynb",
 ]
 
 

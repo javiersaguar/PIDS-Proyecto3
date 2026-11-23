@@ -8,6 +8,7 @@ import { capasLocalizacion, capasValidacion, fondoLocalizacion, rotulosLocalizac
 import { PanelLocalizacion, useLocalizacionDemo } from "../localizacion/DemoLocalizacion";
 import type { Candidato, Marcador } from "../localizacion/modelo";
 import { PanelValidacion } from "../localizacion/PanelValidacion";
+import { ControlOperacion, tooltipOperacion, useOperacion, type VistaOperacion } from "../localizacion/operacion";
 import { contornoSector, SECTORES, useValidacionRed, type SectorMapa } from "../localizacion/validacion";
 import { useRuta } from "../ruta";
 import { capaEtiquetas, capasBase, capasDatos, luces, maximosDe, pasoOcupacion, valorDemanda, valorSaldo } from "./capas";
@@ -90,6 +91,12 @@ function Escena({ demo, tema: nombreTema, setTema }: { demo: Demo; tema: Tema["n
   const esEstudio = esLocalizacion || esValidacion;
   const localizacion = useLocalizacionDemo(esLocalizacion, parametros.join("/"));
   const validacion = useValidacionRed(esValidacion, parametros.join("/"));
+  const modoOperacion = parametros[3] === "operacion";
+  const [vistaOperacion, setVistaOperacion] = useState<VistaOperacion>(modoOperacion ? "cobertura" : "ninguna");
+  useEffect(() => {
+    if (modoOperacion) setVistaOperacion("cobertura");
+  }, [modoOperacion]);
+  const operacion = useOperacion(validacion, esValidacion, vistaOperacion);
   const reducido = useMemo(movimientoReducido, []);
 
   const radioDefecto = demo.manifiesto.networks.find((r) => r.network_id === demo.manifiesto.network_por_defecto)!.radio_m;
@@ -302,7 +309,7 @@ function Escena({ demo, tema: nombreTema, setTema }: { demo: Demo; tema: Tema["n
     () => esValidacion ? capasValidacion(validacion.visibles, validacion.caso) : [],
     [esValidacion, validacion.visibles, validacion.caso],
   );
-  const datos = esEstudio ? [...capasRutas, ...capasLocal] : capasDatos(demo, { capas, red, radio, k, t, tipoDia, franja, seleccion }, tema);
+  const datos = esEstudio ? [...operacion.capas, ...capasRutas, ...capasLocal] : capasDatos(demo, { capas, red, radio, k, t, tipoDia, franja, seleccion }, tema);
 
   const estacionElegida = seleccion ? red.estaciones.find((s) => s.station_id === seleccion) : undefined;
 
@@ -328,6 +335,8 @@ function Escena({ demo, tema: nombreTema, setTema }: { demo: Demo; tema: Tema["n
   };
 
   const tooltip = (info: PickingInfo) => {
+    const operativa = tooltipOperacion(info);
+    if (operativa) return operativa;
     if (info.layer?.id === "validacion-sectores" && info.object) {
       return { text: SECTORES[(info.object as SectorMapa).id] };
     }
@@ -406,7 +415,10 @@ function Escena({ demo, tema: nombreTema, setTema }: { demo: Demo; tema: Tema["n
             <div className="mapa-cuerpo">{capitulo.cuerpo(contexto)}</div>
 
             {esLocalizacion && <PanelLocalizacion estado={localizacion} enfocar={enfocar} />}
-            {esValidacion && <PanelValidacion estado={validacion} enfocar={enfocar} enfocarArea={enfocarArea} />}
+            {esValidacion && <>
+              <ControlOperacion datos={operacion} vista={vistaOperacion} cambiar={setVistaOperacion} />
+              <PanelValidacion estado={validacion} enfocar={enfocar} enfocarArea={enfocarArea} />
+            </>}
             {capitulo.controles.red && <SelectorRadio demo={demo} radio={radio} setRadio={setRadio} />}
             {capitulo.controles.k && (
               <div className="mapa-control">
@@ -521,7 +533,7 @@ function Escena({ demo, tema: nombreTema, setTema }: { demo: Demo; tema: Tema["n
 
       <div className="mapa-atribucion">
         {demo.base.atribucion.split(" (")[0]} · Helbiz, Roma, febrero 2021 ·{" "}
-        {esValidacion ? "Validación T26–T30" : esLocalizacion
+        {esValidacion ? (operacion.disponible && vistaOperacion !== "ninguna" ? "Cobertura y flujos operativos T36" : "Validación T26–T30") : esLocalizacion
           ? "Catálogo T24 y redes T25 del ajuste" : "Red preliminar T36 · ejecución " + demo.manifiesto.run_id}
       </div>
     </div>

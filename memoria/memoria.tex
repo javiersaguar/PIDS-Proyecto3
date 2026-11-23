@@ -52,7 +52,7 @@
 \DeclareUrlCommand\nb{\urlstyle{tt}}
 \def\UrlBreaks{\do\/\do\_\do\.}
 \setcounter{biburlnumpenalty}{100}\setcounter{biburlucpenalty}{100}\setcounter{biburllcpenalty}{100}
-\newcommand\fechaversion{22/11/2026}
+\newcommand\fechaversion{23/11/2026}
 % Apartado sin resultados todavía: qué irá y con qué tareas (docs/TAREAS.md).
 \newcommand\pendiente[1]{{\color{tenue}\small\textit{Pendiente.} #1\par}}
 
@@ -81,7 +81,7 @@
     \textbf{Grupo} & G\cifra{grupo} \\
     \textbf{Autores} & Cuevas, Alejandro \\
                      & Saguar, Javier \\
-    \textbf{Versión} & Fase 0 y validación de la red \\
+    \textbf{Versión} & Cierre de movilidad \\
     \textbf{Fecha} & \fechaversion \\
     \textbf{Curso académico} & 2026/2027 \\
   \end{tabular}
@@ -124,10 +124,10 @@
 
 \section*{Estado de esta versión}
 \addcontentsline{toc}{section}{Estado de esta versión}
-Esta versión cierra la exploración e incorpora el análisis origen-destino, la
-localización de estaciones y la evaluación temporal de la fase~1 (T20--T30).
-Incluye la cobertura calculada en línea recta y una comparación a pie en dos sectores.
-El detalle de la exploración está en los anexos.
+Esta versión cierra la fase~1 (T20--T39). Incluye localización y validación a
+pie, dimensionado de flota y plazas, comparación del rebalanceo, estado de
+carga, acceso territorial, cierres de estaciones y demanda de recarga
+equivalente. El detalle de la exploración está en los anexos.
 
 \newpage
 {\setstretch{1}\setlength{\parskip}{0pt}
@@ -629,8 +629,59 @@ Los \cifra{asig_rechazos} rechazos están repartidos (las diez estaciones con m�
 suman el \cifra{asig_rechazos_top10}\pc{}), así que no hay unas pocas estaciones mal
 dimensionadas.
 
-\pendiente{Comparación de políticas de rebalanceo con \cifra{rebalanceo_sensibilidad}
-patinetes por noche (T33).}
+\subsection{Política nocturna y carga (T33 y T35)}
+La regla por déficit mueve primero hacia la estación más alejada de su stock
+de diseño. La regla marginal estima con el ajuste la probabilidad de que una
+unidad adicional evite déficit. Ambas usan el donante con excedente más cercano.
+Se mantienen \cifra{rebalanceo_base} movimientos como límite con la regla por
+déficit. Es la opción ensayada que alcanza el 95\pc{} de servicio de los
+viajes cubiertos en ajuste con menos kilómetros equivalentes
+(\cifra{cierre_km_ajuste}~km). En reserva la regla marginal recupera
+\cifra{cierre_extra_reb} viajes y ahorra \cifra{cierre_km_ahorro}~km.
+La distancia suma traslados individuales corregidos con el rodeo de T15.
+
+T35 simula el consumo por viaje, la carga continua en anclaje y la reserva
+de batería tras un viaje. Con carga desde el inicio y una reserva del
+20\pc{}, hay \cifra{cierre_bat_rechazos} rechazos por batería en reserva y
+quedan \cifra{cierre_bat_pendiente}~kWh por reponer al cierre. La prueba de
+carga disponible por anclaje justifica conservar el inventario de referencia
+para evaluar potencia y gestión de carga en la fase siguiente.
+
+\subsection{Acceso territorial y cierres (T36--T38)}
+El mapa 3D muestra cobertura OD y servicio por celda de origen, y flujos
+de viajes atendidos. En el ajuste se fijan las \cifra{cierre_zonas} zonas del
+cuartil peor servido entre las que tienen al menos cien salidas. La variante
+territorial mantiene el presupuesto y aumenta su cobertura media en
+\cifra{cierre_equidad_pp} puntos en reserva. Se conserva como alternativa
+ante un objetivo explícito de acceso. Las ubicaciones y zonas se fijan con
+el ajuste.
+
+Se prueban cinco cierres independientes de emplazamientos críticos. La
+variante redundante mantiene al menos el 80\pc{} de cobertura en ajuste e
+incrementa los viajes con dos opciones en ambos extremos. En reserva pierde
+\cifra{cierre_fallos_redundante} viajes netos en la suma de las ventanas frente
+a \cifra{cierre_fallos_habitual} de la habitual. La redundancia global ensayada
+aporta opciones, pero apenas modifica la respuesta a los cinco cierres
+seleccionados. El desglose de los desvíos y la saturación vecina queda en la web.
+
+\subsection{Comparación operativa y recarga equivalente (T39)}
+Se contrastan las finalistas de T28 y las dos variantes con flota, anclajes y
+presupuesto de traslados fijos. La red habitual atiende más viajes en ajuste
+(\cifra{cierre_atendidos_aj}). Las sesiones de reposición se asignan al
+destino real de los viajes atendidos, con solape por cuarto de hora.
+Para la red elegida, la demanda equivalente en batería aumenta de
+\cifra{cierre_kwh_dia_aj} a \cifra{cierre_kwh_dia_res}~kWh/día en reserva.
+El pico simultáneo es \cifra{cierre_kw_red}~kW y el mayor pico individual,
+\cifra{cierre_kw_est}~kW. Las diez estaciones con mayor demanda suman el
+\cifra{cierre_top10}\pc{} de los kWh de reserva. El análisis de recarga
+incorporará después el rendimiento y el suministro.
+\href{https://javiersaguar.github.io/PIDS-Proyecto3/\#/fase1/t39}{Comparación interactiva}.
+
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=0.9\textwidth]{T39_cierre_movilidad}
+  \caption{Izquierda, rebalanceo y servicio en ajuste. Derecha, potencia equivalente de recarga y servicio en ajuste y reserva.}\label{fig:cierre-movilidad}
+\end{figure}
 
 % ------------------------------------------------------------------------------------------
 \section{Consumo}
@@ -645,9 +696,10 @@ Es una referencia: con estaciones y una flota simulada menor cada patinete hará
 así que el consumo por patinete y por estación se calculará con la flota de la simulación.
 
 \subsection{Comparación de los modelos de consumo}
-\pendiente{Modelo A con 13,5~Wh/km por viaje (T40) y modelo B físico con rodadura,
-aerodinámica, pendiente y aceleración (T41), calibrado frente a 13,5~Wh/km (T43): intensidad
-(Wh/km) y kWh agregados de cada uno.}
+T40 estima los Wh de cada viaje elegible con la distancia registrada y
+13,5~Wh/km. Es la entrada de T35 y T39.
+\pendiente{Modelo B físico con rodadura, aerodinámica, pendiente y aceleración (T41),
+calibrado frente a 13,5~Wh/km (T43).}
 
 \subsection{Hipótesis de velocidad y pendiente}
 \pendiente{Efecto de la velocidad supuesta y del desnivel origen-destino (T42) sobre la
@@ -694,9 +746,16 @@ criterio de autonomía para elegir uno (T55); carga inteligente frente a carga i
 \section{Conclusiones}
 
 \subsection{Respuesta a las preguntas iniciales}
-\pendiente{Cuántas estaciones, dónde, con cuántos anclajes y patinetes; cuánta energía
-consume la flota; y qué paneles y batería necesita la estación elegida, con las cifras de la
-ejecución validada (T61).}
+La referencia de movilidad sitúa \cifra{red_estaciones} estaciones con radio
+geométrico de \cifra{red_radio}~m en Roma, \cifra{flota_min} patinetes y
+\cifra{cierre_anc} anclajes. La prueba reservada atiende
+\cifra{cierre_atendidos_res} de \cifra{cierre_solicitudes_res} solicitudes
+(\cifra{cierre_pct_total_res}\pc{} del total, \cifra{cierre_pct_cub_res}\pc{}
+de las cubiertas). Los mapas peatonales localizan barreras de acceso y
+la comparación de cierres cuantifica las pérdidas de un fallo localizado.
+El catálogo por estación y las llegadas atendidas permiten pasar a
+dimensionar la recarga.
+\pendiente{Contraste del consumo físico y dimensionado de paneles y batería (T61).}
 
 \subsection{Decisiones de la exploración (T19)}
 La tabla~\ref{tab:decisiones} recoge lo que la exploración fija para el diseño. El

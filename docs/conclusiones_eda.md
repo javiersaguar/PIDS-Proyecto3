@@ -611,6 +611,157 @@ Criterio: la menor flota que atiende el 95 % de los viajes cubiertos con 100 por
 
 [Matriz](../resultados/tablas/movilidad/T31_matriz_estaciones.csv) · [Estaciones](../resultados/tablas/movilidad/T31_estaciones.csv) · [T31 en la web](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase1/t31)
 
+## T33. Política y coste del rebalanceo nocturno
+
+Se fijan flota, anclajes, red, demanda y corte a las 04:00 de Roma. El límite de
+100 procede del orden de magnitud de T14 en resolución 8. Los límites 0 y 220
+miden el efecto de prescindir del traslado y el de usar la cota aproximada de
+resolución 9. La política por déficit atiende primero el mayor faltante. La
+alternativa marginal repone primero donde la proporción de días de ajuste en
+que faltaría la siguiente unidad es mayor, según la trayectoria de saldo
+ideal. Ambas toman el donante con excedente más cercano. El beneficio estimado
+sirve para ordenar movimientos y el servicio se vuelve a medir con restricciones.
+
+| Política y límite | Atendidos en ajuste | km equivalentes en ajuste | Atendidos en reserva | km equivalentes en reserva |
+|---|---:|---:|---:|---:|
+| Sin movimientos | 11 379 | 0 | 4 302 | 0 |
+| Mayor déficit, 100 | 12 750 | 2 416,84 | 4 670 | 806,32 |
+| Beneficio marginal, 100 | 12 756 | 2 430,25 | 4 674 | 730,44 |
+| Mayor déficit, 220 | 12 790 | 2 988,91 | 4 681 | 985,91 |
+| Beneficio marginal, 220 | 12 790 | 2 909,82 | 4 681 | 935,33 |
+
+Se conserva **mayor déficit con límite de 100**. Es la combinación que menos
+kilómetros requiere entre las que superan el 95 % de los 13 409 viajes
+cubiertos del ajuste. Con 220 y la misma regla se recuperan 40 viajes en el
+ajuste y 11 en reserva, a cambio de 572,08 y 179,59 km adicionales. La regla
+marginal a 100 merece una prueba operativa por el ahorro de distancia en reserva.
+Sin embargo, su mejora de servicio es pequeña y en esa semana deja 10,17
+patinetes por reponer por noche frente a 9,33. La distancia publicada suma
+traslados individuales con el rodeo de T15. La ruta del vehículo, sus tiempos
+de carga y la agrupación de traslados requieren datos logísticos. [Comparación](../resultados/tablas/movilidad/T33_politicas.csv) · [Noches y causas de rechazo](../resultados/tablas/movilidad/T33_noches.csv) · [Web](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase1/t33)
+
+## T35. Si la carga limita los viajes
+
+Cada unidad parte con 576 Wh. Se usa la distancia registrada y los 13,5 Wh/km
+del Modelo A. Mientras ocupa un anclaje recarga a 576 Wh / 7 h en el lado batería.
+La unidad elegida es la menos cargada entre las suficientes, para conservar
+opciones para viajes más largos. Se comprueba el caso físicamente mínimo
+(energía del propio viaje) y una reserva de fin de viaje del 20 % como
+sensibilidad operativa. Las recolocaciones transportan la carga de la unidad.
+El balance suma energía repuesta y déficit final y coincide con la tracción.
+
+Los dos casos con carga conservan los **12 750 y 4 670 viajes atendidos** y
+registran **cero rechazos por batería**. Con reserva del 20 %, la tracción es
+349,535 y 131,301 kWh en los dos periodos y quedan 0,107 y 0,067 kWh por
+reponer al final. Se conserva una política de despacho con comprobación de
+energía para la futura integración. La prueba supone carga disponible en cada
+anclaje y stock inicialmente cargado. La potencia de suministro, las pérdidas
+del cargador y las políticas FV se evaluarán en recarga. [Energía por viaje](../resultados/tablas/consumo/T40_energia_viaje.csv) · [Simulación y balance](../resultados/tablas/movilidad/T35_carga.csv) · [Web](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase1/t35)
+
+## T36. Evidencia de cobertura y flujos en 3D
+
+La vista de la red elegida alterna cobertura OD y servicio por celda H3 de
+origen, además de flujos dirigidos de la simulación. El denominador de cada
+celda es sus salidas elegibles. Los flujos de la tabla incluyen circulares y
+concuerdan con las llegadas y salidas por estación. Se dibujan los flujos más
+frecuentes entre estaciones distintas para mantener legible la vista al
+alejarla. La selección de una estación muestra sus principales entradas y
+salidas. Cambiar de periodo mantiene los emplazamientos. [Celdas](../resultados/tablas/movilidad/T36_cobertura_operativa.csv) · [Flujos](../resultados/tablas/movilidad/T36_flujos_operativos.csv) · [Mapa de operación](https://javiersaguar.github.io/PIDS-Proyecto3/#/mapa/validacion/ajuste/ambos/lscp_r300_k159/operacion)
+
+## T37. Acceso de las zonas peor cubiertas
+
+Se mide cobertura OD por zona urbanística de origen de T21. El mínimo de
+100 salidas en el ajuste acota en cinco puntos el error estándar binomial
+máximo de la tasa como referencia descriptiva. Entre las zonas elegibles se
+fija el cuartil inferior, ocho zonas, con el mismo peso por zona. Se evalúa
+cada intercambio de un emplazamiento abierto y otro del catálogo T24, se
+elige el de mayor mejora media y se protege la cobertura global habitual.
+El límite de cinco sustituciones acota el cambio de infraestructura y
+facilita contrastarlo con la variante de redundancia. La búsqueda es local.
+
+| Periodo | Salidas en las ocho zonas | Cubiertas habitual → territorial | Media por zona habitual → territorial |
+|---|---:|---:|---:|
+| Ajuste | 1 655 | 842 → 912 | 51,95 % → 57,45 % |
+| Reservada | 700 | 327 → 366 | 45,61 % → 51,92 % |
+
+En la reserva, con 159 estaciones y 300 m, se ganan **6,31 pp de media**
+y 39 viajes completos en las zonas prioritarias. En toda Roma, la variante
+cubre 19 viajes adicionales y atiende 14 más en reserva. En ajuste atiende
+9 menos que la habitual y reduce de 2 003 a 1 784 los viajes con dos opciones
+por extremo. La variante es útil si se prioriza acceso territorial y se
+mantiene como alternativa por ese compromiso. La demanda observada por
+origen y la cobertura geométrica son el alcance del indicador. [Resultados por zona](../resultados/tablas/movilidad/T37_zonas.csv) · [Intercambios](../resultados/tablas/movilidad/T37_T38_intercambios.csv) · [Web](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase1/t37)
+
+## T38. Cinco cierres críticos
+
+La franja de punta de T12 es 16:00–20:00. El 06/02 maximiza los viajes
+cubiertos del ajuste en esa franja. Se toman los cinco sitios con más
+viajes que dependen de ellos como única opción en origen o destino. Se
+prueba cada fallo por separado el 06/02 y el 27/02, mismo día de la semana.
+Se suspenden las asignaciones nuevas en el sitio cerrado, se conservan
+las devoluciones reservadas y se permiten desvíos dentro del radio. Cada
+red tiene su propio control sin cierre con los mismos recursos.
+
+La variante conserva los cinco sitios y el objetivo del 80 % en ajuste.
+Dentro de ese límite se aceptan dos sustituciones que mejoran el recuento
+de viajes con dos opciones en cada extremo. Pasa de 2 003 a 2 040 en ajuste
+y de 798 a 801 en reserva. La pérdida neta sumada de los cinco casos
+durante la punta pasa de 52 a 51 en ajuste y **se mantiene en 48 en reserva**.
+En reserva, el receptor de devoluciones desviadas de uno de los cierres
+pasa del 0 % al 54,24 % de la ventana lleno, contando reservas. La
+redundancia global probada no justifica cambiar la red de referencia.
+La pérdida de la semana completa, los metros de desvío y la concentración
+vecina quedan desglosados por cierre. [Casos completos](../resultados/tablas/movilidad/T38_cierres.csv) · [Web](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase1/t38)
+
+## T39. Redes comparables para operación y recarga
+
+Se ensayan las tres finalistas y las dos variantes con **400 patinetes,
+966 anclajes y hasta 100 movimientos al corte**. En las alternativas se
+aseguran dos plazas por estación y se reparte el resto según el excedente
+de capacidad P90 del ajuste. El stock se reparte según la necesidad de
+diseño con el tope de plazas. Dos plazas permiten partir de una recogida
+y una devolución posibles en la misma estación.
+
+| Red | Atendidos en ajuste | Atendidos en reserva | kWh/día en reserva | Pico simultáneo en reserva (kW) | Cuota de las 10 primeras en reserva |
+|---|---:|---:|---:|---:|---:|
+| Elegida | 12 750 | 4 670 | 18,76 | 3,46 | 16,82 % |
+| Menos estaciones | 12 710 | 4 669 | 18,75 | 3,46 | 16,77 % |
+| Menor radio | 12 148 | 4 370 | 17,50 | 3,47 | 15,04 % |
+| Territorial | 12 741 | 4 684 | 19,06 | 3,57 | 16,33 % |
+| Redundante | 12 735 | 4 677 | 18,79 | 3,47 | 16,69 % |
+
+Se calcula el solape de cada sesión equivalente en intervalos de 15 minutos
+desde la devolución. Los kWh por estación suman la energía de los viajes
+atendidos. La potencia se expresa en el lado batería. El mayor pico
+individual de la red habitual es 0,48 kW en reserva. La red habitual
+atiende más viajes en ajuste bajo las reglas comparadas y pasa a recarga
+como referencia. Las diferencias de demanda eléctrica de otras redes
+deben leerse junto con los cambios de servicio. [Redes](../resultados/tablas/movilidad/T39_redes.csv) · [Estaciones](../resultados/tablas/movilidad/T39_estaciones.csv) · [Web](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase1/t39)
+
+## Cierre de la fase 1
+
+Se adopta la red de **159 estaciones con radio geométrico de 300 m,
+400 patinetes, 966 anclajes y un máximo de 100 traslados nocturnos**.
+La localización alcanza el 80 % en ajuste con el menor presupuesto
+factible ensayado. T32 dimensiona el stock y las plazas por estación y
+T34 fija la menor flota probada que supera el 95 % de servicio entre
+viajes cubiertos en ajuste. El contraste de políticas de T33 conserva
+esa referencia por sus kilómetros equivalentes.
+
+En la reserva, **5 001 de 6 614** solicitudes tienen cobertura geométrica
+y se atienden **4 670** en la simulación (**70,61 % de todas las solicitudes,
+93,38 % de las cubiertas**). En los sectores medidos a pie, la cobertura
+pareada en reserva es 44,3 %. Esas tres métricas responden a alcance
+geométrico, servicio con recursos limitados y acceso por calles en una
+muestra local, respectivamente.
+
+La red territorial queda como alternativa cuantificada y los cierres
+muestran dónde los rodeos y las plazas vecinas siguen siendo limitantes.
+La fase de Consumo recibe la energía por viaje y la asignación operativa
+de T31–T32. La fase de Recarga recibe energía de tracción agregada por
+estación y los picos equivalentes, y dimensionará potencia y energía
+del lado de la instalación. [Notebook de reproducción](../movilidad/T33_T39_cierre.ipynb) · [Conclusiones en la web](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase1/decisiones)
+
 ## Preguntas de la exploración ya respondidas
 
 - ¿Coincide el saldo de T14 con las entregas netas del operador de T11? **Sí** (T14):

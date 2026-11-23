@@ -159,6 +159,8 @@ T24 deja el [catálogo compartido de candidatos](../resultados/tablas/movilidad/
 
 **Evidencia de cierre.** Comprobar con casos pequeños que se conserva el total de patinetes entre estaciones y tránsito, que la ocupación más reservas respeta la capacidad y que cada solicitud tiene un resultado único. Entregar una tabla por estación con coordenadas, stock inicial, anclajes y utilización, más la curva de servicio frente a tamaño de flota.
 
+La fase conserva la red y la política que alcanzan los objetivos de cobertura y servicio del ajuste con los recursos adoptados. Las variantes territoriales y de redundancia se evalúan con los mismos totales de patinetes y anclajes. La energía por viaje del Modelo A alimenta el contraste de batería y la demanda equivalente por estación. [Cierre y evidencia](conclusiones_eda.md#cierre-de-la-fase-1)
+
 ## 5. Consumo
 
 ### Modelo de referencia

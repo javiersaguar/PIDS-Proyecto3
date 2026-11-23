@@ -30,13 +30,9 @@ export const FASES: Fase[] = [
       "Matrices origen–destino, redes candidatas de estaciones y la recomendación de cuántas estaciones, dónde, con cuántos anclajes y con qué flota. Muestra cuánto acceso se gana con cada incremento de infraestructura.",
     fechas: "23/11–4/12",
     peso: "60 %",
-    estado: "en curso",
+    estado: "cerrada",
     tareas: "T20–T39",
-    previsto: [
-      "Asignación de cada viaje a estaciones y matriz de flujos de la red elegida.",
-      "Stock, anclajes y rebalanceo por estación en los escenarios de inventario.",
-      "Curva de flota frente a nivel de servicio a partir de la simulación de inventario.",
-    ],
+    previsto: [],
   },
   {
     id: "fase2",

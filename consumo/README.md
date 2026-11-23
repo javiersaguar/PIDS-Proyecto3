@@ -11,3 +11,8 @@
 - Código de los modelos, la calibración y la agregación del consumo, con los parámetros y las unidades documentados.
 - Una tabla derivada con el identificador del viaje, el patinete, la hora de llegada, la estación de destino y la energía estimada en Wh. Es la entrada de [estacion_recarga/](../estacion_recarga/README.md) y se genera en [datos/procesados/](../datos/procesados/README.md).
 - Tablas de consumo agregado y una comparación entre los modelos en [resultados/](../resultados/README.md).
+
+El [Modelo A (T40)](modelo_a.py) genera [energía por viaje](../resultados/tablas/consumo/T40_energia_viaje.csv)
+con 13,5 Wh por kilómetro de distancia registrada. Desde la raíz, ejecutar
+`python consumo/modelo_a.py`. La tabla incluye el porcentaje de batería
+nominal y marca los viajes que exceden una carga. Es la entrada de T35 y T39.

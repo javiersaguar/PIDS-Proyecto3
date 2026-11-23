@@ -1,4 +1,4 @@
-import { FASES } from "../../fases";
+import { CierreMovilidad, TAREAS_CIERRE } from "./CierreMovilidad";
 import { T20 } from "./T20";
 import { T21 } from "./T21";
 import { T22 } from "./T22";
@@ -20,9 +20,10 @@ const SECCIONES = [
   ...TAREAS_RED,
   { id: "t31", tarea: "T31", titulo: "Asignación y matriz entre estaciones" },
   { id: "t32", tarea: "T32", titulo: "Stock y anclajes por estación" },
+  TAREAS_CIERRE[0],
   { id: "t34", tarea: "T34", titulo: "Curva de flota" },
-  { id: "siguientes", tarea: "", titulo: "Lo que falta" },
-  { id: "decisiones", tarea: "", titulo: "Decisiones" },
+  ...TAREAS_CIERRE.slice(1),
+  { id: "decisiones", tarea: "", titulo: "Conclusiones" },
 ];
 
 const DECISIONES = [
@@ -34,10 +35,12 @@ const DECISIONES = [
   ["Asignación por viaje", "Estación más cercana a 300 m en cada extremo y resultado de la simulación; las 16 756 solicitudes cuadran con T32 y la tabla alimenta consumo", "T31"],
   ["Stock y anclajes", "Anclajes = P90 diario de stock y subida de cada estación (966 en total); el stock inicial reparte la flota elegida en proporción al P90 (474 de diseño)", "T32"],
   ["Tamaño de la flota", "400 patinetes con los 966 anclajes de T32 atienden el 95,1 % (criterio del 95 %); el máximo, 95,9 %, está en 475 y queda como alternativa", "T34"],
+  ["Rebalanceo", "100 movimientos como tope y prioridad al déficit. Es la política ensayada con menos kilómetros que supera el 95 % de los viajes cubiertos en ajuste.", "T33"],
+  ["Batería", "La carga lineal en anclajes permite mantener el servicio con una reserva del 20 %. Recarga evaluará la potencia disponible.", "T35"],
+  ["Comparación de redes", "La red elegida conserva la referencia de operación. Las variantes permiten valorar acceso territorial y respuesta ante cierres con los mismos recursos.", "T39"],
 ];
 
 export function Fase1() {
-  const previsto = FASES.find((f) => f.id === "fase1")!.previsto;
   return (
     <>
       <nav className="indice" aria-label="Secciones de la fase 1">
@@ -58,38 +61,17 @@ export function Fase1() {
       <T31 />
       <T32 />
       <T34 />
-      <section id="siguientes" className="seccion">
-        <header>
-          <div>
-            <div className="etiqueta">T31–T39</div>
-            <h2>Lo que falta de la fase</h2>
-          </div>
-          <div>
-            <p>
-              Las gráficas de estas tareas aparecerán aquí cuando sus notebooks exporten los datos. Parten de las
-              decisiones de la fase 0: candidatos en H3 de resolución 9, radios de 200, 250 y 300 m (400 m como
-              sensibilidad) y rebalanceo nocturno en el escenario base.
-            </p>
-          </div>
-        </header>
-        <div className="aviso">
-          <strong>Previsto.</strong>
-          <ul>
-            {previsto.map((p) => (
-              <li key={p}>{p}</li>
-            ))}
-          </ul>
-        </div>
-      </section>
+      <CierreMovilidad />
       <section id="decisiones" className="seccion">
         <header>
           <div>
             <div className="etiqueta">Resumen</div>
-            <h2>Decisiones de la fase 1 hasta ahora</h2>
+            <h2>Conclusiones de movilidad</h2>
           </div>
           <div>
             <p>
-              El detalle de cada decisión, con su evidencia y sus limitaciones, está en <code>docs/conclusiones_eda.md</code>.
+              La fase deja fijada la referencia de operación y cuantifica los compromisos de acceso, flota,
+              rebalanceo y recarga. <a href="https://github.com/javiersaguar/PIDS-Proyecto3/blob/main/docs/conclusiones_eda.md#cierre-de-la-fase-1">Métodos, evidencia y decisiones</a>.
             </p>
           </div>
         </header>

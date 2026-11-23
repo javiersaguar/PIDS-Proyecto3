@@ -473,6 +473,42 @@ def cifras() -> dict[str, str]:
         "flota_res_min": num(fila(comp, periodo="reservada", flota=flota_min)["pct_atendidos_cubiertos"], 1),
         "flota_res_diseno": num(fila(comp, periodo="reservada", caso="diseño T32")["pct_atendidos_cubiertos"], 1),
     }
+    t33 = leer("movilidad/T33_politicas.csv")
+    base = fila(t33, periodo="ajuste", politica="deficit", limite=base_reb)
+    alterna = fila(t33, periodo="reservada", politica="beneficio", limite=base_reb)
+    base_reserva = fila(t33, periodo="reservada", politica="deficit", limite=base_reb)
+    factibles = t33.loc[t33["periodo"].eq("ajuste") & t33["pct_atendidos_cubiertos"].ge(95)]
+    assert factibles.loc[factibles["km_rebalanceo"].idxmin(), "limite"] == base_reb
+    assert factibles.loc[factibles["km_rebalanceo"].idxmin(), "politica"] == "deficit"
+    t35 = fila(leer("movilidad/T35_carga.csv"), periodo="reservada", caso="reserva20")
+    t37 = leer("movilidad/T37_zonas.csv").query("prioritaria and periodo == 'reservada'")
+    tasas = t37.groupby("red")["pct"].mean()
+    cierres = leer("movilidad/T38_cierres.csv").query("periodo == 'reservada'").groupby("red")[["perdidos", "recuperados"]].sum()
+    t39 = leer("movilidad/T39_redes.csv")
+    red_a = fila(t39, red="habitual", periodo="ajuste")
+    red_r = fila(t39, red="habitual", periodo="reservada")
+    c |= {
+        "cierre_km_ajuste": num(base["km_rebalanceo"], 1),
+        "cierre_km_ahorro": num(base_reserva["km_rebalanceo"] - alterna["km_rebalanceo"], 1),
+        "cierre_extra_reb": num(alterna["n_atendido"] - base_reserva["n_atendido"]),
+        "cierre_bat_rechazos": num(t35["n_sin_bateria"]),
+        "cierre_bat_pendiente": num(t35["pendiente_kwh"], 3),
+        "cierre_zonas": num(t37["zona"].nunique()),
+        "cierre_equidad_pp": num(tasas["equidad"] - tasas["habitual"], 2),
+        "cierre_fallos_habitual": num(cierres.loc["habitual", "perdidos"] - cierres.loc["habitual", "recuperados"]),
+        "cierre_fallos_redundante": num(cierres.loc["redundante", "perdidos"] - cierres.loc["redundante", "recuperados"]),
+        "cierre_anc": num(red_a["anclajes"]),
+        "cierre_atendidos_aj": num(red_a["n_atendido"]),
+        "cierre_atendidos_res": num(red_r["n_atendido"]),
+        "cierre_solicitudes_res": num(red_r["solicitudes"]),
+        "cierre_pct_total_res": num(red_r["pct_atendidos_total"], 2),
+        "cierre_pct_cub_res": num(red_r["pct_atendidos_cubiertos"], 2),
+        "cierre_kwh_dia_aj": num(red_a["kwh_dia"], 2),
+        "cierre_kwh_dia_res": num(red_r["kwh_dia"], 2),
+        "cierre_kw_red": num(red_r["pico_red_kw"], 2),
+        "cierre_kw_est": num(red_r["pico_estacion_kw"], 2),
+        "cierre_top10": num(red_r["cuota_top10_pct"], 2),
+    }
     return c
 
 

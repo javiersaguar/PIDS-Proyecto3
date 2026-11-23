@@ -45,4 +45,27 @@
 
 El simulador está en [inventario.py](inventario.py). `simular(demanda, red, stock, anclajes, rebalanceo_max)` sirve para T33 y T34. [test_inventario.py](test_inventario.py) comprueba sus reglas con casos pequeños (`python movilidad/test_inventario.py`).
 
+## Cierre de movilidad
+
+El [notebook T33–T39](T33_T39_cierre.ipynb) presenta y comprueba las salidas.
+Ejecutar `python ejecutar_todo.py --desde consumo/modelo_a.py` para reproducir
+el cierre con la zonificación, red y dimensionado archivados. T21 genera la
+zonificación por viaje y T28 fija el catálogo de ubicaciones. El modelo T40
+aporta los Wh por viaje.
+
+| Tarea | Evidencia |
+|---|---|
+| T33 | [Políticas y límites](../resultados/tablas/movilidad/T33_politicas.csv), [registro nocturno](../resultados/tablas/movilidad/T33_noches.csv) |
+| T35 | [Estado de carga y balance](../resultados/tablas/movilidad/T35_carga.csv) |
+| T36 | [Cobertura y servicio por celda](../resultados/tablas/movilidad/T36_cobertura_operativa.csv), [flujos](../resultados/tablas/movilidad/T36_flujos_operativos.csv) y [mapa](https://javiersaguar.github.io/PIDS-Proyecto3/#/mapa/validacion/ajuste/ambos/lscp_r300_k159/operacion) |
+| T37 | [Cobertura por zona](../resultados/tablas/movilidad/T37_zonas.csv), [emplazamientos de la variante](../resultados/tablas/movilidad/T37_equidad.csv) |
+| T38 | [Cierres y desvíos](../resultados/tablas/movilidad/T38_cierres.csv), [emplazamientos redundantes](../resultados/tablas/movilidad/T38_redundante.csv) |
+| T39 | [Resultados por red](../resultados/tablas/movilidad/T39_redes.csv) y [estación](../resultados/tablas/movilidad/T39_estaciones.csv) |
+
+Los criterios de adopción y las limitaciones están en las
+[conclusiones de movilidad](../docs/conclusiones_eda.md#cierre-de-la-fase-1).
+La regeneración deja también `datos/procesados/T39_llegadas_atendidas.parquet`
+con el destino simulado, la hora de devolución y los Wh de cada viaje
+atendido para la fase de recarga.
+
 `python ejecutar_todo.py --desde movilidad/T26_cobertura_parcial.ipynb` regenera estas etapas desde los resultados de T24 y T25 y la cartografía archivada. Las soluciones bajo límite de tiempo registran su cota y procedencia. T30 verifica la huella de las estaciones congeladas antes de usar los resultados peatonales del ajuste. Para auditar cotas sobre las soluciones archivadas, ejecutar `python movilidad/certificados.py` desde la raíz.
