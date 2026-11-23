@@ -1,6 +1,6 @@
 franja,horas,laborable_viajes_dia,fin_de_semana_viajes_dia,laborable_cuota_pc,fin_de_semana_cuota_pc
-madrugada,0-7,7.67,5.83,0.97,0.73
-punta_manana,7-10,114.6,34.34,14.37,4.33
-mediodia,10-16,280.33,296.17,35.17,37.41
-punta_tarde,16-20,303.28,341.83,38.03,43.18
-noche,20-24,91.47,113.49,11.46,14.34
+madrugada,0-7,7.67,6.0,0.96,0.75
+punta_manana,7-10,114.74,34.51,14.35,4.35
+mediodia,10-16,281.26,296.51,35.16,37.37
+punta_tarde,16-20,304.13,342.99,38.04,43.23
+noche,20-24,91.87,113.49,11.49,14.3

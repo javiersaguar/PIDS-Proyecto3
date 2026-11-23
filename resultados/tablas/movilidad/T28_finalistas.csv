@@ -1,4 +1,4 @@
 network_id,metodo,radio_m,k,viajes,viajes_cubiertos,pct_viajes_cubiertos,d_media_m,d_p90_m,pareto_radio,pareto_principal,rol
-lscp_r250_k225,lscp,250,225,16710,13374,80.035906643,169.592196064,265.646283455,True,True,radio_menor
-lscp_r300_k159,lscp,300,159,16710,13373,80.029922202,197.592999769,309.778395299,True,True,recomendada
-mclp_r300_k158,mclp,300,158,16710,13334,79.796529025,198.035088872,310.434220767,True,True,menos_estaciones
+lscp_r250_k225,lscp,250,225,16756,13412,80.042969683,169.492744212,265.137792037,True,True,radio_menor
+lscp_r300_k159,lscp,300,159,16756,13409,80.025065648,197.557871835,309.776483674,True,True,recomendada
+mclp_r300_k158,mclp,300,158,16756,13370,79.792313201,197.998747278,310.427670248,True,True,menos_estaciones

@@ -1,5 +1,5 @@
 modelo,periodo,n,pendiente_viajes_dia_por_dia,pendiente_ee,pendiente_pct_media_por_semana,coef_fin_de_semana,coef_lluvia_viajes_por_mm,ee_lluvia,coef_temperatura_viajes_por_c,ee_temperatura,r2
-tendencia,ajuste,21,9.416,4.876,8.283,,,,,,0.164
-tendencia + fin_de_semana,ajuste,21,10.223,5.138,8.993,-41.447,,,,,0.181
-tendencia + fin_de_semana,mes,28,10.495,2.969,8.831,-44.931,,,,,0.334
-tendencia + fin_de_semana + lluvia + temperatura,mes,28,7.514,2.446,6.323,23.128,-12.906,3.119,11.715,6.36,0.636
+tendencia,ajuste,21,9.419,4.903,8.264,,,,,,0.163
+tendencia + fin_de_semana,ajuste,21,10.238,5.166,8.981,-41.998,,,,,0.179
+tendencia + fin_de_semana,mes,28,10.606,2.991,8.895,-44.672,,,,,0.335
+tendencia + fin_de_semana + lluvia + temperatura,mes,28,7.599,2.458,6.373,24.036,-13.029,3.134,11.877,6.391,0.638

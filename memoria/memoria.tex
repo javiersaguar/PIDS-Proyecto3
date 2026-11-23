@@ -207,7 +207,10 @@ duración, la velocidad y el precio cuadran en todos los viajes
 (\nb{exploracion/T10_limpieza.ipynb} \cite{codigo}). Solo se excluyen viajes por umbrales de
 comportamiento (tabla~\ref{tab:embudo}), elegidos sobre los histogramas de la
 figura~\ref{fig:umbrales} (anexo~\ref{anx:figuras}). Ningún viaje se borra: cada uno lleva el
-motivo de su exclusión. Quedan \textbf{\cifra{viajes_elegibles} viajes elegibles}
+motivo de su exclusión. Con al menos \cifra{paradas_dis_min_m}~m recorridos, un viaje puede
+incumplir la velocidad mínima o la duración máxima, pero no las dos: son desplazamientos
+reales con paradas (\cifra{paradas_viajes} viajes, figura~\ref{fig:paradas}). Quedan
+\textbf{\cifra{viajes_elegibles} viajes elegibles}
 (\cifra{pct_elegibles}\pc): \cifra{viajes_ajuste} en el ajuste y \cifra{viajes_reservada} en
 la semana reservada. Una limpieza más permisiva deja un \cifra{permisiva_mas_pct}\pc{} más
 de viajes y no cambia los indicadores clave.
@@ -580,7 +583,7 @@ parámetros compartidos se leen de \nb{config.yaml}.
     \toprule
     Decisión & Valor \\
     \midrule
-    Viajes elegibles & \cifra{viajes_elegibles}: umbrales de 60~s, 100~m, 2~km/h, 25~km/h y 2~h \\
+    Viajes elegibles & \cifra{viajes_elegibles}: umbrales de 60~s, 100~m, 2~km/h, 25~km/h y 2~h, con excepción para los viajes con paradas \\
     Periodos & Ajuste del 1 al 21/02; validación con la semana del 22 al 28/02 \\
     Franjas y tipos de día & Cinco franjas; laborable y fin de semana por separado \\
     Rejilla & Candidatos en H3 de resolución~9; mapas y matrices en resolución~8 \\
@@ -663,8 +666,25 @@ para que el óptimo no quede en el borde.
 \end{figure}
 
 El pico de casi mil viajes a 0~km/h de la figura~\ref{fig:umbrales} son desbloqueos sin viaje,
-que ya quitan la duración y la distancia mínimas. La regla de 2~km/h quita viajes de
-distancia normal pero muy largos: patinetes que no se cerraron o que se llevaron a mano. La
+que ya quitan la duración y la distancia mínimas. La regla de 2~km/h quita viajes cortos y
+muy lentos: patinetes que no se cerraron o que se llevaron a mano.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.75\textwidth]{T10_viajes_con_paradas}
+  \caption{Viajes que solo incumplen la velocidad mínima o la duración máxima. En azul, los viajes con paradas que se mantienen.}\label{fig:paradas}
+\end{figure}
+
+La excepción de viajes con paradas (figura~\ref{fig:paradas}) recupera
+\cifra{paradas_lentos} viajes lentos y \cifra{paradas_largos} largos. Los lentos recorren lo
+mismo que un viaje normal (\cifra{paradas_lentos_dis}~m de mediana frente a
+\cifra{resto_dis}~m) y acaban a \cifra{paradas_lentos_recta}~m en línea recta del origen,
+pero duran \cifra{paradas_lentos_tt}~min en vez de \cifra{resto_tt}: paseos o recados con
+paradas. Los largos pasan de 2~h por pocos minutos y sin bajar de 2~km/h, con un tope de
+\cifra{paradas_tt_max_h}~h. Los \cifra{paradas_fuera} viajes de al menos
+\cifra{paradas_dis_min_m}~m que son a la vez largos y lentos siguen fuera
+(\cifra{paradas_fuera_tt_h}~h de mediana). Sin trayectorias las paradas no se ven; la
+excepción se apoya en la distancia y en el desplazamiento entre origen y destino. La
 limpieza permisiva (30~s, 50~m, sin velocidad mínima, 30~km/h y 3~h) cambia las medianas
 menos de un 3\pc{} y deja la misma concentración espacial.
 

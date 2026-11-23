@@ -119,8 +119,8 @@ function BloqueDistribuciones() {
       porQue="El tamaño típico de un viaje fija con qué radios de acceso merece la pena usar el servicio y entra en el consumo por viaje (T16)."
       comoLeer="Distancia y duración tienen cola larga y se dibujan en escala logarítmica; la velocidad, en escala lineal. La tabla tiene los percentiles de cada variable."
       conclusiones={[
-        "El viaje mediano recorre 1 619 m en 489 s (unos 8 min) a 12,5 km/h. El 95 % recorre menos de 5 186 m y dura menos de 1 680 s.",
-        "La distancia en línea recta mediana es de 949 m: los viajes son cortos comparados con un radio de acceso de 300–400 m por extremo.",
+        "El viaje mediano recorre 1 619 m en 490 s (unos 8 min) a 12,5 km/h. El 95 % recorre menos de 5 187 m y dura menos de 1 699 s.",
+        "La distancia en línea recta mediana es de 947 m: los viajes son cortos comparados con un radio de acceso de 300–400 m por extremo.",
       ]}
       fuente="figuras/exploracion/T15_distribuciones y tablas/exploracion/T15_distribuciones.csv"
     >
@@ -298,7 +298,7 @@ function BloqueMedianas() {
       titulo="3. Medianas por franja y tipo de día"
       queMuestra="La mediana de distancia, duración y velocidad en cada franja horaria, en laborables y fines de semana."
       porQue="Si los viajes cambiaran mucho de una franja a otra, el radio aceptable y el consumo por viaje también cambiarían."
-      comoLeer="Elige la medida con los botones. La madrugada tiene pocos viajes (115 en laborables y 35 en fines de semana), así que su mediana es menos fiable."
+      comoLeer="Elige la medida con los botones. La madrugada tiene pocos viajes (115 en laborables y 36 en fines de semana), así que su mediana es menos fiable."
       conclusiones={[
         `Los viajes son parecidos en todas las franjas: la mediana de distancia se mueve entre ${num(Math.min(...dis))} y ${num(Math.max(...dis))} m, y el fin de semana es algo más lento (${num(total("fin_de_semana").vel_kmh_mediana, 2)} km/h frente a ${num(total("laborable").vel_kmh_mediana, 2)} en laborable).`,
         <>

@@ -1,0 +1,5 @@
+grupo,viajes,dis_m_mediana,tt_min_mediana,tt_min_maxima,vel_kmh_mediana,recta_m_mediana,recta_500m_o_mas_pc,rodeo_mediano,fin_de_semana_pc
+lentos con paradas (rescatados de vel_baja),68,1635.8,91.0,119.8,1.35,781.9,61.8,2.03,30.9
+largos con paradas (rescatados de tt_largo),10,7928.2,120.5,126.5,3.95,1553.3,80.0,5.24,50.0
+largos y lentos de al menos 1 km (siguen fuera),52,2379.2,266.8,8560.0,0.58,452.7,48.1,6.48,42.3
+resto de viajes elegibles,23292,1634.2,8.2,120.0,12.48,955.7,75.1,1.36,28.4

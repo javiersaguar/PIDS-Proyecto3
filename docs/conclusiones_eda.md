@@ -13,8 +13,8 @@ limitaciones y qué cambia en el [plan](PLAN.md).
 
 ## T10. Limpieza (Javier)
 
-De 25 186 viajes quedan **23 292 elegibles (92,5 %)**: 16 710 en el periodo de ajuste
-(92,8 %) y 6 582 en la semana reservada (91,7 %). Ningún viaje se borra; los demás
+De 25 186 viajes quedan **23 370 elegibles (92,8 %)**: 16 756 en el periodo de ajuste
+(93,1 %) y 6 614 en la semana reservada (92,1 %). Ningún viaje se borra; los demás
 llevan sus marcas en `motivo`.
 
 - **Datos estructuralmente limpios.** No hay nulos, duplicados ni solapes del mismo
@@ -22,26 +22,44 @@ llevan sus marcas en `motivo`.
   es exactamente `1 € + 0,15 €/min` y la velocidad `3,6 · dis / tt`. Ningún extremo cae
   fuera de Roma. Por eso solo se excluyen viajes por umbrales de comportamiento.
 - **Embudo** (`tablas/exploracion/T10_embudo.csv`):
-  - 122 viajes de más de 2 h;
+  - 112 viajes de más de 2 h;
   - 2 de más de 25 km/h;
   - 949 de menos de 60 s;
   - 596 más de menos de 100 m;
-  - 225 más de menos de 2 km/h.
+  - 157 más de menos de 2 km/h.
 - **El pico de ~1 000 viajes a casi 0 km/h** del histograma son desbloqueos sin viaje.
   Ya los quitan las reglas de duración y distancia: de los 976 viajes por debajo de
-  1 km/h, solo 82 pasan las demás reglas. Los 225 que añade la regla `vel_baja` tienen
-  distancias normales (mediana de 533 m) pero duran mucho: mediana de 35,5 min. Más que un
-  desplazamiento en patinete, parecen un patinete que no se cerró a tiempo o que se llevó
-  a mano (`tablas/exploracion/T10_viajes_lentos.csv`).
+  1 km/h, 894 caen por ellas y 22 son viajes con paradas (punto siguiente). Los 157 que
+  añade la regla `vel_baja` recorren poco (mediana de 318 m) y duran mucho para esa
+  distancia: mediana de 19,7 min. Más que un desplazamiento en patinete, parecen un
+  patinete que no se cerró a tiempo o que se llevó a mano
+  (`tablas/exploracion/T10_viajes_lentos.csv`).
+- **Viajes con paradas** (apartado 4 del notebook, `tablas/exploracion/T10_viajes_con_paradas.csv`,
+  `figuras/exploracion/T10_viajes_con_paradas`). Al revisar los excluidos por `vel_baja`
+  y `tt_largo` aparecen desplazamientos reales en los que el usuario mantiene la reserva
+  mientras para (una tienda, un monumento). Un viaje de **al menos 1 km** puede
+  incumplir **una** de las dos reglas, no las dos: si es lento, debe durar como mucho
+  2 h; si es largo, ir a 2 km/h o más y durar como mucho 2,5 h
+  (`limpieza.viaje_con_paradas` en `config.yaml`). Recupera **78 viajes** (+0,3 %):
+  - 68 lentos que recorren lo mismo que un viaje normal (mediana de 1 636 m frente a
+    1 634 m) y acaban a 782 m en línea recta del origen (el 62 % a más de 500 m), pero
+    duran 91 min en vez de 8 y dan más rodeo (2,0 frente a 1,4);
+  - 10 largos de 2 h 0 min a 2 h 7 min, con 4,1 a 12,6 km a entre 2 y 6 km/h.
+
+  Los 52 viajes de al menos 1 km que son a la vez largos y lentos siguen fuera: duran
+  4 h 27 min de mediana (hasta 143 h) a 0,6 km/h y la mitad acaba a menos de 500 m del
+  origen. Sin trayectorias no se ven las paradas; la excepción se apoya en la distancia
+  recorrida y en el desplazamiento entre origen y destino.
 
 | Decisión | Valor propuesto | Evidencia | Periodo | Limitaciones | Qué cambia en el plan |
 |---|---|---|---|---|---|
 | Duración mínima | 60 s | `figuras/exploracion/T10_umbrales`, `T10_sensibilidad_umbrales` | Ajuste | La curva sube sin codo; 60 s es el criterio natural de "menos de un minuto no es un viaje" y excluye por sí solo el 3,7 % | Ninguno |
 | Distancia mínima | 100 m | Mismas figuras | Ajuste | Por debajo de 25 m está el salto principal (3,5 %); a partir de 100 m la curva es lineal | Ninguno |
-| Velocidad mínima | 2 km/h (regla nueva `vel_baja`) | Histograma de velocidad: valle entre el pico de desbloqueos y la distribución principal | Ajuste | Sus orígenes y destinos son reales; se pierde el 1 % de la demanda | Se añade al contrato de limpieza |
+| Velocidad mínima | 2 km/h (regla nueva `vel_baja`) | Histograma de velocidad: valle entre el pico de desbloqueos y la distribución principal | Ajuste | Sus orígenes y destinos son reales; se pierde el 0,7 % de la demanda | Se añade al contrato de limpieza |
+| Excepción para viajes con paradas | Con al menos 1 km, un viaje puede incumplir 2 km/h o 2 h (hasta 2,5 h), no las dos: 78 viajes vuelven a ser elegibles | `tablas/exploracion/T10_viajes_con_paradas.csv`, `figuras/exploracion/T10_viajes_con_paradas` | Mes completo | 1 km es un criterio prudente, no un corte natural; con 500 m entrarían 49 viajes lentos más (+0,2 %). Sin trayectorias no se ven las paradas | Entra en el contrato de limpieza; todas las fases parten de 23 370 viajes |
 | Velocidad máxima | 25 km/h | `T10_sensibilidad_umbrales` | Ajuste | Solo 2 viajes; límite del patinete | Ninguno |
 | Duración máxima | 2 h | `T10_sensibilidad_umbrales` | Ajuste | La curva se aplana a partir de 2 h (0,29 % por encima) | Ninguno |
-| ¿Dependen las conclusiones de los umbrales? | No: se usa la limpieza principal | `tablas/exploracion/T10_comparacion_limpiezas.csv`, `figuras/exploracion/T10_comparacion_limpiezas` | Ajuste y reservada | La variante permisiva (30 s, 50 m, sin velocidad mínima, 30 km/h, 3 h) deja un 2,9 % más de viajes; las medianas cambian menos del 3 %, los km un 0,6 % y la concentración espacial (56,9 % de los extremos en el 20 % de celdas H3 de resolución 8) es la misma | Repetir esta comparación con los indicadores de la red elegida |
+| ¿Dependen las conclusiones de los umbrales? | No: se usa la limpieza principal | `tablas/exploracion/T10_comparacion_limpiezas.csv`, `figuras/exploracion/T10_comparacion_limpiezas` | Ajuste y reservada | La variante permisiva (30 s, 50 m, sin velocidad mínima, 30 km/h, 3 h) deja un 2,5 % más de viajes en el ajuste; las medianas cambian menos del 3 %, los km un 0,3 % y la concentración espacial (56,9 % de los extremos en el 20 % de celdas H3 de resolución 8) es la misma | Repetir esta comparación con los indicadores de la red elegida |
 
 ## T11. Solapes y recolocaciones (Javier)
 
@@ -75,18 +93,18 @@ salto entre el final de un viaje y el inicio del siguiente.
 ## T12. Patrones temporales y viajes simultáneos (Javier)
 
 - **Volumen.**
-  - 795,7 viajes al día de media en el ajuste y 940,3 en la semana reservada (+18 %).
+  - 797,9 viajes al día de media en el ajuste y 944,9 en la semana reservada (+18 %).
   - La tendencia en el ajuste es de +9,4 viajes al día por cada día (`tablas/exploracion/T12_resumen.csv`, `figuras/exploracion/T12_serie_diaria`).
   - El día con menos viajes es el domingo 07/02 (403), pendiente de la meteorología de T17.
 - **Laborable frente a fin de semana.**
-  - El volumen diario es el mismo (797,3 frente a 791,7), pero cambia la forma.
-  - El laborable tiene una punta de mañana de 7 a 10 h (14,4 % de los viajes frente al 4,3 %) y su máximo a las 18 h.
+  - El volumen diario es el mismo (799,7 frente a 793,5), pero cambia la forma.
+  - El laborable tiene una punta de mañana de 7 a 10 h (14,3 % de los viajes frente al 4,3 %) y su máximo a las 18 h.
   - El fin de semana concentra más en la punta de tarde (43,2 % frente a 38,0 %) y su máximo es a las 16 h.
-  - Los dos perfiles difieren en un 12,1 % de los viajes (distancia de variación total) (`T12_perfil_horario`, `T12_calor_dia_hora`, `tablas/exploracion/T12_franjas.csv`).
+  - Los dos perfiles difieren en un 12,0 % de los viajes (distancia de variación total) (`T12_perfil_horario`, `T12_calor_dia_hora`, `tablas/exploracion/T12_franjas.csv`).
 - **Viajes simultáneos.**
-  - Como mucho hay **41 viajes en curso a la vez** en el ajuste (06/02 a las 17:10) y 42 en la semana reservada.
+  - Como mucho hay **41 viajes en curso a la vez** en el ajuste (06/02 a las 17:10) y 44 en la semana reservada.
   - El percentil 99 por minuto es 26 (`T12_simultaneos`).
-  - Cada día se usan de media 486,7 patinetes distintos (máximo 632) de los 2 305 que aparecen en viajes elegibles.
+  - Cada día se usan de media 487,8 patinetes distintos (máximo 633) de los 2 305 que aparecen en viajes elegibles.
 
 | Decisión | Valor propuesto | Evidencia | Periodo | Limitaciones | Qué cambia en el plan |
 |---|---|---|---|---|---|
@@ -97,19 +115,19 @@ salto entre el final de un viaje y el inicio del siguiente.
 
 ## T13. Densidad de orígenes y destinos (Alejandro)
 
-Viajes elegibles del ajuste (16 710) con el origen y el destino en celdas H3
+Viajes elegibles del ajuste (16 756) con el origen y el destino en celdas H3
 (`exploracion/T13_densidad.ipynb`).
 
 | Resolución | Área media | Arista media | Celdas con demanda | Mediana de extremos por celda | Celdas para el 50 / 80 / 90 / 95 % de los extremos | Extremos en el 10 / 20 % de celdas más usadas |
 |---|---|---|---|---|---|---|
-| 8 | 0,74 km² | 531 m | 111 | 190 | 19 / 45 / 60 / 72 | 37,8 % / 56,9 % |
+| 8 | 0,74 km² | 531 m | 111 | 191 | 19 / 45 / 60 / 72 | 37,8 % / 56,9 % |
 | 9 | 0,105 km² | 201 m | 600 | 32 | 94 / 226 / 312 / 381 | 37,2 % / 58,1 % |
 
 Fuentes: `tablas/exploracion/T13_resoluciones_h3.csv`, `T13_concentracion.csv` y
 `T13_densidad_celdas.csv`; figuras `figuras/exploracion/T13_densidad_res8` y `T13_concentracion`.
 
 - **Estabilidad.** La correlación de Spearman entre las cuotas por celda del ajuste y de la
-  semana reservada es 0,98 en resolución 8 y 0,92 en resolución 9. El 99,98 % y el 99,83 % de
+  semana reservada es 0,98 en resolución 8 y 0,92 en resolución 9. El 99,98 % y el 99,80 % de
   los extremos de la reservada caen en celdas que ya tenían demanda en el ajuste
   (`T13_estabilidad.csv`).
 - **Puntos aislados.** Con el criterio de la tarea (celda de resolución 8 con 2 extremos o menos
@@ -131,19 +149,19 @@ las celdas con al menos 30 extremos: 90 de 111, con el 99,34 % de los extremos. 
 estuviera equilibrada, cada extremo sería origen o destino al 50 % y `saldo_rel` tendría una
 desviación típica de 1/√n, que con n = 30 es 0,18; por debajo, el ruido domina.
 
-- **Emisoras y receptoras.** 43 celdas emisoras, 45 receptoras y 2 equilibradas; 16 tienen un
+- **Emisoras y receptoras.** 42 celdas emisoras, 45 receptoras y 3 equilibradas; 14 tienen un
   desequilibrio mayor que dos desviaciones típicas del caso equilibrado (`T14_resumen.csv`,
   `T14_saldo_celdas.csv`, figura `T14_saldo`).
 - **Persistencia.** En las 10 celdas con más saldo absoluto, el saldo acumulado tiene el mismo
   signo que el total en el 81–100 % de los días (el 100 % en ocho de ellas): crece sin volver a
   cero (`T14_persistencia.csv`, figura `T14_saldo_acumulado`).
 - **Cota inferior del rebalanceo** (suma de |saldo| de todas las celdas cada día, entre 2):
-  - resolución 8: **101,5 patinetes/día de media y 136 como máximo** (12,8 % de los viajes);
-  - resolución 9: 221,2 y 285,5 (28,1 %);
-  - la parte estructural (saldo del periodo repartido por día) es de 42,8 y 100,3
+  - resolución 8: **101,5 patinetes/día de media y 138 como máximo** (12,8 % de los viajes);
+  - resolución 9: 221,6 y 285,5 (28,1 %);
+  - la parte estructural (saldo del periodo repartido por día) es de 42,9 y 100,5
     patinetes/día (`T14_resumen.csv`, `T14_rebalanceo_diario.csv`).
-- **Franjas.** En la punta de mañana el flujo neto desplaza 29,7 patinetes/día, el 32,4 % de
-  sus salidas; mediodía y punta de tarde desplazan 28,2 y 29,2, pero solo el 9,9 % y el 9,3 %
+- **Franjas.** En la punta de mañana el flujo neto desplaza 29,8 patinetes/día, el 32,4 % de
+  sus salidas; mediodía y punta de tarde desplazan 28,3 y 29,1, pero solo el 9,9 % y el 9,2 %
   de las suyas. El centro recibe patinetes por la mañana y los devuelve por la tarde
   (`T14_desequilibrio_franjas.csv`, figura `T14_saldo_franjas`).
 - **Respuesta a la pregunta abierta sobre T11.** Sí coinciden. Con todos los viajes del mes, las entregas
@@ -156,8 +174,8 @@ desviación típica de 1/√n, que con n = 30 es 0,18; por debajo, el ruido domi
 |---|---|---|---|---|---|
 | ¿Hace falta rebalanceo? | **Sí.** El saldo es estructural y el piloto ya lo compensaba con las recogidas del operador | `T14_persistencia.csv`, `T14_saldo_frente_operador.csv` | Ajuste; mes para el contraste con T11 | El contraste con T11 usa todos los viajes del mes | El rebalanceo nocturno es parte del escenario base de T32–T33, no una ampliación |
 | Orden de magnitud diario | **Unos 100 patinetes/día** en resolución 8 y unos 220 en resolución 9 (cota inferior) | `T14_resumen.csv` | Ajuste | Por celda, no por estación; no cuenta los desequilibrios dentro del día | Capacidad de traslado de T33 |
-| Zonas con más anclajes (receptoras) | La principal es `881e8052adfffff` (41,905 N, 12,480 E; entre San Pedro y Termini, al norte del Coliseo), con −3,7 patinetes/día | `T14_saldo_celdas.csv`, figura `T14_saldo` | Ajuste | Celdas de 0,74 km² | Más anclajes libres que stock inicial en T32 |
-| Zonas con más stock inicial (emisoras) | La principal es `881e805089fffff` (41,874 N, 12,522 E; al sureste del Coliseo), con +4,0 patinetes/día, y varias celdas del sur | ídem | Ajuste | ídem | Más stock inicial en T32 |
+| Zonas con más anclajes (receptoras) | La principal es `881e8052adfffff` (41,905 N, 12,480 E; entre San Pedro y Termini, al norte del Coliseo), con −3,6 patinetes/día | `T14_saldo_celdas.csv`, figura `T14_saldo` | Ajuste | Celdas de 0,74 km² | Más anclajes libres que stock inicial en T32 |
+| Zonas con más stock inicial (emisoras) | La principal es `881e805089fffff` (41,874 N, 12,522 E; al sureste del Coliseo), con +3,9 patinetes/día, y varias celdas del sur | ídem | Ajuste | ídem | Más stock inicial en T32 |
 | Franjas del desequilibrio | Sobre todo la punta de mañana, en proporción a sus salidas; el desequilibrio se invierte por la tarde | `T14_desequilibrio_franjas.csv` | Ajuste | El saldo diario esconde la inversión | El simulador debe trabajar por franjas o en continuo |
 
 ## T15. Recorridos y radios de acceso (Alejandro)
@@ -166,28 +184,28 @@ Viajes elegibles del ajuste (`exploracion/T15_recorridos.ipynb`).
 
 | Variable | P5 | P25 | Mediana | P75 | P95 | P99 |
 |---|---|---|---|---|---|---|
-| Distancia recorrida (m) | 348 | 894 | 1 619 | 2 794 | 5 186 | 7 450 |
-| Duración (s) | 121 | 279 | 489 | 856 | 1 680 | 2 611 |
-| Velocidad media (km/h) | 5,1 | 9,3 | 12,5 | 15,3 | 18,5 | 20,3 |
-| Distancia en línea recta (m) | 107 | 497 | 949 | 1 710 | 3 308 | 4 803 |
+| Distancia recorrida (m) | 349 | 896 | 1 619 | 2 794 | 5 187 | 7 467 |
+| Duración (s) | 121 | 279 | 490 | 860 | 1 699 | 2 979 |
+| Velocidad media (km/h) | 5,0 | 9,3 | 12,5 | 15,3 | 18,5 | 20,3 |
+| Distancia en línea recta (m) | 107 | 497 | 947 | 1 708 | 3 307 | 4 806 |
 
 Fuentes: `tablas/exploracion/T15_distribuciones.csv` y figura `figuras/exploracion/T15_distribuciones`.
 Las medianas por franja y tipo de día están en `T15_medianas_franja_tipo_dia.csv`.
 
-- **Rodeo** (`dis_m` / línea recta, viajes con línea recta de 200 m o más): mediana **1,328**,
-  P25 1,185, P75 1,651 y P95 4,55, en 15 218 viajes (`T15_resumen.csv`, figura `T15_rodeo`).
-- **Viajes circulares** (línea recta < 100 m y `dis_m` ≥ 500 m): 599, el **3,58 %**.
+- **Rodeo** (`dis_m` / línea recta, viajes con línea recta de 200 m o más): mediana **1,329**,
+  P25 1,185, P75 1,654 y P95 4,57, en 15 258 viajes (`T15_resumen.csv`, figura `T15_rodeo`).
+- **Viajes circulares** (línea recta < 100 m y `dis_m` ≥ 500 m): 602, el **3,59 %**.
 - **Radios de acceso.** Caso peor: R en cada extremo; caso medio: 2R/3 en cada extremo. Ambos
   por el rodeo y a 1,3 m/s (`T15_radios_acceso.csv`, figura `T15_radios_acceso`):
 
 | R | Andar tarda más que el viaje, caso peor | Ídem, caso medio | `dis_m` ≤ 2R | Andar todo el trayecto es más rápido, caso medio |
 |---|---|---|---|---|
-| 150 m | 28,99 % | 15,19 % | 3,66 % | 29,40 % |
-| 200 m | 41,42 % | 24,96 % | 6,64 % | 33,95 % |
-| 250 m | 52,39 % | 33,50 % | 9,67 % | 38,42 % |
-| 300 m | 60,62 % | 41,42 % | 13,14 % | 43,46 % |
-| 400 m | 73,07 % | 55,32 % | 21,29 % | 52,12 % |
-| 500 m | 81,52 % | 65,16 % | 28,99 % | 59,55 % |
+| 150 m | 28,91 % | 15,15 % | 3,65 % | 29,57 % |
+| 200 m | 41,31 % | 24,89 % | 6,62 % | 34,12 % |
+| 250 m | 52,46 % | 33,41 % | 9,64 % | 38,57 % |
+| 300 m | 60,45 % | 41,31 % | 13,11 % | 43,57 % |
+| 400 m | 72,87 % | 55,17 % | 21,23 % | 52,25 % |
+| 500 m | 81,30 % | 64,98 % | 28,91 % | 59,63 % |
 
 Velocidad a pie: 1,3 m/s, dentro del rango de 1,24–1,43 m/s de velocidad normal de los adultos
 de 20 a 69 años recogido por Bohannon, R. W. y Andrews, A. W. (2011), «Normal walking speed: a
@@ -196,10 +214,10 @@ descriptive meta-analysis», *Physiotherapy* 97(3), 182–189,
 
 | Decisión | Valor propuesto | Evidencia | Periodo | Limitaciones | Qué cambia en el plan |
 |---|---|---|---|---|---|
-| Factor de rodeo | 1,328 como hipótesis para pasar de línea recta a distancia andando | `T15_resumen.csv`, figura `T15_rodeo` | Ajuste | Es el rodeo del patinete, no el del peatón; la cola larga son paseos. T29 lo contrastará con la red peatonal | Las distancias de acceso de T25–T28 pueden multiplicarse por este factor |
-| Radios del barrido | **Mantener 200 y 300 m, añadir 250 m y dejar 400 m como sensibilidad.** Con 400 m, en el caso medio el 55,32 % de los viajes tardaría más andando a las estaciones que en el propio viaje, y el 21,29 % recorre menos de 2R | `T15_radios_acceso.csv` | Ajuste | Velocidad a pie como hipótesis; compara tiempos, no la utilidad de cada usuario | `movilidad.radios_acceso_m` pasaría a [200, 250, 300, 400] |
-| Demanda que deja de tener sentido con estaciones | En el caso medio, el 24,96 % de los viajes con 200 m y el 41,42 % con 300 m; andar todo el trayecto sería más rápido en el 33,95 % y el 43,46 % | `T15_radios_acceso.csv` | Ajuste | Los paseos (rodeo alto) inflan el último indicador | Informar la cobertura junto con la demanda que seguiría usando el servicio |
-| Viajes circulares | 3,58 % de los viajes empezarían y acabarían en la misma estación | `T15_resumen.csv` | Ajuste | Umbrales de la tarea | El simulador debe admitir origen y destino iguales |
+| Factor de rodeo | 1,329 como hipótesis para pasar de línea recta a distancia andando | `T15_resumen.csv`, figura `T15_rodeo` | Ajuste | Es el rodeo del patinete, no el del peatón; la cola larga son paseos. T29 lo contrastará con la red peatonal | Las distancias de acceso de T25–T28 pueden multiplicarse por este factor |
+| Radios del barrido | **Mantener 200 y 300 m, añadir 250 m y dejar 400 m como sensibilidad.** Con 400 m, en el caso medio el 55,17 % de los viajes tardaría más andando a las estaciones que en el propio viaje, y el 21,23 % recorre menos de 2R | `T15_radios_acceso.csv` | Ajuste | Velocidad a pie como hipótesis; compara tiempos, no la utilidad de cada usuario | `movilidad.radios_acceso_m` pasaría a [200, 250, 300, 400] |
+| Demanda que deja de tener sentido con estaciones | En el caso medio, el 24,89 % de los viajes con 200 m y el 41,31 % con 300 m; andar todo el trayecto sería más rápido en el 34,12 % y el 43,57 % | `T15_radios_acceso.csv` | Ajuste | Los paseos (rodeo alto) inflan el último indicador | Informar la cobertura junto con la demanda que seguiría usando el servicio |
+| Viajes circulares | 3,59 % de los viajes empezarían y acabarían en la misma estación | `T15_resumen.csv` | Ajuste | Umbrales de la tarea | El simulador debe admitir origen y destino iguales |
 
 ## T16. Energía de referencia por patinete y día (Alejandro)
 
@@ -212,18 +230,18 @@ diferencia 0 Wh (`tablas/exploracion/T16_comprobacion.csv`).
 |---|---|---|
 | Energía por viaje: mediana, P95 y máximo | 21,9, 70,0 y 246,6 Wh (3,8 %, 12,2 % y 42,8 % de la batería) | `T16_viaje_distribucion.csv` |
 | Viajes de más de 576 Wh | 0 | ídem |
-| Energía por patinete y día con viajes: media, P95 y máximo | 45,3, 122,9 y 298,1 Wh | `T16_patinete_dia_resumen.csv` |
+| Energía por patinete y día con viajes: media, P95 y máximo | 45,4, 123,4 y 298,1 Wh | `T16_patinete_dia_resumen.csv` |
 | Patinete-día por encima del 50 / 80 / 100 % de la batería | 0,01 % / 0 % / 0 % | ídem |
-| Ciclos equivalentes por patinete: media y máximo | 0,377 y 1,405 | `T16_patinete_resumen.csv` |
+| Ciclos equivalentes por patinete: media y máximo | 0,378 y 1,405 | `T16_patinete_resumen.csv` |
 | Patinetes que agotarían la batería sin recargar | 1,4 % | ídem |
-| Autonomía (batería / Wh medios por día en servicio): P10, mediana y P90 | 22,8, 45,6 y 145 días | ídem, figura `T16_distribuciones` |
-| Flota: media y máximo diarios | **22,1 y 29,5 kWh/día** (38,3 y 51,3 cargas completas) | `T16_resumen.csv`, `T16_flota_diaria.csv`, figura `T16_flota_diaria` |
+| Autonomía (batería / Wh medios por día en servicio): P10, mediana y P90 | 22,8, 45,3 y 145 días | ídem, figura `T16_distribuciones` |
+| Flota: media y máximo diarios | **22,1 y 29,6 kWh/día** (38,4 y 51,4 cargas completas) | `T16_resumen.csv`, `T16_flota_diaria.csv`, figura `T16_flota_diaria` |
 | Celda de destino de resolución 8: máximo y mediana | **0,90 y 0,13 kWh/día** | `T16_resumen.csv`, `T16_energia_celdas_top20.csv`, figura `T16_energia_celdas` |
-| Energía que llega de 10 a 16 h / de 16 a 24 h / el resto del día | **33,53 % / 55,45 % / 11,02 %** | `T16_resumen.csv`, `T16_perfil_horario.csv`, figura `T16_perfil_horario` |
+| Energía que llega de 10 a 16 h / de 16 a 24 h / el resto del día | **33,53 % / 55,47 % / 11,00 %** | `T16_resumen.csv`, `T16_perfil_horario.csv`, figura `T16_perfil_horario` |
 
 | Decisión | Valor propuesto | Evidencia | Periodo | Limitaciones | Qué cambia en el plan |
 |---|---|---|---|---|---|
-| Frecuencia de recarga | **Cada varios días** con el uso observado: ningún patinete-día pasa del 80 % de la batería y la autonomía mediana es de 45,6 días | `T16_patinete_dia_resumen.csv`, `T16_patinete_resumen.csv` | Ajuste | Supone la batería entera utilizable y llena en el primer viaje del periodo. Con una flota simulada menor cada patinete hará más viajes | Recalcular con la flota de T34; el estado de carga de T35 solo limitará si la flota baja mucho |
+| Frecuencia de recarga | **Cada varios días** con el uso observado: ningún patinete-día pasa del 80 % de la batería y la autonomía mediana es de 45,3 días | `T16_patinete_dia_resumen.csv`, `T16_patinete_resumen.csv` | Ajuste | Supone la batería entera utilizable y llena en el primer viaje del periodo. Con una flota simulada menor cada patinete hará más viajes | Recalcular con la flota de T34; el estado de carga de T35 solo limitará si la flota baja mucho |
 | Energía por estación | **De décimas de kWh a 1 kWh al día**: la celda de resolución 8 que más recibe llega a 0,90 kWh/día | `T16_energia_celdas_top20.csv` | Ajuste | Supone que se recarga donde se deja el patinete; una estación cubrirá menos área que una celda de resolución 8 | Fija la escala de PVWatts y de la batería en T52–T55 |
 | Energía en horas de sol | Un tercio llega de 10 a 16 h y más de la mitad de 16 a 24 h | `T16_perfil_horario.csv` | Ajuste | Hora de llegada, no de carga | Con carga inmediata, la batería de la estación debe guardar unos dos tercios de la energía; la carga inteligente de T56 es la alternativa |
 
@@ -239,11 +257,11 @@ Lluvia, temperatura y viento de Roma centro según la API histórica de Open-Met
 | Temperatura media en el ajuste / en la reservada | 9,3 / 10,9 °C | ídem |
 | Spearman viajes diarios–lluvia (n = 28) | −0,56 (laborables −0,59 con n = 20; fin de semana −0,46 con n = 8) | `T17_correlaciones.csv`, figura `T17_dispersion` |
 | Spearman viajes diarios–temperatura media (n = 28) | 0,04 | ídem |
-| Viajes en horas con lluvia frente a la misma hora y tipo de día sin lluvia (± 7 días) | 0,69 (laborables 0,88; fin de semana 0,49), en 42 horas | `T17_lluvia_horaria_resumen.csv` |
-| Días por debajo del 70 % de la mediana de su tipo de día | Solo el **07/02**: 403 viajes (46,8 % de la mediana), con 24,6 mm y 21 horas de lluvia | `T17_dias_anomalos.csv`, figura `T17_viajes_lluvia` |
+| Viajes en horas con lluvia frente a la misma hora y tipo de día sin lluvia (± 7 días) | 0,69 (laborables 0,88; fin de semana 0,48), en 42 horas | `T17_lluvia_horaria_resumen.csv` |
+| Días por debajo del 70 % de la mediana de su tipo de día | Solo el **07/02**: 403 viajes (46,6 % de la mediana), con 24,6 mm y 21 horas de lluvia | `T17_dias_anomalos.csv`, figura `T17_viajes_lluvia` |
 | Pendiente de los viajes diarios en el ajuste | 9,4 viajes/día cada día (error típico 4,9), un 8,3 % de la media por semana | `T17_tendencia.csv` |
-| Pendiente en el mes, con fin de semana / añadiendo lluvia y temperatura | 10,5 (e. t. 3,0) / 7,5 (e. t. 2,4) viajes/día cada día | ídem |
-| Cociente reservada / ajuste por día de la semana | 1,12–1,25; 1,182 en la semana | `T17_cociente_semana.csv` |
+| Pendiente en el mes, con fin de semana / añadiendo lluvia y temperatura | 10,6 (e. t. 3,0) / 7,6 (e. t. 2,5) viajes/día cada día | ídem |
+| Cociente reservada / ajuste por día de la semana | 1,13–1,25; 1,184 en la semana | `T17_cociente_semana.csv` |
 | Viento máximo diario medio en el ajuste / en la reservada | 18,3 / 13,5 km/h; racha máxima de la reservada 34,2 km/h | `T17_resumen.csv` |
 | Spearman viajes–viento máximo en fin de semana (n = 8): simple / descontando la lluvia / quitando un día | −0,88 / −0,86 / de −0,82 a −0,93; viento y lluvia solo se asocian en 0,38 | `T17_viento_diario.csv`, figura `T17_viento` |
 | Efecto de +10 km/h de viento en los viajes por hora, con la lluvia en el mismo modelo | Fin de semana −14 % entre días (IC 95 %: −23 a −5) y −16 % dentro del día; laborables −7 % y −4 %, sin diferencia clara con cero | `T17_viento_horario.csv` |
@@ -254,30 +272,31 @@ pedido (`T17_resumen.csv`).
 
 **Viento frente a lluvia (apartado 6 del notebook).** La asociación del viento con menos
 viajes de fin de semana se mantiene al controlar la lluvia, la temperatura y la tendencia.
-El resultado depende del episodio frío y ventoso del 13–14/02. El 14/02 tuvo 717 viajes
+El resultado depende del episodio frío y ventoso del 13–14/02. El 14/02 tuvo 721 viajes
 sin lluvia, frente a 889–1 048 en los fines de semana secos y en calma. El simulador
 conserva la demanda observada y marca ese episodio y el 07/02 como tiempo adverso.
 
 **Respuesta a la pregunta abierta sobre el 07/02 y el crecimiento.** La lluvia explica el 07/02 y parte del crecimiento: al
-añadir lluvia y temperatura, la pendiente del mes baja de 10,5 a 7,5 viajes/día cada día, pero
+añadir lluvia y temperatura, la pendiente del mes baja de 10,6 a 7,6 viajes/día cada día, pero
 no desaparece.
 
 | Decisión | Valor propuesto | Evidencia | Periodo | Limitaciones | Qué cambia en el plan |
 |---|---|---|---|---|---|
 | ¿Excluir algún día? | **No excluir ninguno** de la localización ni de las matrices. El 07/02 (lluvia) y el 13–14/02 (viento fuerte y frío) son demanda real de tiempo adverso: se marcan y no se usan como días de diseño ni como días tipo | `T17_dias_anomalos.csv`, `T17_viento_fines_de_semana.csv` | Mes | Solo el 07/02 baja del 70 % de la mediana; el 13 y el 14/02 se quedan en el 82–83 % | Marcarlos como días de tiempo adverso en el simulador |
 | ¿Entra el viento en el simulador? | Se conserva la demanda observada. Los 10 km/h adicionales se asocian con un 14 % menos de viajes de fin de semana en el modelo que controla la lluvia. | `T17_viento_diario.csv`, `T17_viento_horario.csv`, `T17_viento_horas_secas.csv` | Mes | Un episodio. Los errores típicos suponen horas independientes. | Marcar los días adversos para elegir jornadas representativas. |
-| ¿Es comparable la semana reservada? | **Con cautela.** Tiene un 18,2 % más de viajes, no llovió, fue más cálida (10,9 °C frente a 9,3 °C) y con menos viento. El tiempo explica parte de la diferencia, no toda | `T17_resumen.csv`, `T17_tendencia.csv`, `T17_cociente_semana.csv` | Mes | n = 28 con cuatro variables | La validación de T30 es más exigente que el ajuste; hay que decirlo al presentarla |
+| ¿Es comparable la semana reservada? | **Con cautela.** Tiene un 18,4 % más de viajes, no llovió, fue más cálida (10,9 °C frente a 9,3 °C) y con menos viento. El tiempo explica parte de la diferencia, no toda | `T17_resumen.csv`, `T17_tendencia.csv`, `T17_cociente_semana.csv` | Mes | n = 28 con cuatro variables | La validación de T30 es más exigente que el ajuste; hay que decirlo al presentarla |
 | Restricciones por COVID en Lacio | No se afirma nada: no hemos podido leer el texto oficial de las medidas de febrero de 2021 | — | — | — | Pregunta abierta |
 
 ## T18. Tarifa e importe nominal
 
 La tarifa de **1 € por desbloqueo y 0,15 €/min**, calculada sobre los segundos
 registrados, reproduce los **25 186 precios** dentro de la tolerancia de T10.
-Los 23 292 viajes elegibles suman **62 040,68 €** de los 76 419,57 € registrados.
-El **18,8 % del importe bruto** queda en registros excluidos. Los 122 registros
-de más de dos horas suman 10 335,96 €, la mayor parte de esa diferencia.
-En el ajuste el importe elegible es de **2 104,70 €/día** y en la semana reservada
-de **2 548,86 €/día**. Para comparar escenarios, se sumará el precio nominal de los
+Los 23 370 viajes elegibles suman **63 205,67 €** de los 76 419,57 € registrados.
+El **17,3 % del importe bruto** queda en registros excluidos. Los 122 registros
+de más de dos horas suman 10 335,96 €; 10 de ellos son viajes con paradas y siguen
+siendo elegibles.
+En el ajuste el importe elegible es de **2 138,77 €/día** y en la semana reservada
+de **2 613,07 €/día**. Para comparar escenarios, se sumará el precio nominal de los
 viajes elegibles atendidos. Los cobros, descuentos y costes quedan fuera de este cálculo.
 [Notebook](../exploracion/T18_tarifa_ingresos.ipynb) · [Resumen](../resultados/tablas/exploracion/T18_resumen.csv)
 
@@ -290,11 +309,11 @@ mismas reglas y comparar a la vez volumen y cuotas.
 
 | Decisión para las siguientes fases | Evidencia de la exploración | Aplicación en el diseño |
 |---|---|---|
-| Ajustar sobre **16 710** viajes y reservar **6 582** | T10 deja 23 292 viajes elegibles de 25 186. La limpieza permisiva altera poco las medianas y la concentración. | Mantener la limpieza principal y repetir la sensibilidad con los indicadores de la red elegida. |
+| Ajustar sobre **16 756** viajes y reservar **6 614** | T10 deja 23 370 viajes elegibles de 25 186. La limpieza permisiva altera poco las medianas y la concentración. | Mantener la limpieza principal y repetir la sensibilidad con los indicadores de la red elegida. |
 | Modelar cinco franjas y dos tipos de día | T12 muestra perfiles de salida distintos. El máximo simultáneo observado fue de 41 viajes. | Separar perfiles del simulador. Calcular el stock y los anclajes por estación con la secuencia de salidas y llegadas. |
 | Usar H3 de resolución 9 para emplazamientos y 8 para diagnóstico espacial | T13 sitúa la arista media de resolución 9 cerca de 201 m. T15 compara radios de 200, 250 y 300 m y añade 400 m como sensibilidad. | Construir T24 sobre el ajuste. Barrer los rangos de T13 con margen del 20 % y medir acceso en cada extremo del viaje. |
 | Simular rebalanceo nocturno de 100 patinetes por día | T11 detecta recolocaciones y T14 encuentra saldos zonales persistentes. | Comparar 0, 100 y 220 movimientos con la misma red y medir rechazos, distancia y déficit residual. |
-| Conservar los días de tiempo adverso | T17 identifica el 07/02 por lluvia y el 13–14/02 por viento y frío. La semana reservada tuvo un 18,2 % más de viajes diarios. | Marcar esos días al elegir jornadas representativas y mantenerlos en los recuentos. Evaluar la semana reservada con su demanda observada. |
+| Conservar los días de tiempo adverso | T17 identifica el 07/02 por lluvia y el 13–14/02 por viento y frío. La semana reservada tuvo un 18,4 % más de viajes diarios. | Marcar esos días al elegir jornadas representativas y mantenerlos en los recuentos. Evaluar la semana reservada con su demanda observada. |
 | Mantener referencias de energía e importe por viaje | T16 estima 22,1 kWh/día de tracción con la flota observada en el ajuste. T18 verifica el precio nominal por desbloqueo y tiempo. | Recalcular las dos magnitudes sobre los viajes atendidos y usar la energía por estación para dimensionar la recarga. |
 
 Los radios describen acceso geométrico. La elección de red exige comprobar rutas
@@ -309,30 +328,30 @@ Viajes elegibles del ajuste agregados por celda de origen y de destino de resolu
 
 | Indicador | Valor | Fuente |
 |---|---|---|
-| Celdas de origen / de destino / pares con viajes | 103 / 111 / 2 154 | `tablas/movilidad/T20_resumen.csv`, `T20_od_res8.csv` |
+| Celdas de origen / de destino / pares con viajes | 103 / 111 / 2 157 | `tablas/movilidad/T20_resumen.csv`, `T20_od_res8.csv` |
 | Viajes que empiezan y acaban en la misma celda | **21,4 %** | ídem |
 | Viajes en los 20 pares más frecuentes | 14,8 % | ídem, `T20_pares_top20.csv`, `T20_pares_top20_entre_celdas.csv` |
 | Viajes entre las 30 celdas con más extremos | 51,0 % | ídem, `T20_celdas_top30.csv`, figura `figuras/movilidad/T20_od_top30` |
-| Asimetría de los pares entre celdas distintas (Σ\|M − Mᵀ\| / viajes entre celdas) | 0,224, frente a 0,204 esperable por azar (cociente 1,10) | ídem, `T20_asimetria_pares_top10.csv` |
+| Asimetría de los pares entre celdas distintas (Σ\|M − Mᵀ\| / viajes entre celdas) | 0,223, frente a 0,204 esperable por azar (cociente 1,09) | ídem, `T20_asimetria_pares_top10.csv` |
 
 | Decisión | Valor propuesto | Evidencia | Periodo | Limitaciones | Qué cambia en el plan |
 |---|---|---|---|---|---|
-| ¿Hay corredores asimétricos? | No: cada par es casi simétrico (1,10 veces lo esperable por azar). El saldo de T14 es la suma de muchos pares pequeños | `T20_resumen.csv` | Ajuste | Resolución 8 | El rebalanceo se plantea por zonas, no por corredores |
+| ¿Hay corredores asimétricos? | No: cada par es casi simétrico (1,09 veces lo esperable por azar). El saldo de T14 es la suma de muchos pares pequeños | `T20_resumen.csv` | Ajuste | Resolución 8 | El rebalanceo se plantea por zonas, no por corredores |
 | Viajes intrazonales | El 21,4 % no sale de su celda de resolución 8 | ídem | Ajuste | Depende de la resolución | Con radios de 300 m o más, parte de ellos empezarían y acabarían en la misma estación |
 
 ## T21. Matrices OD por municipios y zonas urbanísticas
 
-En febrero, **23 268 de 23 292 viajes elegibles** tienen ambos extremos asignados
+En febrero, **23 346 de 23 370 viajes elegibles** tienen ambos extremos asignados
 en las dos divisiones de Istat. Las matrices completas incluyen los otros
 24 viajes en la categoría «Sin asignar».
 
 | División | Viajes dentro de la misma unidad | Proporción sobre viajes asignados |
 |---|---:|---:|
-| Municipio | 17 120 | 73,6 % |
-| Zona urbanística | 9 731 | 41,8 % |
-| H3, resolución 8 | 4 933 | 21,2 % |
+| Municipio | 17 184 | 73,6 % |
+| Zona urbanística | 9 769 | 41,8 % |
+| H3, resolución 8 | 4 954 | 21,2 % |
 
-El mayor flujo entre municipios va del **VII al I (748 viajes)** y el regreso
+El mayor flujo entre municipios va del **VII al I (749 viajes)** y el regreso
 registra 707. El porcentaje intrazonal depende de la escala, por lo que conviene
 usar los municipios para resumir los intercambios y las zonas urbanísticas o H3
 para describir los desplazamientos locales. La asignación usa la cartografía
@@ -343,7 +362,7 @@ de Istat del 31/12/2021. [Notebook de T21](../movilidad/T21_matrices_od_administ
 Se generaron 90 matrices al cruzar tres divisiones territoriales, tres periodos,
 cinco franjas de salida y dos tipos de día. En las tres divisiones se recuperan
 los mismos totales por corte, incluidos los extremos sin asignar de T21.
-La franja de 7 a 10 h del ajuste tiene **114,6 viajes por laborable** y **34,3
+La franja de 7 a 10 h del ajuste tiene **114,7 viajes por laborable** y **34,5
 por día de fin de semana**. Se conservan perfiles separados para el simulador.
 [Notebook de T22](../movilidad/T22_matrices_od_temporales.ipynb) · [Resumen por franja](../resultados/tablas/movilidad/T22_segmentos.csv)
 
@@ -351,7 +370,7 @@ por día de fin de semana**. Se conservan perfiles separados para el simulador.
 
 En el ajuste, los diez pares de celdas con más viajes en ambos sentidos
 concentran **el 10,6 %** de los viajes entre celdas H3. La asimetría agregada
-es del **22,4 %** frente al **20,4 %** esperado si los dos sentidos de cada
+es del **22,3 %** frente al **20,4 %** esperado si los dos sentidos de cada
 par fueran equiprobables. El simulador podrá usar los saldos por par y franja
 para estimar dónde y cuándo hace falta rebalancear. El mapa conecta los
 centros de celda y ajusta el grosor al volumen total de ida y vuelta.
@@ -359,7 +378,7 @@ centros de celda y ajusta el grosor al volumen total de ida y vuelta.
 
 ## T24. Catálogo de candidatos para localización
 
-Los **33 420 extremos** del ajuste se reparten en **600 celdas H3 de resolución 9**.
+Los **33 512 extremos** del ajuste se reparten en **600 celdas H3 de resolución 9**.
 Siete centros caen en agua cartografiada y se sustituyen por el extremo observado
 en tierra más cercano al centro de la misma celda. Las 600 posiciones pasan al
 barrido. Hay **65** con avisos cartográficos, entre cercanía al río (20) y cercanía
@@ -376,10 +395,10 @@ con la posición propuesta. Las marcas de proximidad orientan la revisión sobre
 
 Se calcularon **118 redes** de K-medoids y K-means ajustado a candidatos, que
 dan **166** evaluaciones al cruzar tamaños y radios. A 300 m con 141 estaciones,
-K-medoids cubre ambos extremos del **58,6 %** de los viajes y K-means del
-**58,4 %**. Con 207 estaciones la mejor de las dos redes llega al **75,6 %**.
-El umbral del 80 % se alcanza desde 350 estaciones ensayadas a 200 m y desde
-280 a 250 m con ambos métodos. El número de estaciones estimado por área en
+K-medoids cubre ambos extremos del **60,8 %** de los viajes y K-means del
+**58,4 %**. Con 207 estaciones la mejor de las dos redes llega al **75,9 %**.
+El umbral del 80 % se alcanza desde 340 estaciones ensayadas a 200 m con K-medoids
+(350 con K-means) y desde 290 a 250 m con ambos métodos. El número de estaciones estimado por área en
 T13 sirve para acotar el barrido. La cobertura conjunta de un viaje se mide
 directamente sobre sus dos extremos y será el objetivo de la comparación de T26–T28.
 La superposición de los métodos muestra los emplazamientos compartidos y exclusivos
@@ -391,7 +410,7 @@ de salidas y la de llegadas coinciden por separado con el total de viajes cubier
 
 ## T26. Mínimo de estaciones para cubrir viajes completos
 
-Se exigen **13 368 de los 16 710 viajes** del ajuste. Las variables binarias
+Se exigen **13 405 de los 16 756 viajes** del ajuste. Las variables binarias
 abren emplazamientos de T24. Cada grupo OD cuenta en proporción a su
 multiplicidad si se abre al menos un candidato de su conjunto de origen y
 uno de su conjunto de destino. Se valida cada solución factible sobre los
@@ -402,12 +421,12 @@ fracciones y se verifica la cota dual con aritmética entera. Esto acota el
 mínimo por abajo. La solución factible lo acota por arriba. La auditoría
 aplica ambos criterios al catálogo existente y a la demanda de ajuste.
 
-| Radio | Voraz por extremos | Cota inicial | Cota auditada | Factible | Margen sobre 13 368 viajes |
+| Radio | Voraz por extremos | Cota inicial | Cota auditada | Factible | Margen sobre 13 405 viajes |
 |---:|---:|---:|---:|---:|---:|
-| 200 m | 293 | 289 | 289 | 289 | +18 |
-| 250 m | 228 | 224 | 224 | 225 | +6 |
-| 300 m | 163 | 62 | 154 | 159 | +5 |
-| 400 m (sensibilidad) | 87 | 33 | 79 | 86 | +144 |
+| 200 m | 293 | 289 | 289 | 289 | +10 |
+| 250 m | 228 | 224 | 224 | 225 | +7 |
+| 300 m | 163 | 62 | 154 | 159 | +4 |
+| 400 m (sensibilidad) | 87 | 33 | 78 | 86 | +73 |
 
 El mínimo está certificado a 200 m. A 300 m, **154–159 estaciones** deja por
 resolver hasta cinco estaciones y muestra lo cerca que la solución queda
@@ -424,13 +443,13 @@ viajes fuera de radio.
 
 | Método a 300 m y 159 estaciones | Viajes completos en ajuste | Cobertura | P90 de acceso |
 |---|---:|---:|---:|
-| MCLP | 13 373 | 80,03 % | 309,8 m |
-| Voraz por extremos | 13 191 | 78,94 % | 310,4 m |
-| P-mediana | 11 623 | 69,56 % | 374,9 m |
+| MCLP | 13 409 | 80,03 % | 309,8 m |
+| Voraz por extremos | 13 230 | 78,96 % | 310,2 m |
+| P-mediana | 11 656 | 69,56 % | 374,8 m |
 
-MCLP recupera **182 viajes completos** frente al voraz. La mejor red MCLP
-conocida en ese presupuesto cubre 13 373 y la cota dual auditada limita el
-máximo a 13 566, una diferencia de 193 viajes. La web permite repetir la
+MCLP recupera **179 viajes completos** frente al voraz. La mejor red MCLP
+conocida en ese presupuesto cubre 13 409 y la cota dual auditada limita el
+máximo a 13 603, una diferencia de 194 viajes. La web permite repetir la
 comparación para cada presupuesto ensayado y consultar el desglose en cero,
 uno y dos extremos cubiertos. [Resultados](../resultados/tablas/movilidad/T27_resultados.csv) · [Cotas de MCLP](../resultados/tablas/movilidad/T27_certificados.csv) · [T27 en la web](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase1/t27)
 
@@ -444,12 +463,12 @@ el 80 % elige por menos estaciones, menor P90, más viajes cubiertos y menor rad
 | Finalista congelada | Estaciones | Radio | Cobertura de ajuste | P90 |
 |---|---:|---:|---:|---:|
 | Elegida (LSCP) | 159 | 300 m | 80,03 % | 309,8 m |
-| Menos estaciones (MCLP) | 158 | 300 m | 79,80 % | 310,4 m |
-| Menor radio (LSCP) | 225 | 250 m | 80,04 % | 265,6 m |
+| Menos estaciones (MCLP) | 158 | 300 m | 79,79 % | 310,4 m |
+| Menor radio (LSCP) | 225 | 250 m | 80,04 % | 265,1 m |
 
 Las dos primeras redes factibles publicadas difieren en 39 viajes completos.
 La opción de 250 m requiere 66 estaciones adicionales y reduce el P90 en
-44,1 m. El objetivo interactivo se aplica a las redes ya ensayadas en el ajuste.
+44,6 m. El objetivo interactivo se aplica a las redes ya ensayadas en el ajuste.
 Las ubicaciones de las tres redes constan en una tabla que se verifica por
 huella antes de la evaluación temporal. [Barrido](../resultados/tablas/movilidad/T28_comparacion.csv) · [Emplazamientos](../resultados/tablas/movilidad/T28_estaciones.csv) · [T28 en la web](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase1/t28)
 
@@ -457,8 +476,8 @@ huella antes de la evaluación temporal. [Barrido](../resultados/tablas/movilida
 
 | Periodo | Viajes comparables | En recta | A pie | Cambio | Pierde origen | Pierde destino | Pierde ambos |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| Ajuste | 966 | 85,9 % | 44,4 % | −41,5 pp | 148 | 172 | 81 |
-| Semana reservada | 427 | 82,2 % | 44,0 % | −38,2 pp | 66 | 61 | 36 |
+| Ajuste | 969 | 86,0 % | 44,5 % | −41,5 pp | 149 | 172 | 81 |
+| Semana reservada | 431 | 82,4 % | 44,3 % | −38,1 pp | 66 | 62 | 36 |
 
 Los dos extremos del viaje deben caer en el mismo núcleo. Se excluyeron de los
 porcentajes emparejados 6 viajes del ajuste y 2 de la semana reservada por falta
@@ -470,19 +489,19 @@ la demanda observada de febrero de 2021. Los resultados peatonales corresponden
 a estos dos sectores. Las columnas de pérdida clasifican exclusivamente a los viajes
 cubiertos en recta que rebasan el radio al medir calles.
 
-El P90 a pie del ajuste es **413,1 m**, frente a 285,7 m en recta. Al variar el
-umbral entre 200 y 400 m sobre la misma red y los mismos 966 viajes comparables,
+El P90 a pie del ajuste es **412,7 m**, frente a 285,6 m en recta. Al variar el
+umbral entre 200 y 400 m sobre la misma red y los mismos 969 viajes comparables,
 la cobertura a pie va del 14,6 % al 78,2 %. En la semana reservada Termini baja
-del 75,7 % al 30,4 % a 300 m, frente al 87,0 % al 54,1 % en Tíber. Estas dos
+del 75,8 % al 30,2 % a 300 m, frente al 87,1 % al 54,6 % en Tíber. Estas dos
 muestras muestran la sensibilidad a barreras locales. [Prueba peatonal](../resultados/tablas/movilidad/T30_validacion_peatonal.csv) · [Curvas](../resultados/tablas/movilidad/T30_sensibilidad_peatonal.csv) · [T29 en la web](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase1/t29) · [Mapa 3D](https://javiersaguar.github.io/PIDS-Proyecto3/#/mapa/validacion)
 
 ## T30. Transferencia a la semana reservada
 
 En toda Roma, con las mismas 159 estaciones y 300 m de radio, se pasa de
-**13 373 de 16 710 (80,03 %)** a **4 977 de 6 582 (75,62 %)**. La caída es
-de 4,41 pp con 18,2 % más de viajes diarios y el P90 sube de 309,8 a 329,4 m.
+**13 409 de 16 756 (80,03 %)** a **5 001 de 6 614 (75,61 %)**. La caída es
+de 4,41 pp con 18,4 % más de viajes diarios y el P90 sube de 309,8 a 329,4 m.
 Los siete días de reserva quedan por debajo del 80 %. El 26/02 presenta la
-menor cobertura, **72,95 % sobre 1 087 viajes**.
+menor cobertura, **72,94 % sobre 1 094 viajes**.
 
 Se divide el cambio según tipo de día y franja T12. Para cada grupo se
 multiplica el cambio de peso por su cobertura media y el cambio de
@@ -500,14 +519,14 @@ de las estaciones se evalúa antes de modelar patinetes y anclajes disponibles.
   El rebalanceo nocturno es imprescindible en la simulación.
 - ¿Explica la meteorología el 07/02 y el crecimiento del mes? **El 07/02 sí y el
   crecimiento solo en parte** (T17): el 07/02 tuvo 24,6 mm y 21 horas de lluvia, y la
-  pendiente del mes baja de 10,5 a 7,5 viajes/día por día al añadir lluvia y temperatura.
+  pendiente del mes baja de 10,6 a 7,6 viajes/día por día al añadir lluvia y temperatura.
 
 ## Preguntas de Alejandro: respuestas de Javier
 
 1. **Parámetros en `config.yaml`.** Sí para los que usan varias tareas o las fases siguientes:
    `movilidad.resolucion_mapas` (8), `resolucion_candidatos` (9), `radios_acceso_m`
    ([200, 250, 300, 400], con 400 m solo como sensibilidad), `velocidad_pie_ms` (1,3, con su
-   referencia), `factor_rodeo` (1,328, copiado de T15) y el rebalanceo de la pregunta 3. T13,
+   referencia), `factor_rodeo` (1,329, copiado de T15) y el rebalanceo de la pregunta 3. T13,
    T14, T15 y T20 ya los leen de ahí. El mínimo de 30 extremos del saldo, el umbral de lluvia de
    0,1 mm/h y las horas de sol de 10 a 16 h se quedan en los `PARAMETROS` de su notebook: solo
    los usa esa tarea, y en la fase 3 la producción fotovoltaica sale de PVWatts hora a hora.
@@ -522,7 +541,7 @@ de las estaciones se evalúa antes de modelar patinetes y anclajes disponibles.
    el 14/02 con el mismo trato (ver T17).
 5. **Semana reservada.** Las dos cosas, para cosas distintas. La localización y las matrices se
    validan con cuotas (reparto de viajes entre estaciones, pares y franjas), que no dependen del
-   volumen. El volumen se compara tal cual y la diferencia (+18,2 %, sin lluvia, más cálida y con
+   volumen. El volumen se compara tal cual y la diferencia (+18,4 %, sin lluvia, más cálida y con
    menos viento) se presenta como resultado: la validación es más exigente que el ajuste.
 6. **COVID en Lacio.** De acuerdo: sin fuente oficial leída no se dice nada. En la memoria va
    como limitación (no se ha podido controlar el contexto sanitario del mes).

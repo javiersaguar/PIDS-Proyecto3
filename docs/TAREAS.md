@@ -26,7 +26,7 @@ responde a una pregunta y deja una tabla o figura que se cita en `docs/conclusio
 | T07 | Ampliar el plan de análisis, simulación y demo 3D | E | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/bb6054ed01008b6fbb8b2d6d10854c597a06d5ca) |
 | T08 | Análisis en notebooks: una celda por análisis, con objetivo antes y conclusiones después | E | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/3fb407a73b3cbbf773290c64d3bf06e34df2b9a4) |
 | T09 | Web de resultados en GitHub Pages: gráficas interactivas, explicación y conclusiones por fase | E | Javier | hecha | [Web](https://javiersaguar.github.io/PIDS-Proyecto3/) · [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/0e8ecce68a0ba4d9a3288a80734ddc9a42bb26b7) |
-| T10 | Limpieza: `viajes_limpios.parquet`, marcas en `motivo`, umbrales justificados y tabla de embudo | R | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/81e54e25872b346e51243c4f6962adfdf5c89c14) |
+| T10 | Limpieza: `viajes_limpios.parquet`, marcas en `motivo`, umbrales justificados, excepción de viajes con paradas y tabla de embudo | R | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/81e54e25872b346e51243c4f6962adfdf5c89c14) |
 | T11 | Solapes por patinete y recolocaciones del operador | R | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/81e54e25872b346e51243c4f6962adfdf5c89c14) |
 | T12 | Patrones temporales y viajes simultáneos | R | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/81e54e25872b346e51243c4f6962adfdf5c89c14) |
 | T13 | Densidad de orígenes y destinos en H3 y concentración de la demanda | R | Alejandro | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/604599cbc4a0aceb28ce65dc9ccbebab1cfaf571) · [Notebook](https://github.com/javiersaguar/PIDS-Proyecto3/commit/19ffdcb1bd5233d38151985db2b5918cb5909fe5) |
@@ -95,10 +95,10 @@ responde a una pregunta y deja una tabla o figura que se cita en `docs/conclusio
 |---|---|---|---|---|---|
 | T60 | Probar el diseño con días difíciles, demanda punta adicional y producción solar baja | E | | pendiente | |
 | T61 | Conclusiones y limitaciones | R | | pendiente | |
-| T62 | Memoria `G02-P3.pdf` (LaTeX en `memoria/`) | R | Javier | en curso | |
+| T62 | Memoria `G05-P3.pdf` (LaTeX en `memoria/`) | R | Javier | en curso | |
 | T63 | Presentación en PDF | R | | pendiente | |
 | T64 | Reproducción en limpio | R | | pendiente | |
-| T65 | Script de empaquetado `G02-P3.zip` | R | | pendiente | |
+| T65 | Script de empaquetado `G05-P3.zip` | R | | pendiente | |
 | T66 | Ensayo de la defensa | R | | pendiente | |
 
 ## Demo 3D para la defensa

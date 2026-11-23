@@ -65,6 +65,8 @@ def reglas(df: pd.DataFrame, c: dict | None = None) -> dict[str, tuple[str, pd.S
     orden = df.sort_values(["idS", "tsO"])
     fin_anterior = orden.groupby("idS")["tsD"].shift()
     solape = (orden["tsO"] < fin_anterior).reindex(df.index)
+    p = c["viaje_con_paradas"]
+    paradas = con_paradas(df, c)
 
     return {
         "nulos": ("Algún campo vacío", df.isna().any(axis=1)),
@@ -78,13 +80,31 @@ def reglas(df: pd.DataFrame, c: dict | None = None) -> dict[str, tuple[str, pd.S
                                (df["price_eur"] - precio_tarifa).abs() > c["tolerancia_precio_eur"]),
         "fuera_de_zona": ("Algún extremo fuera del rectángulo de servicio", fuera),
         "solape": ("Empieza antes de que acabe el viaje anterior del mismo patinete", solape),
-        "tt_largo": (f"Duración > {c['tt_max_s']} s", df["tt_s"] > c["tt_max_s"]),
+        "tt_largo": (f"Duración > {c['tt_max_s']} s (salvo viaje con paradas: "
+                     f">= {p['dis_min_m']} m, >= {c['vel_min_kmh']} km/h y <= {p['tt_max_s']} s)",
+                     (df["tt_s"] > c["tt_max_s"]) & ~paradas),
         "vel_alta": (f"Velocidad > {c['vel_max_kmh']} km/h", df["vel_kmh"] > c["vel_max_kmh"]),
         "tt_corto": (f"Duración < {c['tt_min_s']} s", df["tt_s"] < c["tt_min_s"]),
         "dis_corta": (f"Distancia < {c['dis_min_m']} m", df["dis_m"] < c["dis_min_m"]),
-        "vel_baja": (f"Velocidad < {c['vel_min_kmh']} km/h (patinete sin cerrar o llevado a mano)",
-                     df["vel_kmh"] < c["vel_min_kmh"]),
+        "vel_baja": (f"Velocidad < {c['vel_min_kmh']} km/h (patinete sin cerrar o llevado a mano; "
+                     f"salvo viaje con paradas: >= {p['dis_min_m']} m y <= {c['tt_max_s']} s)",
+                     (df["vel_kmh"] < c["vel_min_kmh"]) & ~paradas),
     }
+
+
+def con_paradas(df: pd.DataFrame, c: dict | None = None) -> pd.Series:
+    """Viajes con paradas, que se libran de `tt_largo` o de `vel_baja`.
+
+    Recorren al menos `dis_min_m` e incumplen solo una de las dos reglas: o son lentos
+    sin pasar de `tt_max_s`, o son largos sin bajar de `vel_min_kmh` ni pasar del
+    `tt_max_s` de la excepción. Los que son a la vez largos y lentos siguen fuera.
+    """
+    c = umbrales() if c is None else c
+    p = c["viaje_con_paradas"]
+    largo = df["tt_s"] > c["tt_max_s"]
+    lento = df["vel_kmh"] < c["vel_min_kmh"]
+    recorrido = df["dis_m"] >= p["dis_min_m"]
+    return recorrido & (lento ^ largo) & (~largo | (df["tt_s"] <= p["tt_max_s"]))
 
 
 def asignar_periodo(ts: pd.Series) -> pd.Series:

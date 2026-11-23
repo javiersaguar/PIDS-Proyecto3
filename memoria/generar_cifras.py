@@ -81,6 +81,22 @@ def cifras() -> dict[str, str]:
         "concentracion_20pc_res8": num(p_aj["extremos_en_20pc_celdas_pc"], 1),
         "km_ajuste": num(p_aj["km_totales"]),
     }
+    paradas = leer("exploracion/T10_viajes_con_paradas.csv").set_index("grupo")
+    lentos = paradas.loc["lentos con paradas (rescatados de vel_baja)"]
+    largos = paradas.loc["largos con paradas (rescatados de tt_largo)"]
+    fuera = paradas.loc["largos y lentos de al menos 1 km (siguen fuera)"]
+    resto = paradas.loc["resto de viajes elegibles"]
+    lim = cfg["limpieza"]
+    c |= {
+        "paradas_dis_min_m": num(lim["viaje_con_paradas"]["dis_min_m"]),
+        "paradas_tt_max_h": num(lim["viaje_con_paradas"]["tt_max_s"] / 3600, 1),
+        "paradas_viajes": num(lentos["viajes"] + largos["viajes"]),
+        "paradas_lentos": num(lentos["viajes"]), "paradas_largos": num(largos["viajes"]),
+        "paradas_lentos_dis": num(lentos["dis_m_mediana"]), "resto_dis": num(resto["dis_m_mediana"]),
+        "paradas_lentos_recta": num(lentos["recta_m_mediana"]),
+        "paradas_lentos_tt": num(lentos["tt_min_mediana"]), "resto_tt": num(resto["tt_min_mediana"], 1),
+        "paradas_fuera": num(fuera["viajes"]), "paradas_fuera_tt_h": num(fuera["tt_min_mediana"] / 60, 1),
+    }
 
     # T11. Recolocaciones.
     t11 = indicadores("exploracion/T11_resumen.csv")

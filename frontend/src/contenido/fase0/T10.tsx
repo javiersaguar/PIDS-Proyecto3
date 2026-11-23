@@ -23,6 +23,23 @@ type Comparacion = {
   diferencia_ajuste_pc: { indicador: string; clave: string; diferencia_pc: number }[];
 };
 type Lentos = { indicador: string; valor: number }[];
+type GrupoParadas = {
+  grupo: string;
+  viajes: number;
+  dis_m_mediana: number;
+  tt_min_mediana: number;
+  tt_min_maxima: number;
+  vel_kmh_mediana: number;
+  recta_m_mediana: number;
+  recta_500m_o_mas_pc: number;
+  rodeo_mediano: number;
+  fin_de_semana_pc: number;
+};
+type Paradas = {
+  umbrales: { dis_min_m: number; tt_max_s: number; tt_max_paradas_s: number; vel_min_kmh: number };
+  grupos: GrupoParadas[];
+  puntos: { dis_m: number[]; tt_min: number[]; con_paradas: boolean[] };
+};
 type Variable = "tt_s" | "dis_m" | "vel_kmh";
 
 const FASE = "fase0";
@@ -64,7 +81,7 @@ export function T10() {
       responsable="Javier Saguar"
       titulo="Limpieza de los viajes"
       notebook="exploracion/T10_limpieza.ipynb"
-      objetivo="Decidir qué viajes del CSV original entran en el análisis con umbrales justificados con datos. No se borra ningún viaje: los no válidos quedan marcados con el motivo."
+      objetivo="Decidir qué viajes del CSV original entran en el análisis con umbrales justificados con datos y una excepción para los viajes con paradas. No se borra ningún viaje: los no válidos quedan marcados con el motivo."
       valor="Todas las fases parten de estos viajes. Si se cuelan desbloqueos sin viaje o patinetes sin cerrar, inflan la demanda y la energía; si se quita demasiado, la red se diseña para menos demanda de la real."
     >
       {p ? (
@@ -94,6 +111,7 @@ export function T10() {
       {p && <BloqueEmbudo e={p} />}
       <BloqueDistribuciones />
       <BloqueLentos />
+      <BloqueParadas />
       <BloqueSensibilidad />
       <BloqueComparacion />
     </Seccion>
@@ -132,6 +150,7 @@ function BloqueEmbudo({ e }: { e: Embudo }) {
           Solo se excluyen viajes por comportamiento: {num(e.pasos[8].excluidos)} de más de 2 h,{" "}
           {num(e.pasos[9].excluidos)} de más de 25 km/h, {num(e.pasos[10].excluidos)} de menos de 60 s,{" "}
           {num(e.pasos[11].excluidos)} más de menos de 100 m y {num(e.pasos[12].excluidos)} más de menos de 2 km/h.
+          Las reglas de 2 h y 2 km/h no se aplican a los viajes con paradas del apartado 4.
         </>,
         <>
           Los dos periodos pierden una proporción parecida ({pc(e.periodos[0].porcentaje_elegibles)} y{" "}
@@ -232,7 +251,7 @@ function BloqueLentos() {
   const lentos = useDatos<Lentos>(`${FASE}/t10_lentos`);
   const hist = useDatos<Histogramas>(`${FASE}/t10_histogramas`);
   if (!lentos.datos || !hist.datos) return <Cargando error={lentos.error ?? hist.error} />;
-  const [menos1, otras, soloVb1, soloVb, disMed, ttMed, mas20] = lentos.datos.map((x) => x.valor);
+  const [menos1, otras, soloVb1, paradas1, soloVb, disMed, ttMed, mas20] = lentos.datos.map((x) => x.valor);
   const v = hist.datos.variables.vel_kmh;
   const n = v.bordes.findIndex((b) => b >= 8);
   const bordes = v.bordes.slice(0, n + 1);
@@ -259,14 +278,15 @@ function BloqueLentos() {
       conclusiones={[
         <>
           El pico de {num(menos1)} viajes por debajo de 1 km/h son desbloqueos sin recorrido: {num(otras)} ya caen
-          por duración o distancia y solo {num(soloVb1)} pasan las demás reglas.
+          por duración o distancia, {num(paradas1)} son viajes con paradas de más de 1 km (apartado 4) y solo{" "}
+          {num(soloVb1)} caen únicamente por la velocidad.
         </>,
         <>
-          Los {num(soloVb)} viajes que solo excluye la regla nueva <code>vel_baja</code> recorren distancias normales
-          (mediana de {num(disMed)} m) pero duran mucho (mediana de {num(ttMed, 1)} min; el {pc(mas20)} pasa de 20
+          Los {num(soloVb)} viajes que solo excluye la regla nueva <code>vel_baja</code> recorren poco (mediana de{" "}
+          {num(disMed)} m) y duran mucho para esa distancia (mediana de {num(ttMed, 1)} min; el {pc(mas20)} pasa de 20
           min). Son patinetes que no se cerraron a tiempo o que se llevaron a mano.
         </>,
-        "Se añade vel_baja con umbral de 2 km/h, en el valle del histograma. Cuesta el 1 % de la demanda y la comparación del apartado 5 muestra que no cambia las conclusiones.",
+        "Se añade vel_baja con umbral de 2 km/h, en el valle del histograma. Cuesta el 0,7 % de la demanda y la comparación del apartado 6 muestra que no cambia las conclusiones.",
       ]}
       fuente="tablas/exploracion/T10_viajes_lentos.csv"
     >
@@ -289,6 +309,99 @@ function BloqueLentos() {
           { valor: `${num(disMed)} m`, nombre: "distancia mediana", detalle: "de esos viajes" },
           { valor: `${num(ttMed, 1)} min`, nombre: "duración mediana", detalle: "de esos viajes" },
         ]}
+      />
+    </Bloque>
+  );
+}
+
+function BloqueParadas() {
+  const { datos, error } = useDatos<Paradas>(`${FASE}/t10_paradas`);
+  if (!datos) return <Cargando error={error} />;
+  const u = datos.umbrales;
+  const [lentos, largos, fuera, resto] = datos.grupos;
+  const pts = datos.puntos;
+  const serie = (conParadas: boolean, nombre: string, color: string): Data => {
+    const i = pts.con_paradas.flatMap((c, k) => (c === conParadas ? [k] : []));
+    return {
+      type: "scatter",
+      mode: "markers",
+      name: `${nombre} (${num(i.length)})`,
+      x: i.map((k) => pts.dis_m[k]),
+      y: i.map((k) => pts.tt_min[k]),
+      marker: { size: 8, color, opacity: 0.8, line: { color: "#fff", width: 1 } },
+      hovertemplate: `${nombre}<br>%{x:,.0f} m en %{y:.0f} min<extra></extra>`,
+    } as Data;
+  };
+  const linea = (x: number[], y: number[], dash: string): Data =>
+    ({ type: "scatter", mode: "lines", x, y, line: { color: COLOR.tenue, width: 1, dash }, hoverinfo: "skip", showlegend: false }) as Data;
+  const xMax = Math.max(...pts.dis_m) * 1.2;
+  const yMin = Math.min(...pts.tt_min) * 0.8;
+  const yMax = Math.max(...pts.tt_min) * 1.2;
+  const fila = (g: GrupoParadas) => [
+    g.grupo,
+    num(g.viajes),
+    num(g.dis_m_mediana),
+    num(g.tt_min_mediana, 1),
+    num(g.vel_kmh_mediana, 2),
+    num(g.recta_m_mediana),
+    pc(g.recta_500m_o_mas_pc),
+    num(g.rodeo_mediano, 2),
+  ];
+  return (
+    <Bloque
+      titulo="4. Viajes lentos o largos con recorrido real"
+      queMuestra={`Los viajes que solo incumplen la velocidad mínima (${num(u.vel_min_kmh)} km/h) o la duración máxima (${num(u.tt_max_s / 3600)} h), según su distancia y su duración. En azul, los que la excepción de viaje con paradas deja como elegibles.`}
+      porQue="Un patinete olvidado sin cerrar no se mueve y su viaje no es demanda. Un viaje con paradas (el usuario mantiene la reserva mientras entra en una tienda o se para en un monumento) sí lo es: si se descarta, la red pierde demanda en las zonas donde ocurre."
+      comoLeer={`Los dos ejes van en escala logarítmica. La línea vertical marca ${num(u.dis_min_m)} m y las horizontales, ${num(u.tt_max_s / 3600)} h y ${num(u.tt_max_paradas_s / 3600, 1)} h. Con al menos ${num(u.dis_min_m)} m, un viaje puede incumplir una de las dos reglas, pero no las dos.`}
+      conclusiones={[
+        <>
+          La excepción recupera <strong>{num(lentos.viajes + largos.viajes)} viajes</strong>: {num(lentos.viajes)} lentos y{" "}
+          {num(largos.viajes)} largos.
+        </>,
+        <>
+          Los lentos recorren lo mismo que un viaje normal (mediana de {num(lentos.dis_m_mediana)} m frente a{" "}
+          {num(resto.dis_m_mediana)} m) y acaban a {num(lentos.recta_m_mediana)} m en línea recta del origen; el{" "}
+          {pc(lentos.recta_500m_o_mas_pc)} a más de 500 m. Duran {num(lentos.tt_min_mediana)} min en vez de{" "}
+          {num(resto.tt_min_mediana, 1)} y dan más rodeo ({num(lentos.rodeo_mediano, 1)} veces la línea recta frente a{" "}
+          {num(resto.rodeo_mediano, 1)}): paseos o recados con paradas, no patinetes olvidados.
+        </>,
+        <>
+          Los {num(largos.viajes)} largos pasan de {num(u.tt_max_s / 3600)} h por pocos minutos (hasta{" "}
+          {num(largos.tt_min_maxima)} min) y van a {num(largos.vel_kmh_mediana, 1)} km/h de mediana: están en marcha casi
+          todo el tiempo.
+        </>,
+        <>
+          Los {num(fuera.viajes)} viajes de al menos 1 km que son a la vez largos y lentos siguen fuera: duran{" "}
+          {num(fuera.tt_min_mediana / 60, 1)} h de mediana a {num(fuera.vel_kmh_mediana, 1)} km/h, y la mitad acaba a menos
+          de 500 m del origen.
+        </>,
+        "El límite de 1 km es un criterio prudente, no un corte natural. Con 500 m entrarían 117 viajes lentos en vez de 68 (+0,2 % de demanda), así que la elección no cambia las conclusiones. Sin trayectorias no se pueden ver las paradas.",
+      ]}
+      fuente="tablas/exploracion/T10_viajes_con_paradas.csv y figuras/exploracion/T10_viajes_con_paradas"
+    >
+      <Grafica
+        descripcion="Dispersión de distancia y duración de los viajes lentos o largos, con los recuperados como viaje con paradas"
+        trazas={[
+          linea([u.dis_min_m, u.dis_min_m], [yMin, yMax], "dash"),
+          linea([80, xMax], [u.tt_max_s / 60, u.tt_max_s / 60], "dot"),
+          linea([u.dis_min_m, xMax], [u.tt_max_paradas_s / 60, u.tt_max_paradas_s / 60], "dot"),
+          serie(false, "Excluidos", COLOR.eje),
+          serie(true, "Viaje con paradas", COLOR.serie1),
+        ]}
+        alto={380}
+        capa={{
+          showlegend: true,
+          legend: { orientation: "h", y: 1.1 },
+          margin: { t: 30 },
+          xaxis: { type: "log", title: { text: "Distancia recorrida (m)" }, exponentformat: "none", range: [Math.log10(80), Math.log10(xMax)] },
+          yaxis: { type: "log", title: { text: "Duración (min)" }, exponentformat: "none", range: [Math.log10(yMin), Math.log10(yMax)] },
+        }}
+      />
+      <TablaDesplegable
+        titulo="Ver los indicadores de cada grupo"
+        cabeceras={["Grupo", "Viajes", "Distancia (m)", "Duración (min)", "Velocidad (km/h)", "Línea recta (m)", "Línea recta ≥ 500 m", "Rodeo"]}
+        numericas={[1, 2, 3, 4, 5, 6, 7]}
+        filas={datos.grupos.map(fila)}
       />
     </Bloque>
   );
@@ -332,7 +445,7 @@ function BloqueSensibilidad() {
   };
   return (
     <Bloque
-      titulo="4. Sensibilidad de cada umbral"
+      titulo="5. Sensibilidad de cada umbral"
       queMuestra="Qué porcentaje de los viajes del periodo de ajuste excluiría cada umbral por sí solo al moverlo, con el valor elegido en línea discontinua."
       porQue="Si un pequeño cambio de umbral moviera muchos viajes, la decisión sería frágil y habría que justificarla mejor o revisar su efecto en los resultados."
       comoLeer="Elige un parámetro y mueve el deslizador para ver cuántos viajes quitaría cada valor. Cada umbral se evalúa solo, sin las demás reglas."
@@ -408,7 +521,7 @@ function BloqueComparacion() {
   const u = datos.umbrales;
   return (
     <Bloque
-      titulo="5. Limpieza permisiva frente a la principal"
+      titulo="6. Limpieza permisiva frente a la principal"
       queMuestra={`Cuánto cambia cada indicador del periodo de ajuste si se usa una limpieza menos restrictiva: ${u.permisiva.tt_min_s} s, ${u.permisiva.dis_min_m} m, sin velocidad mínima, ${u.permisiva.vel_max_kmh} km/h y ${num(u.permisiva.tt_max_s / 3600)} h.`}
       porQue="Es la prueba de robustez de la limpieza. Si los indicadores que usarán las fases siguientes apenas cambian, las conclusiones del proyecto no dependen de los umbrales."
       conclusiones={[
@@ -416,7 +529,10 @@ function BloqueComparacion() {
           La permisiva deja un {pc(d[0].diferencia_pc)} más de viajes en el ajuste ({num(Number(ind("permisiva", "ajuste").viajes_elegibles))}{" "}
           frente a {num(Number(ind("principal", "ajuste").viajes_elegibles))}).
         </>,
-        "Las medianas de distancia, duración y velocidad cambian menos de un 3 %; los kilómetros y la energía, un 0,6 %.",
+        <>
+          Las medianas de distancia, duración y velocidad cambian menos de un 3 %; los kilómetros y la energía, un{" "}
+          {pc(d.find((x) => x.clave === "km_totales")!.diferencia_pc)}.
+        </>,
         <>
           La concentración espacial es la misma: el 20 % de celdas H3 más usadas reúne el{" "}
           {pc(Number(ind("principal", "ajuste").extremos_en_20pc_celdas_pc))} de los extremos con las dos limpiezas.

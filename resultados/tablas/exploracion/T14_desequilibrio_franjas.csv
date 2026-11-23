@@ -1,6 +1,6 @@
 franja,inicio_h,fin_h,salidas_dia,desplazamiento_estructural_patinetes_dia,desplazamiento_diario_medio_patinetes_dia,desplazamiento_estructural_patinetes_hora,pct_salidas_desplazadas_estructural
-madrugada,0,7,7.1,4.0,5.4,0.6,56.0
-punta_manana,7,10,91.7,29.7,43.1,9.9,32.4
-mediodia,10,16,284.9,28.2,66.6,4.7,9.9
-punta_tarde,16,20,314.3,29.2,71.8,7.3,9.3
-noche,20,24,97.8,19.1,34.9,4.8,19.6
+madrugada,0,7,7.2,4.1,5.4,0.6,56.6
+punta_manana,7,10,91.8,29.8,43.1,9.9,32.4
+mediodia,10,16,285.6,28.3,66.7,4.7,9.9
+punta_tarde,16,20,315.2,29.1,71.8,7.3,9.2
+noche,20,24,98.0,19.2,35.0,4.8,19.6

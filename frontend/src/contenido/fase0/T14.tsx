@@ -113,7 +113,7 @@ function BloqueSaldo() {
       porQue="Una celda emisora (más salidas que llegadas) se vacía y pide stock inicial; una receptora se llena y pide anclajes libres."
       comoLeer="Rojo: emisora, pierde patinetes. Azul: receptora, los gana. Gris claro: celdas con muy pocos extremos para que el saldo signifique algo. El saldo relativo divide entre el total de extremos de la celda."
       conclusiones={[
-        "Cuentan 90 de las 111 celdas, con el 99,34 % de los extremos: 43 emisoras, 45 receptoras y 2 equilibradas. En 16 el desequilibrio supera dos desviaciones típicas del caso equilibrado.",
+        "Cuentan 90 de las 111 celdas, con el 99,34 % de los extremos: 42 emisoras, 45 receptoras y 3 equilibradas. En 14 el desequilibrio supera dos desviaciones típicas del caso equilibrado.",
         <>
           La principal emisora (<code>{emisora.h3}</code>, al sureste del Coliseo) pierde{" "}
           <strong>{num(emisora.saldo_dia, 1)} patinetes al día</strong> y la principal receptora (<code>{receptora.h3}</code>,
@@ -186,8 +186,8 @@ function BloqueFranjas() {
       comoLeer="Elige la franja con los botones; la barra oscura es la franja del mapa. La escala de color es la misma en todas las franjas para poder compararlas."
       conclusiones={[
         <>
-          En la punta de mañana el flujo neto desplaza <strong>29,7 patinetes al día, el 32,4 % de sus salidas</strong>.
-          Mediodía y punta de tarde desplazan casi lo mismo (28,2 y 29,2), pero es solo el 9,9 % y el 9,3 % de sus
+          En la punta de mañana el flujo neto desplaza <strong>29,8 patinetes al día, el 32,4 % de sus salidas</strong>.
+          Mediodía y punta de tarde desplazan casi lo mismo (28,3 y 29,1), pero es solo el 9,9 % y el 9,2 % de sus
           salidas.
         </>,
         "El centro recibe patinetes por la mañana y los devuelve por la tarde: el saldo diario esconde esa inversión, así que el simulador debe trabajar por franjas o en continuo.",

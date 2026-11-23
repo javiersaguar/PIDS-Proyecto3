@@ -117,7 +117,7 @@ function BloqueDensidad() {
       porQue="La arista de la celda tiene que ser del orden del radio de acceso a una estación para que cada celda sea un candidato razonable, y el mapa dice dónde buscar estaciones."
       comoLeer="Cambia entre orígenes, destinos o la suma de los dos. Pasa el ratón por una celda para ver sus cifras y usa la rueda para acercarte."
       conclusiones={[
-        "En el ajuste hay demanda en 111 celdas de resolución 8 (0,74 km² y 531 m de arista media) y en 600 de resolución 9 (0,105 km² y 201 m). La mediana es de 190 extremos por celda en resolución 8 y de 32 en resolución 9.",
+        "En el ajuste hay demanda en 111 celdas de resolución 8 (0,74 km² y 531 m de arista media) y en 600 de resolución 9 (0,105 km² y 201 m). La mediana es de 191 extremos por celda en resolución 8 y de 32 en resolución 9.",
         `Orígenes y destinos ocupan las mismas celdas. La que más extremos reúne (${num(top.origenes + top.destinos)}) está al sureste del Coliseo; le siguen otras del este y del suroeste y la del centro, entre San Pedro y Termini.`,
         <>
           La <strong>resolución 9</strong> tiene una arista del orden del radio de acceso (200 m): es la rejilla de los

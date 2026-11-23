@@ -1,7 +1,7 @@
 nivel,periodo,viajes,asignados,sin_asignar,intrazonales,pct_intrazonales,pct_intrazonales_h3,zonas_activas
-municipio,mes,23292,23268,24,17120,73.5774,21.2008,12
-municipio,ajuste,16710,16693,17,12306,73.7195,21.4281,12
-municipio,reservada,6582,6575,7,4814,73.2167,20.6236,12
-zona_urbanistica,mes,23292,23268,24,9731,41.8214,21.2008,53
-zona_urbanistica,ajuste,16710,16693,17,7037,42.1554,21.4281,52
-zona_urbanistica,reservada,6582,6575,7,2694,40.9734,20.6236,51
+municipio,mes,23370,23346,24,17184,73.6058,21.2199,12
+municipio,ajuste,16756,16739,17,12342,73.732,21.429,12
+municipio,reservada,6614,6607,7,4842,73.2859,20.6902,12
+zona_urbanistica,mes,23370,23346,24,9769,41.8444,21.2199,53
+zona_urbanistica,ajuste,16756,16739,17,7060,42.177,21.429,52
+zona_urbanistica,reservada,6614,6607,7,2709,41.002,20.6902,51

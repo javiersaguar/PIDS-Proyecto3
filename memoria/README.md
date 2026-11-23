@@ -8,8 +8,8 @@
 
 ## Qué debe incluir
 
-- Los archivos fuente de la memoria, según el plan en LaTeX, y el PDF final `G02-P3.pdf` (somos el grupo 2; el enunciado lo llama `GZZ-P3.pdf`).
-- Las referencias a los datos, los métodos y los programas utilizados. El comprimido de entrega reúne la memoria y la carpeta `G02-P3_code/` con los programas reproducibles, según el [enunciado](../docs/enunciado.md#entregable).
+- Los archivos fuente de la memoria, según el plan en LaTeX, y el PDF final `G05-P3.pdf` (somos el grupo 5; el enunciado lo llama `GZZ-P3.pdf`).
+- Las referencias a los datos, los métodos y los programas utilizados. El comprimido de entrega reúne la memoria y la carpeta `G05-P3_code/` con los programas reproducibles, según el [enunciado](../docs/enunciado.md#entregable).
 
 ## Cómo se compila
 
@@ -30,7 +30,7 @@ El script hace dos cosas:
 2. `latexmk -pdf` compila `memoria.tex` con pdflatex y biber (bibliografía en
    `referencias.bib`, estilo IEEE). Los ficheros intermedios van a `memoria/build/`, que no
    se versiona, y el PDF se copia a `memoria/G<grupo>-P3.pdf`. El número de grupo está en
-   `config.yaml` (`entrega.grupo: "02"`), así que el PDF es `memoria/G02-P3.pdf`.
+   `config.yaml` (`entrega.grupo: "05"`), así que el PDF es `memoria/G05-P3.pdf`.
 
 Hace falta una distribución de LaTeX con `latexmk`, `pdflatex` y `biber` (MiKTeX o TeX Live)
 y los paquetes `carlito`, `babel-spanish`, `biblatex-ieee`, `booktabs`, `makecell`,
@@ -43,7 +43,7 @@ y los paquetes `carlito`, `babel-spanish`, `biblatex-ieee`, `booktabs`, `makecel
 | `generar_cifras.py` | Cifras y tablas desde `resultados/tablas/` |
 | `compilar.py` | Genera las cifras y compila el PDF |
 | `generado/` | Salida de `generar_cifras.py` (versionada para poder compilar sin Python) |
-| `G02-P3.pdf` | Última versión compilada |
+| `G05-P3.pdf` | Última versión compilada |
 
 Formato: Calibri 11 (aquí Carlito, que tiene las mismas medidas), interlineado 1,15 y
 márgenes de 2 cm (la plantilla de la asignatura usa 2,5 cm; se cambia en la línea de
@@ -75,7 +75,7 @@ a `resultados/` y las cifras están en [conclusiones_eda.md](../docs/conclusione
 
 | Apartado | Figura o tabla | Decisión que justifica |
 |---|---|---|
-| Datos y método | `tablas/exploracion/T10_embudo.csv` | Viajes elegibles: 23 292 de 25 186 |
+| Datos y método | `tablas/exploracion/T10_embudo.csv` | Viajes elegibles: 23 370 de 25 186 |
 | Datos y método | `figuras/exploracion/T10_umbrales` | Umbrales de 60 s, 100 m, 2 km/h, 25 km/h y 2 h |
 | Datos y método | `figuras/exploracion/T12_calor_dia_hora` | Franjas horarias y tipos de día |
 | Datos y método | `figuras/exploracion/T17_viajes_lluvia` | Periodos de ajuste y reservada; el 07/02 no se excluye |

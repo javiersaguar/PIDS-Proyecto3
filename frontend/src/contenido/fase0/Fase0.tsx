@@ -22,8 +22,8 @@ const SECCIONES = [
 ];
 
 const DECISIONES = [
-  ["Umbrales de limpieza", "60 s, 100 m, 2 km/h, 25 km/h y 2 h", "T10"],
-  ["Viajes elegibles", "23 292: 16 710 en el ajuste y 6 582 en la semana reservada", "T10"],
+  ["Umbrales de limpieza", "60 s, 100 m, 2 km/h, 25 km/h y 2 h; con al menos 1 km, un viaje puede incumplir 2 km/h o 2 h (hasta 2,5 h), no las dos", "T10"],
+  ["Viajes elegibles", "23 370: 16 756 en el ajuste y 6 614 en la semana reservada", "T10"],
   ["Robustez de la limpieza", "La limpieza permisiva no cambia los indicadores clave; se usa la principal", "T10"],
   ["Umbral de recolocación", "200 m, en el valle entre el ruido de GPS y los saltos de kilómetros", "T11"],
   ["Recolocaciones del piloto", "Recogidas de varios días, no rebalanceo dentro del día; el escenario de la fase 1 será nocturno", "T11"],
@@ -36,9 +36,9 @@ const DECISIONES = [
   ["Rebalanceo", "Hace falta: el saldo es estructural y el piloto ya lo compensaba. Cota inferior de unos 100 patinetes/día en resolución 8 y 220 en resolución 9", "T14"],
   ["Franjas del desequilibrio", "Sobre todo la punta de mañana, que se invierte por la tarde: el simulador trabaja por franjas o en continuo", "T14"],
   ["Radios del barrido", "200, 250 y 300 m; 400 m como sensibilidad", "T15"],
-  ["Rodeo y velocidad a pie (hipótesis)", "1,328 y 1,3 m/s", "T15"],
-  ["Viajes circulares", "3,58 %: el simulador admite origen y destino en la misma estación", "T15"],
-  ["Frecuencia de recarga", "Cada varios días con el uso observado (autonomía mediana de 45,6 días); se repite con la flota simulada", "T16"],
+  ["Rodeo y velocidad a pie (hipótesis)", "1,329 y 1,3 m/s", "T15"],
+  ["Viajes circulares", "3,59 %: el simulador admite origen y destino en la misma estación", "T15"],
+  ["Frecuencia de recarga", "Cada varios días con el uso observado (autonomía mediana de 45,3 días); se repite con la flota simulada", "T16"],
   ["Energía por estación", "De décimas de kWh a 1 kWh al día; más de la mitad llega de 16 a 24 h", "T16"],
   ["Días excluidos", "Ninguno: el 07/02 (lluvia) y el 13–14/02 (viento fuerte y frío) son días reales de tiempo adverso; se marcan y no se usan como días de diseño", "T17"],
   ["Viento", "Se asocia con menos viajes de fin de semana en un episodio. El simulador conserva la demanda observada.", "T17"],

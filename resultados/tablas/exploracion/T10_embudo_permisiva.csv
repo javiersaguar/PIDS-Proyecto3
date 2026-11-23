@@ -7,8 +7,8 @@ paso,regla,descripcion,excluidos,quedan
 5,precio_incoherente,Precio distinto de la tarifa (±0.01 €),0,25186
 6,fuera_de_zona,Algún extremo fuera del rectángulo de servicio,0,25186
 7,solape,Empieza antes de que acabe el viaje anterior del mismo patinete,0,25186
-8,tt_largo,Duración > 10800 s,79,25107
+8,tt_largo,"Duración > 10800 s (salvo viaje con paradas: >= 1000 m, >= 0 km/h y <= 9000 s)",79,25107
 9,vel_alta,Velocidad > 30 km/h,1,25106
 10,tt_corto,Duración < 30 s,391,24715
 11,dis_corta,Distancia < 50 m,750,23965
-12,vel_baja,Velocidad < 0 km/h (patinete sin cerrar o llevado a mano),0,23965
+12,vel_baja,Velocidad < 0 km/h (patinete sin cerrar o llevado a mano; salvo viaje con paradas: >= 1000 m y <= 10800 s),0,23965
