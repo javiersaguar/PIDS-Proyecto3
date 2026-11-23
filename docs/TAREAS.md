@@ -54,19 +54,19 @@ responde a una pregunta y deja una tabla o figura que se cita en `docs/conclusio
 | T30 | Validación temporal (semanas 1–3 frente a 4) y robustez a viajes encadenados y entregas del operador | E | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/a50f5c10973500672af81a928b8ffd495c1fd233) · [Notebook](../movilidad/T30_validacion_temporal.ipynb) · [Resultados](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase1/t30) |
 | T31 | Asignación de viajes a estaciones y matriz estación → estación | R | Alejandro | hecha | [Notebook](../movilidad/T31_asignacion_estaciones.ipynb) · [Web](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase1/t31) (sumas revisadas por Javier) |
 | T32 | Simulación de inventario: stock inicial y anclajes por estación | R | Javier | hecha | [Notebook](../movilidad/T32_inventario.ipynb) · [Pruebas](../movilidad/test_inventario.py) · [Web](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase1/t32) |
-| T33 | Rebalanceo nocturno con 0, 100 y 220 movimientos, km y déficit residual | E | | pendiente | |
+| T33 | Rebalanceo nocturno con 0, 100 y 220 movimientos, km y déficit residual | E | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/bec59b007fd947783db0975e6f38db245fbbef33) · [Notebook](../movilidad/T33_T39_cierre.ipynb) · [Web](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase1/t33) |
 | T34 | Curva flota frente a nivel de servicio e indicadores de uso | R | Alejandro | hecha | [Notebook](../movilidad/T34_curva_flota.ipynb) · [Web](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase1/t34) (flota adoptada: 400; T32 la reparte entre estaciones) |
-| T35 | Simulación con estado de carga (movilidad + consumo) | E | | pendiente | |
-| T36 | Capas de cobertura y flujos OD para el mapa de la demo | E | Alejandro | en curso | [Red preliminar](../movilidad/T36_capas_mapa.ipynb) · [Capítulo Localización con T24 y T25](https://javiersaguar.github.io/PIDS-Proyecto3/#/mapa/localizacion) |
-| T37 | Medir acceso en las zonas peor cubiertas y comparar una red alternativa | E | | pendiente | |
-| T38 | Comparar la red habitual y una redundante en cinco cierres críticos con derivación de viajes | E | | pendiente | |
-| T39 | Comparar redes finalistas con indicadores de movilidad y recarga | E | | pendiente | |
+| T35 | Simulación con estado de carga (movilidad + consumo) | E | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/bec59b007fd947783db0975e6f38db245fbbef33) · [Notebook](../movilidad/T33_T39_cierre.ipynb) · [Web](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase1/t35) |
+| T36 | Capas de cobertura y flujos OD para el mapa de la demo | E | Alejandro y Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/bec59b007fd947783db0975e6f38db245fbbef33) · [Notebook](../movilidad/T33_T39_cierre.ipynb) · [Web](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase1/t36) · [Capas de referencia](../movilidad/T36_capas_mapa.ipynb) |
+| T37 | Medir acceso en las zonas peor cubiertas y comparar una red alternativa | E | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/bec59b007fd947783db0975e6f38db245fbbef33) · [Notebook](../movilidad/T33_T39_cierre.ipynb) · [Web](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase1/t37) |
+| T38 | Comparar la red habitual y una redundante en cinco cierres críticos con derivación de viajes | E | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/bec59b007fd947783db0975e6f38db245fbbef33) · [Notebook](../movilidad/T33_T39_cierre.ipynb) · [Web](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase1/t38) |
+| T39 | Comparar redes finalistas con indicadores de movilidad y recarga | E | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/bec59b007fd947783db0975e6f38db245fbbef33) · [Notebook](../movilidad/T33_T39_cierre.ipynb) · [Web](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase1/t39) |
 
 ## Fase 2. Consumo (10 %)
 
 | ID | Tarea | Tipo | Responsable | Estado | Entrega |
 |---|---|---|---|---|---|
-| T40 | Modelo A: 13,5 Wh/km por viaje | R | | pendiente | |
+| T40 | Modelo A: 13,5 Wh/km por viaje | R | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/bec59b007fd947783db0975e6f38db245fbbef33) · [Modelo A](../consumo/modelo_a.py) · [Tabla por viaje](../resultados/tablas/consumo/T40_energia_viaje.csv) |
 | T41 | Modelo B físico con parámetros referenciados | R | | pendiente | |
 | T42 | Desnivel origen-destino con modelo de elevaciones | E | | pendiente | |
 | T43 | Calibración del modelo B frente a 13,5 Wh/km | R | | pendiente | Punto de partida: T16, apartado 9 (en llano da 7–9 Wh/km en el caso central) |
