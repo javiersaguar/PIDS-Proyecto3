@@ -52,7 +52,7 @@ export const DIAPOSITIVAS: Diapositiva[] = [
     contenido: () => (
       <>
         <Aparece>
-          <div className="etiqueta">PIDS · Proyecto 3 · Grupo 02</div>
+          <div className="etiqueta">PIDS · Proyecto 3 · Grupo 05</div>
           <h1>Estaciones de recarga para patinetes compartidos en Roma</h1>
           <p className="entradilla">Matrices origen-destino, red de estaciones y tamaño de la flota a partir de los viajes de Helbiz en febrero de 2021</p>
         </Aparece>
@@ -204,7 +204,7 @@ export const DIAPOSITIVAS: Diapositiva[] = [
                 <>Criterio fijado antes: <strong>el mínimo de estaciones que cubre el 80 %</strong> de los viajes, con origen y destino cubiertos.</>,
                 <>La red elegida cubre el <strong>{pc(d.red.pct, 2)}</strong> y el 90 % de los extremos tiene su estación a menos de {num(d.red.p90)} m.</>,
                 alt && <>Con {num(alt.radio)} m harían falta {num(alt.k)} estaciones ({num(alt.k - d.red.k)} más) para la misma cobertura.</>,
-                <>Validada con la semana reservada y con rutas a pie en dos sectores con barreras.</>,
+                <>Se contrasta con la semana reservada y con rutas a pie en dos sectores con barreras: en los dos casos la cobertura baja.</>,
               ].filter(Boolean)}
             />
           </div>
@@ -225,7 +225,7 @@ export const DIAPOSITIVAS: Diapositiva[] = [
               <>Las líneas son los <strong>{num(d.lineas.length)} pares de estaciones</strong> con más viajes atendidos; el tamaño del punto, las salidas de cada estación.</>,
               <>Los diez pares más fuertes solo suman el <strong>{pc(d.asignacion.pct_top10)}</strong> de los viajes: no hay líneas que tratar aparte.</>,
               <>El <strong>{pc(d.asignacion.pct_circulares)}</strong> de los viajes vuelve a la misma estación.</>,
-              <>El saldo de la mañana y el de la tarde tienen un Spearman de {num(d.asignacion.spearman, 2)}: lo que entra por la mañana sale por la tarde.</>,
+              <>El saldo de la mañana y el de la tarde tienen un Spearman de {num(d.asignacion.spearman, 2)}: parte de lo que entra por la mañana sale por la tarde, y el resto lo corrige el rebalanceo nocturno.</>,
             ]}
           />
         </div>

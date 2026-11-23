@@ -27,7 +27,7 @@ function Lienzo({ d, i, escala }: { d: Datos; i: number; escala: number }) {
       <section className={`diapositiva${diapo.portada ? " portada" : ""}`} aria-label={diapo.titulo}>
         {diapo.contenido(d)}
         <footer className="pie">
-          <span>PIDS · Proyecto 3 · Grupo 02</span>
+          <span>PIDS · Proyecto 3 · Grupo 05</span>
           <span>
             {i + 1} / {DIAPOSITIVAS.length}
           </span>
