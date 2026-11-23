@@ -39,7 +39,9 @@
 
 | Tarea | Resultado y comprobación | Vista |
 |---|---|---|
+| [T31](T31_asignacion_estaciones.ipynb) | Asigna cada viaje del ajuste a la estación más cercana de cada extremo y le añade el resultado de T32. Construye las matrices estación → estación de demanda asignable y de viajes atendidos, y [concilia](../resultados/tablas/movilidad/T31_conciliacion.csv) las cuentas con T32. La [matriz](../resultados/tablas/movilidad/T31_matriz_estaciones.csv) guarda la distancia y los viajes de cada par. La tabla por viaje se regenera en `datos/procesados/T31_asignacion.parquet` y es la entrada de consumo. | [Asignación](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase1/t31) |
 | [T32](T32_inventario.ipynb) | Simula el ajuste con patinetes y anclajes limitados, reserva de anclaje, desvío dentro del radio y rebalanceo nocturno. Da el [catálogo de estaciones](../resultados/tablas/movilidad/T32_estaciones.csv) con stock inicial, anclajes y utilización. El resultado de cada solicitud se regenera en `datos/procesados/T32_viajes_simulados.parquet`. | [Stock y anclajes](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase1/t32) |
+| [T34](T34_curva_flota.ipynb) | Barre el tamaño de la flota con los anclajes de T32 y 0, 100 y 220 recolocaciones por noche. Da la [curva de servicio y uso](../resultados/tablas/movilidad/T34_curva_flota.csv) y la flota mínima que cumple el objetivo, con su [contraste en la semana reservada](../resultados/tablas/movilidad/T34_comparacion.csv). | [Curva de flota](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase1/t34) |
 
 El simulador está en [inventario.py](inventario.py). `simular(demanda, red, stock, anclajes, rebalanceo_max)` sirve para T33 y T34. [test_inventario.py](test_inventario.py) comprueba sus reglas con casos pequeños (`python movilidad/test_inventario.py`).
 

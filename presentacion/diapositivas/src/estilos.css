@@ -1,0 +1,83 @@
+/* Lienzo fijo de 1920 × 1080 que se escala a la ventana; en impresión, una página por diapositiva. */
+:root {
+  --fondo: #f6f8fb;
+  --tinta: #1b2a38;
+  --tenue: #5a6b7b;
+  --linea: #d9e1e9;
+  --azul: #2a78d6;
+  --azul-oscuro: #134a8a;
+  --naranja: #eb6834;
+  --verde: #1baf7a;
+  --gris: #c5ced8;
+  --fuente: "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; background: #0e1a26; font-family: var(--fuente); color: var(--tinta); }
+#raiz { height: 100%; }
+
+.escenario { position: fixed; inset: 0; overflow: hidden; }
+.capa { position: absolute; inset: 0; }
+.lienzo {
+  width: 1920px; height: 1080px; position: absolute; left: 50%; top: 50%; overflow: hidden;
+  background: var(--fondo); transform-origin: center center;
+}
+
+.diapositiva { position: absolute; inset: 0; padding: 88px 120px 96px; display: flex; flex-direction: column; }
+.diapositiva > header { margin-bottom: 40px; }
+.etiqueta { font-size: 22px; letter-spacing: .14em; text-transform: uppercase; color: var(--azul); font-weight: 600; }
+h1 { font-size: 76px; line-height: 1.05; margin: 14px 0 0; font-weight: 700; letter-spacing: -.01em; }
+h2 { font-size: 58px; line-height: 1.1; margin: 12px 0 0; font-weight: 700; letter-spacing: -.01em; }
+.entradilla { font-size: 30px; line-height: 1.4; color: var(--tenue); margin: 18px 0 0; max-width: 1500px; }
+
+.cuerpo { flex: 1; display: grid; gap: 64px; min-height: 0; }
+.dos { grid-template-columns: 1.25fr 1fr; align-items: center; }
+.dos-iguales { grid-template-columns: 1fr 1fr; align-items: center; }
+
+.puntos { list-style: none; padding: 0; margin: 0; display: grid; gap: 26px; font-size: 30px; line-height: 1.4; }
+.puntos li { padding-left: 34px; position: relative; }
+.puntos li::before { content: ""; position: absolute; left: 0; top: .55em; width: 14px; height: 14px; border-radius: 3px; background: var(--azul); }
+.puntos strong { color: var(--azul-oscuro); }
+
+.cifras { display: grid; grid-template-columns: repeat(var(--n, 3), 1fr); gap: 28px; }
+.cifra { background: #fff; border: 1px solid var(--linea); border-radius: 18px; padding: 30px 34px; }
+.cifra .valor { font-size: 72px; font-weight: 700; color: var(--azul-oscuro); line-height: 1; font-variant-numeric: tabular-nums; }
+.cifra .nombre { font-size: 26px; margin-top: 12px; font-weight: 600; }
+.compactas { gap: 20px; }
+.compactas .cifra { padding: 22px 30px; }
+.compactas .cifra .valor { font-size: 56px; }
+.compactas .cifra .nombre { margin-top: 8px; }
+.cifra .detalle { font-size: 22px; color: var(--tenue); margin-top: 6px; line-height: 1.35; }
+
+.tarjetas { display: grid; grid-template-columns: repeat(2, 1fr); gap: 28px; }
+.tarjeta { background: #fff; border: 1px solid var(--linea); border-radius: 18px; padding: 30px 34px; }
+.tarjeta h3 { margin: 0 0 10px; font-size: 32px; }
+.tarjeta p { margin: 0; font-size: 25px; line-height: 1.4; color: var(--tenue); }
+
+.figura { width: 100%; height: 100%; min-height: 0; display: flex; flex-direction: column; }
+.figura svg { width: 100%; flex: 1; min-height: 0; overflow: visible; }
+.eje text, .rotulo { font-size: 20px; fill: var(--tenue); font-family: var(--fuente); }
+.rotulo-fuerte { font-size: 22px; fill: var(--tinta); font-weight: 600; font-family: var(--fuente); }
+.leyenda { display: flex; gap: 32px; font-size: 22px; color: var(--tenue); margin-top: 10px; flex-wrap: wrap; }
+.leyenda span::before { content: ""; display: inline-block; width: 28px; height: 6px; border-radius: 3px; background: var(--c); margin-right: 10px; vertical-align: middle; }
+
+.pie { position: absolute; left: 120px; right: 120px; bottom: 34px; display: flex; justify-content: space-between; font-size: 19px; color: var(--tenue); }
+.fuente { font-size: 19px; color: var(--tenue); margin-top: 18px; }
+
+.portada { background: linear-gradient(135deg, #0f2f57 0%, #134a8a 55%, #2a78d6 100%); color: #fff; justify-content: center; }
+.portada .etiqueta { color: #9cc6f5; }
+.portada h1 { font-size: 96px; max-width: 1500px; }
+.portada .entradilla { color: #d5e6fa; font-size: 36px; }
+.portada .autores { margin-top: 80px; font-size: 30px; color: #fff; line-height: 1.6; }
+.portada .pie { color: #9cc6f5; }
+
+.navegacion { position: fixed; right: 18px; bottom: 14px; color: #9fb3c6; font: 14px var(--fuente); user-select: none; }
+.navegacion button { background: none; border: 1px solid #3a5168; color: #cfe0f0; border-radius: 6px; padding: 4px 12px; margin-left: 6px; cursor: pointer; font: inherit; }
+
+/* Impresión y exportación a PDF: todas las diapositivas, una por página, sin animaciones. */
+@page { size: 1920px 1080px; margin: 0; }
+.imprimir, .imprimir body { background: none; height: auto; }
+.imprimir .escenario { position: static; display: block; overflow: visible; }
+.imprimir .lienzo { position: relative; left: 0; top: 0; transform: none !important; break-after: page; page-break-after: always; }
+.imprimir .navegacion { display: none; }
+@media print { body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }

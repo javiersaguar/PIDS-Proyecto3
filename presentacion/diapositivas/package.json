@@ -1,0 +1,24 @@
+{
+  "name": "pids-proyecto3-presentacion",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "datos": "node scripts/datos.mjs",
+    "dev": "node scripts/datos.mjs && vite",
+    "build": "node scripts/datos.mjs && tsc -p . && vite build",
+    "pdf": "npm run build && node scripts/pdf.mjs"
+  },
+  "dependencies": {
+    "motion": "14.14.0",
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
+  },
+  "devDependencies": {
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@vitejs/plugin-react": "6.3.0",
+    "typescript": "7.0.2",
+    "vite": "8.3.8"
+  }
+}

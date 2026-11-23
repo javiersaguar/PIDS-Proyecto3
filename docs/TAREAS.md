@@ -52,10 +52,10 @@ responde a una pregunta y deja una tabla o figura que se cita en `docs/conclusio
 | T28 | Frente de Pareto y elección de la red | R | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/a50f5c10973500672af81a928b8ffd495c1fd233) · [Notebook](../movilidad/T28_pareto_eleccion.ipynb) · [Resultados](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase1/t28) |
 | T29 | Contrastar la cobertura geométrica con rutas a pie en dos sectores con barreras | E | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/a50f5c10973500672af81a928b8ffd495c1fd233) · [Notebook](../movilidad/T29_rutas_peatonales.ipynb) · [Resultados](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase1/t29) |
 | T30 | Validación temporal (semanas 1–3 frente a 4) y robustez a viajes encadenados y entregas del operador | E | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/a50f5c10973500672af81a928b8ffd495c1fd233) · [Notebook](../movilidad/T30_validacion_temporal.ipynb) · [Resultados](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase1/t30) |
-| T31 | Asignación de viajes a estaciones y matriz estación → estación | R | | pendiente | |
+| T31 | Asignación de viajes a estaciones y matriz estación → estación | R | Alejandro | revisión | [Notebook](../movilidad/T31_asignacion_estaciones.ipynb) (Javier revisa que las sumas cuadran) |
 | T32 | Simulación de inventario: stock inicial y anclajes por estación | R | Javier | hecha | [Notebook](../movilidad/T32_inventario.ipynb) · [Pruebas](../movilidad/test_inventario.py) · [Web](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase1/t32) |
 | T33 | Rebalanceo nocturno con 0, 100 y 220 movimientos, km y déficit residual | E | | pendiente | |
-| T34 | Curva flota frente a nivel de servicio e indicadores de uso | R | | pendiente | |
+| T34 | Curva flota frente a nivel de servicio e indicadores de uso | R | Alejandro | revisión | [Notebook](../movilidad/T34_curva_flota.ipynb) (flota de 400 o 474 por acordar con Javier) |
 | T35 | Simulación con estado de carga (movilidad + consumo) | E | | pendiente | |
 | T36 | Capas de cobertura y flujos OD para el mapa de la demo | E | Alejandro | en curso | [Red preliminar](../movilidad/T36_capas_mapa.ipynb) · [Capítulo Localización con T24 y T25](https://javiersaguar.github.io/PIDS-Proyecto3/#/mapa/localizacion) |
 | T37 | Medir acceso en las zonas peor cubiertas y comparar una red alternativa | E | | pendiente | |
@@ -96,7 +96,7 @@ responde a una pregunta y deja una tabla o figura que se cita en `docs/conclusio
 | T60 | Probar el diseño con días difíciles, demanda punta adicional y producción solar baja | E | | pendiente | |
 | T61 | Conclusiones y limitaciones | R | | pendiente | |
 | T62 | Memoria `G05-P3.pdf` (LaTeX en `memoria/`) | R | Javier | en curso | |
-| T63 | Presentación en PDF | R | | pendiente | |
+| T63 | Presentación en PDF | R | Alejandro | en curso | [Diapositivas](../presentacion/diapositivas/) con datos 0 y 1 hasta T34; `npm run pdf` genera el PDF |
 | T64 | Reproducción en limpio | R | | pendiente | |
 | T65 | Script de empaquetado `G05-P3.zip` | R | | pendiente | |
 | T66 | Ensayo de la defensa | R | | pendiente | |

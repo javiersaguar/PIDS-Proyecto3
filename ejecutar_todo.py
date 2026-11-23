@@ -41,6 +41,8 @@ PASOS = [
     "movilidad/T30_validacion_temporal.ipynb",
     "movilidad/test_inventario.py",
     "movilidad/T32_inventario.ipynb",
+    "movilidad/T31_asignacion_estaciones.ipynb",
+    "movilidad/T34_curva_flota.ipynb",
     "movilidad/T36_capas_mapa.ipynb",
 ]
 
