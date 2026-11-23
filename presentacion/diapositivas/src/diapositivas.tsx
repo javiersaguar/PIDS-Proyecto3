@@ -115,6 +115,26 @@ function Marcador({ items, retardo }: { items: [string, string][]; retardo: numb
   );
 }
 
+// Lista de diapositivas, en el orden en que se proyectan. Para quitar una, se borra su bloque
+// { id, titulo, contenido }; para moverla, se corta y se pega en otra posición. Para añadir una,
+// se copia esta plantilla donde toque (los números de página y los puntos se ajustan solos):
+//
+//   {
+//     id: "nueva",                       // identificador único, sin espacios
+//     titulo: "Título corto",            // lo leen los lectores de pantalla y los puntos de abajo
+//     contenido: (d) => (                // d: cifras de datos.json (tipos.ts dice qué hay)
+//       <>
+//         <Cabecera etiqueta="Fase X · Tema" titulo="Frase que resume la diapositiva" entradilla="Texto opcional" />
+//         <div className="cuerpo dos">    {/* dos columnas; "dos-iguales" las hace iguales */}
+//           <Puntos items={[<>Idea con <strong>énfasis</strong></>, <>Otra idea: {num(d.red.k)} estaciones</>]} />
+//           <Cifras columnas={1} cifras={[{ valor: pc(d.inventario.pct), nombre: "atendidos", detalle: "con 400 patinetes" }]} />
+//         </div>
+//       </>
+//     ),
+//   },
+//
+// Otras piezas: <Tarjetas items={[["Título", "Texto"], …]} />, <Aparece retardo={0.5}>…</Aparece>
+// para que cualquier bloque entre animado, y los gráficos de graficos.tsx (MapaRed, CurvaFlota…).
 export const DIAPOSITIVAS: Diapositiva[] = [
   {
     id: "portada",

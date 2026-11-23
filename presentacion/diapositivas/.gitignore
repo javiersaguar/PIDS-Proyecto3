@@ -1,4 +1,4 @@
 node_modules/
 dist/
 # Lo genera scripts/datos.mjs a partir de los resultados de los notebooks.
-public/datos.json
+src/datos.json

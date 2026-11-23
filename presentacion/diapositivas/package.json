@@ -7,7 +7,7 @@
     "datos": "node scripts/datos.mjs",
     "dev": "node scripts/datos.mjs && vite",
     "build": "node scripts/datos.mjs && tsc -p . && vite build",
-    "pdf": "npm run build && node scripts/pdf.mjs"
+    "html": "npm run build && node scripts/html.mjs"
   },
   "dependencies": {
     "@fontsource-variable/inter": "5.3.0",
@@ -21,6 +21,7 @@
     "@types/react-dom": "19.3.0",
     "@vitejs/plugin-react": "6.3.0",
     "typescript": "7.0.2",
-    "vite": "8.3.8"
+    "vite": "8.3.8",
+    "vite-plugin-singlefile": "2.3.4"
   }
 }

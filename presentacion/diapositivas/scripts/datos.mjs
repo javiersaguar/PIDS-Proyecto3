@@ -1,5 +1,5 @@
-// Reúne en public/datos.json las cifras de las diapositivas. Lee solo lo que generan los
-// notebooks (resultados/tablas y frontend/public/datos), así que se regenera con ellos.
+// Reúne en src/datos.json las cifras de las diapositivas (van dentro del HTML). Lee solo lo
+// que generan los notebooks (resultados/tablas y frontend/public/datos), así que se regenera con ellos.
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -102,7 +102,7 @@ const datos = {
   },
 };
 
-const salida = join(dirname(fileURLToPath(import.meta.url)), "..", "public", "datos.json");
+const salida = join(dirname(fileURLToPath(import.meta.url)), "..", "src", "datos.json");
 mkdirSync(dirname(salida), { recursive: true });
 writeFileSync(salida, JSON.stringify(datos));
 console.log(`datos.json: ${datos.estaciones.length} estaciones, ${datos.pareto.length} redes del frente, ${datos.lineas.length} líneas`);

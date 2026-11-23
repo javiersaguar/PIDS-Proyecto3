@@ -1,10 +1,14 @@
 // Presentación: una diapositiva a pantalla completa con flechas, espacio, clic o deslizando.
-// Con ?imprimir se dibujan todas seguidas y sin animación (lo usa scripts/pdf.mjs).
+// Con ?imprimir se dibujan todas seguidas y sin animación (para imprimir desde el navegador).
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { AnimatePresence, MotionConfig, motion } from "motion/react";
 import { Estatico, SUAVE } from "./animacion";
+import DATOS from "./datos.json";
 import { DIAPOSITIVAS } from "./diapositivas";
 import type { Datos } from "./tipos";
+
+// Las cifras van dentro de la compilación (las reúne scripts/datos.mjs), así el HTML se abre sin servidor.
+const d = DATOS as Datos;
 
 const IMPRIMIR = new URLSearchParams(location.search).has("imprimir");
 const N = DIAPOSITIVAS.length;
@@ -59,18 +63,9 @@ const paso = {
 };
 
 export function App() {
-  const [d, setD] = useState<Datos | null>(null);
-  const [error, setError] = useState("");
   const [[i, dir], setPaso] = useState<[number, number]>([indiceDeRuta(), 0]);
   const escala = useEscala();
   const toque = useRef<number | null>(null);
-
-  useEffect(() => {
-    fetch("./datos.json")
-      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`datos.json: ${r.status}`))))
-      .then(setD)
-      .catch((e: Error) => setError(e.message));
-  }, []);
 
   const ir = useCallback(
     (n: number) => {
@@ -105,11 +100,7 @@ export function App() {
 
   useEffect(() => {
     document.documentElement.classList.toggle("imprimir", IMPRIMIR);
-    if (d && IMPRIMIR) document.body.dataset.listo = "1";
-  }, [d]);
-
-  if (error) return <p style={{ color: "#fff", padding: 40 }}>No se pudieron cargar los datos ({error}). Ejecuta «npm run datos».</p>;
-  if (!d) return null;
+  }, []);
 
   if (IMPRIMIR)
     return (

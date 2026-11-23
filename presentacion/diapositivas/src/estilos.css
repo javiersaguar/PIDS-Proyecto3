@@ -141,12 +141,12 @@ h2 { font-size: 66px; line-height: 1.08; margin: 16px 0 0; font-weight: 700; let
   .barrido { display: none; }
 }
 
-/* Impresión y exportación a PDF: todas las diapositivas, una por página, sin animaciones. */
+/* Impresión desde el navegador (?imprimir): todas las diapositivas, una por página, sin animaciones. */
 @page { size: 1920px 1080px; margin: 0; }
 .imprimir, .imprimir body { background: none; height: auto; }
 .imprimir .escenario { position: static; display: block; overflow: visible; cursor: default; }
 .imprimir .lienzo { position: relative; left: 0; top: 0; transform: none !important; break-after: page; page-break-after: always; }
-/* Sin desenfoques ni texto recortado con degradado: Chrome los rasteriza o les deja bordes en el PDF. */
+/* Sin desenfoques ni texto recortado con degradado: al imprimir se rasterizan o dejan bordes. */
 .imprimir .mancha { display: none; }
 .imprimir .fondo { background:
   radial-gradient(900px 800px at 8% 0%, rgba(31, 95, 214, 0.45), transparent 70%),

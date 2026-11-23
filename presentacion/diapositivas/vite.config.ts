@@ -1,5 +1,7 @@
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
+import { viteSingleFile } from "vite-plugin-singlefile";
 
-// base "./" para abrir la compilación desde cualquier carpeta, también sin red.
-export default defineConfig({ base: "./", plugins: [react()] });
+// Todo (código, estilos, fuentes y datos) dentro de un único index.html que se abre con doble
+// clic, sin servidor ni conexión. Lo copia a presentacion/presentacion.html «npm run html».
+export default defineConfig({ base: "./", plugins: [react(), viteSingleFile()] });

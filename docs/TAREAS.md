@@ -96,7 +96,7 @@ responde a una pregunta y deja una tabla o figura que se cita en `docs/conclusio
 | T60 | Probar el diseño con días difíciles, demanda punta adicional y producción solar baja | E | | pendiente | |
 | T61 | Conclusiones y limitaciones | R | | pendiente | |
 | T62 | Memoria `G05-P3.pdf` (LaTeX en `memoria/`) | R | Javier | en curso | |
-| T63 | Presentación en PDF | R | Alejandro | en curso | [Diapositivas](../presentacion/diapositivas/) con datos 0 y 1 hasta T34; `npm run pdf` genera el PDF · [Versión animada en la web](https://javiersaguar.github.io/PIDS-Proyecto3/presentacion/) |
+| T63 | Presentación en HTML | R | Alejandro | en curso | [Diapositivas](../presentacion/diapositivas/) con datos 0 y 1 hasta T34; `npm run html` genera [presentacion.html](../presentacion/presentacion.html) · [Versión animada en la web](https://javiersaguar.github.io/PIDS-Proyecto3/presentacion/) |
 | T64 | Reproducción en limpio | R | | pendiente | |
 | T65 | Script de empaquetado `G05-P3.zip` | R | | pendiente | |
 | T66 | Ensayo de la defensa | R | | pendiente | |
