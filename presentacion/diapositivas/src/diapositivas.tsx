@@ -435,7 +435,7 @@ export const DIAPOSITIVAS: Diapositiva[] = [
           retardo={0.5}
           items={[
             ["Rebalanceo (T33)", <>{d.cierre.limite} traslados por noche suben el servicio del {pc(d.cierre.sin_reb_pct)} al {pc(d.cierre.reb_pct)}. Las dos reglas probadas empatan.</>],
-            ["Batería (T35)", <>Con carga en cada anclaje no limita: {num(d.cierre.doble_rechazos)} rechazos con el doble de consumo. Sin cargar en la estación, el servicio cae al {pc(d.cierre.sin_recarga_pct)} en {num(d.cierre.sin_recarga_dias, 1)} días.</>],
+            ["Batería (T35)", <>Con carga en cada anclaje no limita: {num(d.cierre.doble_rechazos)} rechazos con el doble de consumo. Sin cargar en la estación, falla a los {num(d.cierre.sin_recarga_dias, 1)} días y el servicio del mes cae al {pc(d.cierre.sin_recarga_pct)}.</>],
             ["Acceso y cierres (T37–T38)", <>Cambiar 5 estaciones sube {num(d.cierre.equidad_pp, 1)} puntos las zonas peor servidas; cambiar 13 deja en {num(d.cierre.perdida_redundante)} los viajes perdidos por cierres, frente a {num(d.cierre.perdida_elegida)}.</>],
             ["Recarga (T39)", <>La red elegida pide {num(d.cierre.kwh_dia, 1)} kWh al día y {num(d.cierre.pico_kw, 1)} kW de pico en toda la red: demanda pequeña y repartida.</>],
           ]}
