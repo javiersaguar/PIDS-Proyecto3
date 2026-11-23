@@ -1,11 +1,14 @@
 name: Web de resultados
 
-# Compila frontend/ y lo publica en GitHub Pages cada vez que main cambia la web o sus datos.
+# Compila frontend/ y la presentación (presentacion/diapositivas, servida en /presentacion/) y los
+# publica en GitHub Pages cada vez que main cambia la web, la presentación o sus datos.
 on:
   push:
     branches: [main]
     paths:
       - "frontend/**"
+      - "presentacion/diapositivas/**"
+      - "resultados/tablas/**"
       - ".github/workflows/pages.yml"
   workflow_dispatch:
 
@@ -30,9 +33,18 @@ jobs:
         with:
           node-version: 24
           cache: npm
-          cache-dependency-path: frontend/package-lock.json
+          cache-dependency-path: |
+            frontend/package-lock.json
+            presentacion/diapositivas/package-lock.json
       - run: npm ci
       - run: npm run build
+      # La presentación animada se publica dentro de la web, en /presentacion/.
+      - name: Presentación
+        working-directory: presentacion/diapositivas
+        run: |
+          npm ci
+          npm run build
+          cp -r dist ../../frontend/dist/presentacion
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

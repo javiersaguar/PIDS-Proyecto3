@@ -15,7 +15,9 @@
 
 ## Diapositivas
 
-Las diapositivas están en [diapositivas/](diapositivas/): una aplicación React con animaciones (`motion`) que lee las mismas tablas y datos que exportan los notebooks, así que sus cifras cambian con ellos.
+Las diapositivas están en [diapositivas/](diapositivas/): una aplicación React + Vite con animaciones de Motion (antes Framer Motion) que lee las mismas tablas y datos que exportan los notebooks, así que sus cifras cambian con ellos. Se publica con la web en https://javiersaguar.github.io/PIDS-Proyecto3/presentacion/ (enlace «Presentación» de la cabecera).
+
+Animaciones: barrido de luz y desenfoque al cambiar de diapositiva, títulos palabra a palabra, cifras que cuentan hasta su valor, líneas que se dibujan con la punta luminosa, la red de Roma con patinetes circulando por los pares con más viajes y ondas sobre la red elegida y la flota mínima. Con «reducir movimiento» activado en el sistema, las animaciones se simplifican. También se avanza deslizando en pantallas táctiles y con los puntos de abajo.
 
 ```
 cd presentacion/diapositivas
@@ -24,4 +26,4 @@ npm run dev     # presentación en el navegador: flechas, espacio o clic para av
 npm run pdf     # compila y guarda presentacion/presentacion.pdf (una página por diapositiva)
 ```
 
-`scripts/datos.mjs` reúne las cifras en `public/datos.json` desde `resultados/tablas/` y `frontend/public/datos/`. `scripts/pdf.mjs` abre la compilación en Chrome sin ventana con `?imprimir` (todas las diapositivas, sin animación) y la imprime a PDF. Si Chrome no está en la ruta habitual de Windows, se indica con la variable `CHROME`.
+`scripts/datos.mjs` reúne las cifras en `public/datos.json` desde `resultados/tablas/` y `frontend/public/datos/`. `scripts/pdf.mjs` abre la compilación en Chrome sin ventana con `?imprimir` (todas las diapositivas en su estado final, sin desenfoques para que el PDF pese poco) y la imprime a PDF. Si Chrome no está en la ruta habitual de Windows, se indica con la variable `CHROME`.

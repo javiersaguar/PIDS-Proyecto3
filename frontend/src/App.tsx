@@ -50,6 +50,9 @@ export function App() {
               </a>
             ))}
             <a href="#/mapa">Mapa 3D</a>
+            <a href="./presentacion/" target="_blank" rel="noopener">
+              Presentación
+            </a>
           </nav>
         </div>
       </header>
