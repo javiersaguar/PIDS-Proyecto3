@@ -53,7 +53,7 @@ responde a una pregunta y deja una tabla o figura que se cita en `docs/conclusio
 | T29 | Contrastar la cobertura geométrica con rutas a pie en dos sectores con barreras | E | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/a50f5c10973500672af81a928b8ffd495c1fd233) · [Notebook](../movilidad/T29_rutas_peatonales.ipynb) · [Resultados](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase1/t29) |
 | T30 | Validación temporal (semanas 1–3 frente a 4) y robustez a viajes encadenados y entregas del operador | E | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/a50f5c10973500672af81a928b8ffd495c1fd233) · [Notebook](../movilidad/T30_validacion_temporal.ipynb) · [Resultados](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase1/t30) |
 | T31 | Asignación de viajes a estaciones y matriz estación → estación | R | | pendiente | |
-| T32 | Simulación de inventario: stock inicial y anclajes por estación | R | | pendiente | |
+| T32 | Simulación de inventario: stock inicial y anclajes por estación | R | Javier | hecha | [Notebook](../movilidad/T32_inventario.ipynb) · [Pruebas](../movilidad/test_inventario.py) · [Web](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase1/t32) |
 | T33 | Rebalanceo nocturno con 0, 100 y 220 movimientos, km y déficit residual | E | | pendiente | |
 | T34 | Curva flota frente a nivel de servicio e indicadores de uso | R | | pendiente | |
 | T35 | Simulación con estado de carga (movilidad + consumo) | E | | pendiente | |

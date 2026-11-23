@@ -115,7 +115,7 @@
     \toprule
     Integrante & Fase 0: datos y exploración & Fase 1: movilidad & Fase 2: consumo & Fase 3: estación \\
     \midrule
-    Javier Saguar (líder) & Entorno reproducible, web, limpieza (T10), recolocaciones (T11), patrones temporales (T12), análisis de viento (T17), tarifa (T18) y cierre de la exploración (T19) & Revisión de T20. Matrices y flujos (T21--T23), localización y validación de redes (T24--T30) & -- & -- \\
+    Javier Saguar (líder) & Entorno reproducible, web, limpieza (T10), recolocaciones (T11), patrones temporales (T12), análisis de viento (T17), tarifa (T18) y cierre de la exploración (T19) & Revisión de T20. Matrices y flujos (T21--T23), localización y validación de redes (T24--T30), stock inicial y anclajes por estación (T32) & -- & -- \\
     \addlinespace
     Alejandro Cuevas & Densidad en H3 (T13), saldo por celda (T14), recorridos y radios (T15), energía de referencia (T16), meteorología (T17) y conclusiones de estos análisis (T19) & Primera matriz O-D en H3 (T20) & -- & -- \\
     \bottomrule
@@ -498,12 +498,6 @@ menor alcanza el objetivo con \cifra{red_radio_menor_k} estaciones a
 \end{figure}
 \FloatBarrier
 
-\subsection{Flota frente a nivel de servicio}
-\pendiente{Asignación de cada viaje a sus estaciones y matriz estación-estación (T31).
-Simulación de inventario por franjas con rebalanceo nocturno de \cifra{rebalanceo_base}
-patinetes al día (\cifra{rebalanceo_sensibilidad} como sensibilidad) para fijar el stock
-inicial y los anclajes (T32, T33) y curva de flota frente a nivel de servicio (T34).}
-
 \subsection{Red elegida y validación (T29--T30)}
 Los emplazamientos y radios se fijaron antes de evaluar los viajes del
 22 al 28 de febrero. Para toda Roma, la cobertura geométrica de ambos extremos
@@ -533,7 +527,7 @@ reservada, los \cifra{red_reservada_comparables} viajes comparables pasan del
 (\cifra{red_reservada_pie_delta} puntos). El P90 a pie de sus extremos es de
 \cifra{red_reservada_ruta_p90}~m. Los resultados peatonales corresponden a ambos
 sectores (figura~\ref{fig:validacion-red}). La asignación de solicitudes, el
-stock y los anclajes se estudian en T31--T34.
+stock y los anclajes se estudian a continuación.
 
 \begin{figure}[!htb]
   \centering
@@ -545,6 +539,49 @@ stock y los anclajes se estudian en T31--T34.
 Las pestañas de la web permiten revisar cotas, presupuestos, finalistas, rutas y
 validación diaria, con enlaces a sus tablas y al mapa de Roma.
 \href{https://javiersaguar.github.io/PIDS-Proyecto3/\#/fase1/t26}{Resultados de T26--T30}.
+
+\subsection{Stock inicial y anclajes (T32)}\label{sec:inventario}
+El simulador recorre las solicitudes del ajuste en orden temporal. Si una llegada y una
+salida coinciden en el mismo segundo, primero va la llegada. Un viaje se acepta si hay
+patinete en la estación de origen y anclaje libre en la de destino, que queda reservado
+hasta que llega. Si la estación más cercana no sirve, se prueba la siguiente dentro del
+radio. Cada noche, a las 4~h, se recolocan como mucho \cifra{rebalanceo_base} patinetes
+hacia el stock inicial de cada estación. Nueve casos pequeños comprueban estas reglas, y
+cada simulación verifica que el total de patinetes se conserva, que ninguna estación supera
+sus anclajes y que cada solicitud tiene un solo resultado
+(\nb{movilidad/T32_inventario.ipynb}).
+
+Cada estación recibe como stock inicial el cuantil~$q$ de su stock necesario diario con
+rebalanceo perfecto, y como anclajes ese stock más el cuantil~$q$ de lo que sube su
+inventario en un día. El criterio, fijado de antemano, es el menor~$q$ que atiende al menos
+el \cifra{inv_objetivo}\pc{} de los viajes cubiertos con el rebalanceo base. Lo cumple el
+\cifra{inv_cuantil}: \cifra{inv_flota} patinetes y \cifra{inv_anclajes} anclajes (de 2 a
+\cifra{inv_anclajes_max} por estación, mediana \cifra{inv_anclajes_mediana}) atienden el
+\cifra{inv_pct}\pc{}, frente al \cifra{inv_pct_anterior}\pc{} del cuantil anterior
+(figura~\ref{fig:inventario}). Sin rebalanceo, no quedarse nunca sin patinetes exigiría
+\cifra{inv_mes_flota} patinetes y \cifra{inv_mes_anclajes} anclajes, y ni el diseño P100
+llega al objetivo (\cifra{inv_sin_reb_max_pct}\pc{}). Con \cifra{inv_reb_max}
+recolocaciones por noche, el diseño elegido apenas mejora (\cifra{inv_reb_max_pct}\pc{}).
+
+Se rechazan \cifra{inv_sin_patinete} viajes por falta de patinete y
+\cifra{inv_sin_anclaje} por falta de anclaje. Otros \cifra{inv_desvios} se desvían a otra
+estación, con \cifra{inv_desvio_m}~m de más de media; sin desvío se atendería el
+\cifra{inv_sin_desvio_pct}\pc{}. El límite de rebalanceo se agota en
+\cifra{inv_noches_agotadas} de las \cifra{inv_noches} noches, y cada patinete hace
+\cifra{inv_vpd} viajes al día. En la semana reservada, con más demanda, el mismo diseño
+atiende el \cifra{inv_reservada_pct}\pc{} de los viajes cubiertos.
+
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=0.80\textwidth]{T32_dimensionado}
+  \caption{Viajes cubiertos atendidos en el ajuste frente al total de anclajes, para cada cuantil de diseño y tres límites de rebalanceo nocturno. La estrella es el diseño elegido.}\label{fig:inventario}
+\end{figure}
+\FloatBarrier
+
+\subsection{Flota frente a nivel de servicio}
+\pendiente{Asignación de cada viaje a sus estaciones y matriz estación-estación (T31),
+comparación de políticas de rebalanceo con \cifra{rebalanceo_sensibilidad} patinetes por
+noche (T33) y curva de flota frente a nivel de servicio con los anclajes de T32 (T34).}
 
 % ------------------------------------------------------------------------------------------
 \section{Consumo}
@@ -654,6 +691,9 @@ Limitaciones conocidas hasta ahora:
         medidas sanitarias del mes.
   \item En las celdas con menos salidas, la falta de patinetes puede haber recortado la
         demanda observada (T13).
+  \item El simulador de inventario usa la duración observada de cada viaje y mide los desvíos
+        en línea recta; a pie son más largos (T29). Las solicitudes rechazadas no se repiten
+        más tarde ni en otra estación fuera del radio.
 \end{itemize}
 \pendiente{Limitaciones de las fases 1 a 3 y, para cada una, la mejora que más impacto
 tendría (meteorología típica, viabilidad urbana de las ubicaciones, cambios de comportamiento

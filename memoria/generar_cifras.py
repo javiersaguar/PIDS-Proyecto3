@@ -385,6 +385,42 @@ def cifras() -> dict[str, str]:
         "pares_semanas_min": num(semanas["exceso_pp"].min(), 1),
         "pares_semanas_max": num(semanas["exceso_pp"].max(), 1),
     }
+    # Inventario (T32).
+    inv = indicadores("movilidad/T32_resumen.csv")
+    dim = leer("movilidad/T32_dimensionado.csv")
+    base_reb = int(cfg["movilidad"]["rebalanceo_base_patinetes_dia"])
+    reb_max = int(dim["rebalanceo_max"].max())
+    base = dim[dim["rebalanceo_max"].eq(base_reb)].reset_index(drop=True)
+    q = float(inv["cuantil"])
+    i_q = int(base.index[base["cuantil"].eq(q)][0])
+    est = leer("movilidad/T32_estaciones.csv")
+    noches = leer("movilidad/T32_noches.csv")
+    ref = leer("movilidad/T32_referencia.csv")
+    reservada = fila(leer("movilidad/T32_reservada.csv"), periodo="reservada", rebalanceo_max=base_reb)
+    c |= {
+        "inv_objetivo": num(95),
+        "inv_cuantil": f"P{round(100 * q)}",
+        "inv_flota": num(float(inv["flota"])),
+        "inv_anclajes": num(float(inv["anclajes"])),
+        "inv_anclajes_max": num(est["anclajes"].max()),
+        "inv_anclajes_mediana": num(est["anclajes"].median()),
+        "inv_pct": num(float(inv["pct_atendidos_cubiertos"]), 1),
+        "inv_pct_anterior": num(base.loc[i_q - 1, "pct_atendidos_cubiertos"], 1),
+        "inv_mes_flota": num(ref["stock_mes"].sum()),
+        "inv_mes_anclajes": num(ref["anclajes_mes"].sum()),
+        "inv_sin_reb_max_pct": num(fila(dim, rebalanceo_max=0, cuantil=1.0)["pct_atendidos_cubiertos"], 1),
+        "inv_reb_max": num(reb_max),
+        "inv_reb_max_pct": num(fila(dim, rebalanceo_max=reb_max, cuantil=q)["pct_atendidos_cubiertos"], 1),
+        "inv_sin_patinete": num(float(inv["n_sin_patinete"])),
+        "inv_sin_anclaje": num(float(inv["n_sin_anclaje"])),
+        "inv_desvios": num(float(inv["viajes_con_desvio"])),
+        "inv_desvio_m": num(float(inv["desvio_medio_m"])),
+        "inv_sin_desvio_pct": num(float(inv["pct_atendidos_sin_desvio"]), 1),
+        "inv_noches_agotadas": num(int(noches["patinetes_movidos"].eq(base_reb).sum())),
+        "inv_noches": num(len(noches)),
+        "inv_vpd": num(float(inv["viajes_por_patinete_dia"]), 2),
+        "inv_reservada_pct": num(reservada["pct_atendidos_cubiertos"], 1),
+    }
     return c
 
 

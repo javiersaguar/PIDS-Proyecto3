@@ -5,6 +5,7 @@ import { T22 } from "./T22";
 import { T23 } from "./T23";
 import { T24 } from "./T24";
 import { T25 } from "./T25";
+import { T32 } from "./T32";
 import { TAREAS_RED, ValidacionRed } from "./ValidacionRed";
 
 const SECCIONES = [
@@ -15,6 +16,7 @@ const SECCIONES = [
   { id: "t24", tarea: "T24", titulo: "Candidatos a estación" },
   { id: "t25", tarea: "T25", titulo: "Líneas base de localización" },
   ...TAREAS_RED,
+  { id: "t32", tarea: "T32", titulo: "Stock y anclajes por estación" },
   { id: "siguientes", tarea: "", titulo: "Lo que falta" },
   { id: "decisiones", tarea: "", titulo: "Decisiones" },
 ];
@@ -25,6 +27,7 @@ const DECISIONES = [
   ["Catálogo de estaciones", "Partir de los candidatos de T24 y revisar los avisos cartográficos de las redes finalistas", "T24"],
   ["Líneas base", "Comparar cobertura de viajes completos y distancia en cada extremo con el mismo presupuesto y radio", "T25"],
   ["Selección de la red", "Congelar los emplazamientos del ajuste antes de comprobar el acceso a pie y la transferencia temporal", "T28"],
+  ["Stock y anclajes", "P90 diario de cada estación: 474 patinetes y 966 anclajes atienden el 95,9 % de los viajes cubiertos con 100 recolocaciones por noche", "T32"],
 ];
 
 export function Fase1() {
@@ -46,6 +49,7 @@ export function Fase1() {
       <T24 />
       <T25 />
       <ValidacionRed />
+      <T32 />
       <section id="siguientes" className="seccion">
         <header>
           <div>

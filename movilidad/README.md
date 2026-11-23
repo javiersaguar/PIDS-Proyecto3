@@ -35,4 +35,12 @@
 | [T29](T29_rutas_peatonales.ipynb) | Mide rutas en dos sectores con barreras, separa pérdidas por extremo y ensaya varios umbrales sobre las mismas estaciones. | [Acceso por calles](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase1/t29) · [Mapa](https://javiersaguar.github.io/PIDS-Proyecto3/#/mapa/validacion) |
 | [T30](T30_validacion_temporal.ipynb) | Evalúa la misma red en la reserva. Publica recuentos diarios, por franja y tipo de día, y descompone la variación en cambio de pesos y cambio dentro de cada grupo. | [Semana reservada](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase1/t30) |
 
+## Inventario
+
+| Tarea | Resultado y comprobación | Vista |
+|---|---|---|
+| [T32](T32_inventario.ipynb) | Simula el ajuste con patinetes y anclajes limitados, reserva de anclaje, desvío dentro del radio y rebalanceo nocturno. Da el [catálogo de estaciones](../resultados/tablas/movilidad/T32_estaciones.csv) con stock inicial, anclajes y utilización. El resultado de cada solicitud se regenera en `datos/procesados/T32_viajes_simulados.parquet`. | [Stock y anclajes](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase1/t32) |
+
+El simulador está en [inventario.py](inventario.py). `simular(demanda, red, stock, anclajes, rebalanceo_max)` sirve para T33 y T34. [test_inventario.py](test_inventario.py) comprueba sus reglas con casos pequeños (`python movilidad/test_inventario.py`).
+
 `python ejecutar_todo.py --desde movilidad/T26_cobertura_parcial.ipynb` regenera estas etapas desde los resultados de T24 y T25 y la cartografía archivada. Las soluciones bajo límite de tiempo registran su cota y procedencia. T30 verifica la huella de las estaciones congeladas antes de usar los resultados peatonales del ajuste. Para auditar cotas sobre las soluciones archivadas, ejecutar `python movilidad/certificados.py` desde la raíz.

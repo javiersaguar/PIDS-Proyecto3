@@ -529,6 +529,42 @@ de las estaciones se evalúa antes de modelar patinetes y anclajes disponibles.
 **Robustez.** Si se unen los viajes encadenados de T11, la cobertura pasa del 80,03 % al 80,22 % en el ajuste y del 75,61 % al 75,87 % en la reservada. El 90,3 % de las entregas del operador queda a menos de 300 m de una estación, frente al 89,9 % de los orígenes y al 80,7 % de las recogidas (`T30_robustez_encadenados.csv`, `T30_entregas_operador.csv`).
 [Cobertura diaria](../resultados/tablas/movilidad/T30_cobertura_diaria.csv) · [Desglose por franja](../resultados/tablas/movilidad/T30_cobertura_franjas.csv) · [Descomposición](../resultados/tablas/movilidad/T30_efectos_temporales.csv) · [T30 en la web](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase1/t30)
 
+## T32. Stock inicial y anclajes por estación
+
+El simulador (`movilidad/inventario.py`) procesa las solicitudes del ajuste en orden
+temporal, con las llegadas antes que las salidas del mismo segundo. Acepta un viaje si hay
+patinete en el origen y reserva el anclaje de destino hasta que llega. Si la estación más
+cercana no sirve, desvía a la siguiente dentro de los 300 m. Cada noche, a las 4 h, recoloca
+como mucho 100 patinetes hacia el stock inicial. Nueve casos pequeños comprueban las reglas
+(`movilidad/test_inventario.py`). Cada simulación verifica la conservación de patinetes, la
+capacidad y un único resultado por solicitud.
+
+| Diseño (cuantil de los días) | Patinetes | Anclajes | Atendidos (100 por noche) |
+|---|---:|---:|---:|
+| P75 | 343 | 684 | 90,37 % |
+| P85 | 412 | 836 | 94,24 % |
+| **P90 (elegido)** | **474** | **966** | **95,94 %** |
+| P95 | 549 | 1 121 | 97,40 % |
+| P100 | 699 | 1 443 | 98,95 % |
+
+- Con el criterio fijado (menor cuantil que atiende el 95 % de los viajes cubiertos con el
+  rebalanceo base) sale el P90. Las estaciones tienen de 2 a 11 anclajes (mediana 6) y
+  empiezan el día con 1 a 7 patinetes (mediana 3).
+- Sin rebalanceo, no quedarse nunca sin patinetes exigiría 1 556 patinetes y 3 123 anclajes.
+  Ni el P100 llega al 95 % (90,11 %). Con 220 recolocaciones el P90 solo sube al 96,61 %.
+- Se rechazan 240 viajes por falta de patinete y 304 por falta de anclaje. 251 se desvían,
+  con 86 m de más de media; sin desvío se atendería el 94,29 %.
+- El límite de 100 se agota en 18 de las 20 noches (unos 112 km por noche). Cada patinete
+  hace 1,29 viajes al día y está en viaje el 1,0 % del tiempo.
+- En la semana reservada, el mismo diseño atiende el 94,18 % de los 5 001 viajes cubiertos.
+
+| Decisión | Valor propuesto | Evidencia | Periodo | Limitaciones | Qué cambia en el plan |
+|---|---|---|---|---|---|
+| Stock y anclajes por estación | P90 diario: 474 patinetes y 966 anclajes | `T32_dimensionado.csv`, `T32_estaciones.csv` | Ajuste | Duración observada; desvíos en línea recta; los rechazados no se repiten | T31, T33, T34 y consumo leen `T32_estaciones.csv` |
+| Rebalanceo base | 100 por noche; 220 apenas mejora con estos anclajes | `T32_noches.csv` | Ajuste | Política voraz hacia el stock inicial | T33 compara políticas y kilómetros |
+
+[Catálogo](../resultados/tablas/movilidad/T32_estaciones.csv) · [Barrido](../resultados/tablas/movilidad/T32_dimensionado.csv) · [Semana reservada](../resultados/tablas/movilidad/T32_reservada.csv) · [T32 en la web](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase1/t32)
+
 ## Preguntas de la exploración ya respondidas
 
 - ¿Coincide el saldo de T14 con las entregas netas del operador de T11? **Sí** (T14):

@@ -39,6 +39,8 @@ PASOS = [
     "movilidad/T28_pareto_eleccion.ipynb",
     "movilidad/T29_rutas_peatonales.ipynb",
     "movilidad/T30_validacion_temporal.ipynb",
+    "movilidad/test_inventario.py",
+    "movilidad/T32_inventario.ipynb",
     "movilidad/T36_capas_mapa.ipynb",
 ]
 
