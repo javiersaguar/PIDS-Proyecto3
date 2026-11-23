@@ -103,6 +103,10 @@ function BloqueCurva({ d }: { d: Flota }) {
         </>,
         `El servicio llega al máximo con ${num(mejor.flota)} patinetes (${pc(mejor.pct_atendidos_cubiertos)}). Con más, empeora: ${pc(en(600).pct_atendidos_cubiertos)} con 600 y ${pc(en(700).pct_atendidos_cubiertos)} con 700, porque las estaciones se llenan y los rechazos por falta de anclaje pasan de ${num(en(400).n_sin_anclaje)} a ${num(en(700).n_sin_anclaje)}.`,
         `Sin rebalanceo nocturno el máximo se queda en el ${pc(maxSin.pct_atendidos_cubiertos)}: el rebalanceo vale unos 10 puntos de servicio.`,
+        <>
+          <strong>Decisión: {num(d.flota_minima ?? 0)} patinetes.</strong> Es lo que da el criterio y lo que pide el enunciado (la menor flota con el mayor uso). T32 los reparte entre
+          estaciones y su simulación es la que usan la asignación (T31) y el consumo. El diseño de {num(d.flota_diseno)} queda como alternativa con más margen.
+        </>,
       ]}
       fuente="tablas/movilidad/T34_curva_flota.csv y figuras/movilidad/T34_curva_flota"
     >

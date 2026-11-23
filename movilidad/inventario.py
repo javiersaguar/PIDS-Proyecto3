@@ -185,6 +185,22 @@ def repartir(pesos, total):
     return base
 
 
+def repartir_flota(stock_diseno, anclajes, flota):
+    """Reparte una flota entre estaciones en proporción al stock de diseño, sin pasar de los
+    anclajes de cada una (T34). Con la flota del diseño devuelve el stock de diseño."""
+    stock_diseno = np.asarray(stock_diseno, int)
+    anclajes = np.asarray(anclajes, int)
+    if flota > anclajes.sum():
+        raise ValueError("La flota no cabe en los anclajes.")
+    stock = np.zeros_like(anclajes)
+    libres = np.ones(len(anclajes), bool)
+    while (falta := flota - stock.sum()) > 0:
+        extra = repartir(np.where(libres, stock_diseno, 0), falta)
+        stock = np.minimum(stock + extra, anclajes)
+        libres = stock < anclajes
+    return stock
+
+
 # ---------------------------------------------------------------------------------------
 # Simulación con restricciones
 # ---------------------------------------------------------------------------------------

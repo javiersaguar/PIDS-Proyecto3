@@ -117,7 +117,7 @@
     \midrule
     Javier Saguar (líder) & Entorno reproducible, web, limpieza (T10), recolocaciones (T11), patrones temporales (T12), análisis de viento (T17), tarifa (T18) y cierre de la exploración (T19) & Revisión de T20. Matrices y flujos (T21--T23), localización y validación de redes (T24--T30), stock inicial y anclajes por estación (T32) & -- & -- \\
     \addlinespace
-    Alejandro Cuevas & Densidad en H3 (T13), saldo por celda (T14), recorridos y radios (T15), energía de referencia (T16), meteorología (T17) y conclusiones de estos análisis (T19) & Primera matriz O-D en H3 (T20) & -- & -- \\
+    Alejandro Cuevas & Densidad en H3 (T13), saldo por celda (T14), recorridos y radios (T15), energía de referencia (T16), meteorología (T17) y conclusiones de estos análisis (T19) & Primera matriz O-D en H3 (T20), asignación y matriz entre estaciones (T31), curva de flota (T34) & -- & -- \\
     \bottomrule
   \end{tabularx}
 \end{table}
@@ -546,30 +546,33 @@ salida coinciden en el mismo segundo, primero va la llegada. Un viaje se acepta 
 patinete en la estación de origen y anclaje libre en la de destino, que queda reservado
 hasta que llega. Si la estación más cercana no sirve, se prueba la siguiente dentro del
 radio. Cada noche, a las 4~h, se recolocan como mucho \cifra{rebalanceo_base} patinetes
-hacia el stock inicial de cada estación. Nueve casos pequeños comprueban estas reglas, y
+hacia el stock inicial de cada estación. Diez casos pequeños comprueban estas reglas, y
 cada simulación verifica que el total de patinetes se conserva, que ninguna estación supera
 sus anclajes y que cada solicitud tiene un solo resultado
 (\nb{movilidad/T32_inventario.ipynb}).
 
-Cada estación recibe como stock inicial el cuantil~$q$ de su stock necesario diario con
+Cada estación recibe como stock de diseño el cuantil~$q$ de su stock necesario diario con
 rebalanceo perfecto, y como anclajes ese stock más el cuantil~$q$ de lo que sube su
 inventario en un día. El criterio, fijado de antemano, es el menor~$q$ que atiende al menos
 el \cifra{inv_objetivo}\pc{} de los viajes cubiertos con el rebalanceo base. Lo cumple el
-\cifra{inv_cuantil}: \cifra{inv_flota} patinetes y \cifra{inv_anclajes} anclajes (de 2 a
-\cifra{inv_anclajes_max} por estación, mediana \cifra{inv_anclajes_mediana}) atienden el
-\cifra{inv_pct}\pc{}, frente al \cifra{inv_pct_anterior}\pc{} del cuantil anterior
-(figura~\ref{fig:inventario}). Sin rebalanceo, no quedarse nunca sin patinetes exigiría
+\cifra{inv_cuantil}: \cifra{inv_anclajes} anclajes (de 2 a \cifra{inv_anclajes_max} por
+estación, mediana \cifra{inv_anclajes_mediana}) y \cifra{inv_flota_diseno} patinetes de
+diseño atienden el \cifra{inv_pct_diseno}\pc{}, frente al \cifra{inv_pct_anterior}\pc{} del
+cuantil anterior (figura~\ref{fig:inventario}). Con esos anclajes fijos, la curva de flota
+(apartado~\ref{sec:flota}) muestra que bastan \cifra{inv_flota} patinetes; el stock de diseño
+solo sirve para repartirlos entre estaciones en proporción. Sin rebalanceo, no quedarse nunca sin patinetes exigiría
 \cifra{inv_mes_flota} patinetes y \cifra{inv_mes_anclajes} anclajes, y ni el diseño P100
 llega al objetivo (\cifra{inv_sin_reb_max_pct}\pc{}). Con \cifra{inv_reb_max}
 recolocaciones por noche, el diseño elegido apenas mejora (\cifra{inv_reb_max_pct}\pc{}).
 
-Se rechazan \cifra{inv_sin_patinete} viajes por falta de patinete y
+Con la flota de \cifra{inv_flota} patinetes se atiende el \cifra{inv_pct}\pc{} de los viajes
+cubiertos. Se rechazan \cifra{inv_sin_patinete} por falta de patinete y
 \cifra{inv_sin_anclaje} por falta de anclaje. Otros \cifra{inv_desvios} se desvían a otra
 estación, con \cifra{inv_desvio_m}~m de más de media; sin desvío se atendería el
 \cifra{inv_sin_desvio_pct}\pc{}. El límite de rebalanceo se agota en
 \cifra{inv_noches_agotadas} de las \cifra{inv_noches} noches, y cada patinete hace
-\cifra{inv_vpd} viajes al día. En la semana reservada, con más demanda, el mismo diseño
-atiende el \cifra{inv_reservada_pct}\pc{} de los viajes cubiertos.
+\cifra{inv_vpd} viajes al día. En la semana reservada, con más demanda, la misma red y
+flota atienden el \cifra{inv_reservada_pct}\pc{} de los viajes cubiertos.
 
 \begin{figure}[!htb]
   \centering
@@ -578,10 +581,56 @@ atiende el \cifra{inv_reservada_pct}\pc{} de los viajes cubiertos.
 \end{figure}
 \FloatBarrier
 
-\subsection{Flota frente a nivel de servicio}
-\pendiente{Asignación de cada viaje a sus estaciones y matriz estación-estación (T31),
-comparación de políticas de rebalanceo con \cifra{rebalanceo_sensibilidad} patinetes por
-noche (T33) y curva de flota frente a nivel de servicio con los anclajes de T32 (T34).}
+\subsection{Flota frente a nivel de servicio (T34)}\label{sec:flota}
+Con la red y los anclajes de T32 fijos, se barre la flota de 150 a 900 patinetes de 25 en
+25, repartida en proporción al stock de diseño, y se simula cada tamaño con las mismas
+reglas. El criterio es el mismo de T32: la menor flota que atiende el
+\cifra{inv_objetivo}\pc{} de los viajes cubiertos con el rebalanceo base
+(\nb{movilidad/T34_curva_flota.ipynb}). \textbf{Bastan \cifra{flota_min} patinetes}
+(\cifra{flota_min_pct}\pc{}); con \cifra{flota_antes} se queda en el
+\cifra{flota_antes_pct}\pc{}. Es la flota adoptada: es lo que da el criterio y lo que pide el
+enunciado, la menor flota con el mayor uso.
+
+El servicio tiene un máximo, el \cifra{flota_max_pct}\pc{} con \cifra{flota_max} patinetes.
+Con más, empeora (\cifra{flota_700_pct}\pc{} con 700), porque las estaciones se llenan y los
+rechazos por falta de anclaje pasan de \cifra{flota_min_anclaje} a
+\cifra{flota_700_anclaje} (figura~\ref{fig:flota}): flota y anclajes se dimensionan juntos.
+Sin rebalanceo, el máximo se queda en el \cifra{flota_sin_reb_pct}\pc{}. Pasar de
+\cifra{flota_min} a \cifra{flota_max} patinetes da menos de un punto de servicio y baja el
+uso de \cifra{flota_vpd_min} a \cifra{flota_vpd_max} viajes por patinete y día. En la semana
+reservada, \cifra{flota_min} patinetes atienden el \cifra{flota_res_min}\pc{}, frente al
+\cifra{flota_res_diseno}\pc{} del diseño: ninguno llega al objetivo fuera de la muestra, y el
+diseño queda como alternativa con más margen si crece la demanda.
+
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=0.98\textwidth]{T34_curva_flota}
+  \caption{Viajes cubiertos atendidos, rechazos por causa y viajes por patinete y día según el tamaño de la flota, con los anclajes de T32. La línea vertical es la flota adoptada.}\label{fig:flota}
+\end{figure}
+\FloatBarrier
+
+\subsection{Asignación de viajes y matriz entre estaciones (T31)}
+Cada viaje del ajuste se asigna a la estación más cercana de cada extremo, a 300~m o menos,
+y la simulación con la flota adoptada dice qué le pasó y a qué estación fue de verdad
+(\nb{movilidad/T31_asignacion_estaciones.ipynb}). Las cuentas cuadran con T32: se atienden
+\cifra{asig_atendidos} solicitudes (\cifra{asig_pct_total}\pc{} del total). La estación
+queda de media a \cifra{asig_acceso_o}~m en línea recta en el origen y a
+\cifra{asig_acceso_d}~m en el destino, con un P90 de \cifra{asig_acceso_p90}~m; a pie serían
+unos \cifra{asig_acceso_pie}~m. Esta tabla por viaje es la entrada de la fase de consumo.
+
+La matriz estación-estación está muy repartida: los viajes cubiertos usan
+\cifra{asig_pares} pares (\cifra{asig_pares_pct}\pc{} de los posibles), los diez más
+fuertes suman el \cifra{asig_top10_pct}\pc{} y el \cifra{asig_circular_pct}\pc{} vuelve a
+su estación. La asimetría entre ida y vuelta, \cifra{asig_asimetria}\pc{}, es poco mayor que
+la del azar (\cifra{asig_asimetria_azar}\pc{}). En los laborables, el saldo de cada estación
+en la punta de mañana y el de la tarde tienen un Spearman de \cifra{asig_spearman}: parte de
+lo que entra por la mañana sale por la tarde, y el resto lo corrige el rebalanceo nocturno.
+Los \cifra{asig_rechazos} rechazos están repartidos (las diez estaciones con más rechazos
+suman el \cifra{asig_rechazos_top10}\pc{}), así que no hay unas pocas estaciones mal
+dimensionadas.
+
+\pendiente{Comparación de políticas de rebalanceo con \cifra{rebalanceo_sensibilidad}
+patinetes por noche (T33).}
 
 % ------------------------------------------------------------------------------------------
 \section{Consumo}

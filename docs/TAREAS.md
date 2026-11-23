@@ -55,7 +55,7 @@ responde a una pregunta y deja una tabla o figura que se cita en `docs/conclusio
 | T31 | Asignación de viajes a estaciones y matriz estación → estación | R | Alejandro | hecha | [Notebook](../movilidad/T31_asignacion_estaciones.ipynb) · [Web](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase1/t31) (sumas revisadas por Javier) |
 | T32 | Simulación de inventario: stock inicial y anclajes por estación | R | Javier | hecha | [Notebook](../movilidad/T32_inventario.ipynb) · [Pruebas](../movilidad/test_inventario.py) · [Web](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase1/t32) |
 | T33 | Rebalanceo nocturno con 0, 100 y 220 movimientos, km y déficit residual | E | | pendiente | |
-| T34 | Curva flota frente a nivel de servicio e indicadores de uso | R | Alejandro | revisión | [Notebook](../movilidad/T34_curva_flota.ipynb) (flota de 400 o 474 por acordar con Javier) |
+| T34 | Curva flota frente a nivel de servicio e indicadores de uso | R | Alejandro | hecha | [Notebook](../movilidad/T34_curva_flota.ipynb) · [Web](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase1/t34) (flota adoptada: 400; T32 la reparte entre estaciones) |
 | T35 | Simulación con estado de carga (movilidad + consumo) | E | | pendiente | |
 | T36 | Capas de cobertura y flujos OD para el mapa de la demo | E | Alejandro | en curso | [Red preliminar](../movilidad/T36_capas_mapa.ipynb) · [Capítulo Localización con T24 y T25](https://javiersaguar.github.io/PIDS-Proyecto3/#/mapa/localizacion) |
 | T37 | Medir acceso en las zonas peor cubiertas y comparar una red alternativa | E | | pendiente | |

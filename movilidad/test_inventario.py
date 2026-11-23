@@ -9,7 +9,7 @@ from pathlib import Path
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).parent))
-from inventario import Demanda, Red, dimensionar, referencia, repartir, simular  # noqa: E402
+from inventario import Demanda, Red, dimensionar, referencia, repartir, repartir_flota, simular  # noqa: E402
 
 DIA = 86_400
 T0 = 10 * DIA + 8 * 3600   # un día cualquiera a las 8 h
@@ -118,6 +118,14 @@ def test_referencia_y_dimensionado():
 def test_repartir():
     assert repartir([1, 1, 2], 7).tolist() == [2, 2, 3]
     assert repartir([5, 0, 5], 3).sum() == 3
+
+
+def test_repartir_flota():
+    # Con la flota de diseño devuelve el diseño; si una estación se llena, el resto va a las demás.
+    assert repartir_flota([2, 4, 2], [3, 5, 3], 8).tolist() == [2, 4, 2]
+    assert repartir_flota([2, 4, 2], [3, 5, 3], 4).tolist() == [1, 2, 1]
+    assert repartir_flota([1, 6, 1], [3, 6, 3], 10).tolist() == [2, 6, 2]
+    assert repartir_flota([2, 4, 2], [3, 5, 3], 11).tolist() == [3, 5, 3]
 
 
 if __name__ == "__main__":

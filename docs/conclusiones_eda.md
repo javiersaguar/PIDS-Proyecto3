@@ -535,11 +535,11 @@ El simulador (`movilidad/inventario.py`) procesa las solicitudes del ajuste en o
 temporal, con las llegadas antes que las salidas del mismo segundo. Acepta un viaje si hay
 patinete en el origen y reserva el anclaje de destino hasta que llega. Si la estación más
 cercana no sirve, desvía a la siguiente dentro de los 300 m. Cada noche, a las 4 h, recoloca
-como mucho 100 patinetes hacia el stock inicial. Nueve casos pequeños comprueban las reglas
+como mucho 100 patinetes hacia el stock inicial. Diez casos pequeños comprueban las reglas
 (`movilidad/test_inventario.py`). Cada simulación verifica la conservación de patinetes, la
 capacidad y un único resultado por solicitud.
 
-| Diseño (cuantil de los días) | Patinetes | Anclajes | Atendidos (100 por noche) |
+| Diseño (cuantil de los días) | Patinetes de diseño | Anclajes | Atendidos (100 por noche) |
 |---|---:|---:|---:|
 | P75 | 343 | 684 | 90,37 % |
 | P85 | 412 | 836 | 94,24 % |
@@ -548,22 +548,68 @@ capacidad y un único resultado por solicitud.
 | P100 | 699 | 1 443 | 98,95 % |
 
 - Con el criterio fijado (menor cuantil que atiende el 95 % de los viajes cubiertos con el
-  rebalanceo base) sale el P90. Las estaciones tienen de 2 a 11 anclajes (mediana 6) y
-  empiezan el día con 1 a 7 patinetes (mediana 3).
+  rebalanceo base) sale el P90. Las estaciones tienen de 2 a 11 anclajes (mediana 6).
+- Con esos anclajes, la curva de T34 da la flota adoptada: **400 patinetes**. Se reparten en
+  proporción al stock de diseño (474) y cada estación empieza el día con 1 a 6 (mediana 2).
+  Las cifras siguientes son con esta flota.
 - Sin rebalanceo, no quedarse nunca sin patinetes exigiría 1 556 patinetes y 3 123 anclajes.
   Ni el P100 llega al 95 % (90,11 %). Con 220 recolocaciones el P90 solo sube al 96,61 %.
-- Se rechazan 240 viajes por falta de patinete y 304 por falta de anclaje. 251 se desvían,
-  con 86 m de más de media; sin desvío se atendería el 94,29 %.
-- El límite de 100 se agota en 18 de las 20 noches (unos 112 km por noche). Cada patinete
-  hace 1,29 viajes al día y está en viaje el 1,0 % del tiempo.
-- En la semana reservada, el mismo diseño atiende el 94,18 % de los 5 001 viajes cubiertos.
+- Se atiende el 95,09 % de los viajes cubiertos. Se rechazan 472 por falta de patinete y
+  187 por falta de anclaje. 298 se desvían, con 85 m de más de media; sin desvío se
+  atendería el 92,96 %.
+- El límite de 100 se agota en 16 de las 20 noches (unos 121 km por noche). Cada patinete
+  hace 1,52 viajes al día y está en viaje el 1,2 % del tiempo.
+- En la semana reservada, la misma red y flota atienden el 93,38 % de los 5 001 viajes
+  cubiertos (94,18 % con los 474 de diseño).
 
 | Decisión | Valor propuesto | Evidencia | Periodo | Limitaciones | Qué cambia en el plan |
 |---|---|---|---|---|---|
-| Stock y anclajes por estación | P90 diario: 474 patinetes y 966 anclajes | `T32_dimensionado.csv`, `T32_estaciones.csv` | Ajuste | Duración observada; desvíos en línea recta; los rechazados no se repiten | T31, T33, T34 y consumo leen `T32_estaciones.csv` |
+| Stock y anclajes por estación | Anclajes del P90 diario (966); stock inicial = 400 patinetes repartidos en proporción al P90 | `T32_dimensionado.csv`, `T32_estaciones.csv` | Ajuste | Duración observada; desvíos en línea recta; los rechazados no se repiten | T31, T33, T34 y consumo leen `T32_estaciones.csv` |
 | Rebalanceo base | 100 por noche; 220 apenas mejora con estos anclajes | `T32_noches.csv` | Ajuste | Política voraz hacia el stock inicial | T33 compara políticas y kilómetros |
 
 [Catálogo](../resultados/tablas/movilidad/T32_estaciones.csv) · [Barrido](../resultados/tablas/movilidad/T32_dimensionado.csv) · [Semana reservada](../resultados/tablas/movilidad/T32_reservada.csv) · [T32 en la web](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase1/t32)
+
+## T34. Curva de flota frente a nivel de servicio (Alejandro)
+
+Con la red y los 966 anclajes de T32 fijos, se barre la flota de 150 a 900 patinetes de 25
+en 25, repartida en proporción al stock de diseño, con 0, 100 y 220 recolocaciones por noche.
+Criterio: la menor flota que atiende el 95 % de los viajes cubiertos con 100 por noche.
+
+| Flota | Atendidos (100 por noche) | Sin patinete | Sin anclaje | Viajes por patinete y día |
+|---:|---:|---:|---:|---:|
+| 375 | 94,48 % | 592 | 148 | — |
+| **400 (adoptada)** | **95,09 %** | **472** | **187** | **1,52** |
+| 475 (máximo) | 95,92 % | 237 | 310 | 1,29 |
+| 600 | 93,30 % | 90 | 809 | — |
+| 700 | 87,67 % | 21 | 1 632 | — |
+
+- **Se adopta la flota de 400 patinetes**: es lo que da el criterio y lo que pide el
+  enunciado (la menor flota con el mayor uso). El diseño de 474 queda como alternativa con
+  más margen si crece la demanda.
+- El servicio tiene un máximo: con más patinetes las estaciones se llenan. Flota y anclajes
+  se dimensionan juntos. Sin rebalanceo, el máximo es el 85,74 % (525 patinetes).
+- En la semana reservada: 93,38 % con 400 y 94,18 % con 474. Ninguno llega al 95 %.
+- T34 comprueba que la flota de T32 (`FLOTA`) sigue siendo la mínima; si cambian los
+  anclajes, se detiene y pide cambiarla.
+
+[Curva](../resultados/tablas/movilidad/T34_curva_flota.csv) · [Comparación](../resultados/tablas/movilidad/T34_comparacion.csv) · [T34 en la web](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase1/t34)
+
+## T31. Asignación de viajes a estaciones y matriz estación → estación (Alejandro)
+
+- Cada viaje va a la estación más cercana a 300 m o menos de cada extremo; la simulación de
+  T32 con 400 patinetes da su resultado y su estación real. Se atienden 12 750 de las 16 756
+  solicitudes (76,1 %); las cuentas cuadran con T32.
+- Acceso medio en línea recta: 162 m en el origen y 163 m en el destino (P90 de 264 m); a
+  pie, unos 215 m.
+- La matriz está muy repartida: 4 090 pares con viajes (16,2 % de los posibles), los diez más
+  fuertes suman el 4,0 % y el 12,3 % de los viajes vuelve a su estación. Asimetría del 38,4 %
+  frente al 34,6 % del azar.
+- En los laborables, el saldo de mañana y el de tarde tienen un Spearman de −0,40: la
+  compensación dentro del día es parcial y el resto lo corrige el rebalanceo.
+- Los 659 rechazos están repartidos: las diez estaciones con más suman el 17,5 %.
+- La tabla por viaje (`datos/procesados/T31_asignacion.parquet`) es la entrada de consumo.
+
+[Matriz](../resultados/tablas/movilidad/T31_matriz_estaciones.csv) · [Estaciones](../resultados/tablas/movilidad/T31_estaciones.csv) · [T31 en la web](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase1/t31)
 
 ## Preguntas de la exploración ya respondidas
 

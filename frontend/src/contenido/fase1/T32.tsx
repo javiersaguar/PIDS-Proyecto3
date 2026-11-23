@@ -41,6 +41,7 @@ type Inventario = {
   servicio_objetivo: number;
   rebalanceo_base: number;
   cuantil: number;
+  flota_diseno: number;
   cotas: { caso: string; flota: number; anclajes: number }[];
   dimensionado: Fila[];
   resumen: Record<string, number>;
@@ -75,10 +76,10 @@ function Contenido({ d }: { d: Inventario }) {
     <>
       <Cifras
         cifras={[
-          { valor: num(r.flota), nombre: "patinetes", detalle: `stock inicial de las ${num(r.estaciones)} estaciones` },
+          { valor: num(r.flota), nombre: "patinetes", detalle: `flota elegida en T34, repartida entre las ${num(r.estaciones)} estaciones` },
           { valor: num(r.anclajes), nombre: "anclajes", detalle: `de 2 a ${Math.max(...d.estaciones.map((e) => e.anclajes))} por estación` },
           { valor: pc(r.pct_atendidos_cubiertos), nombre: "viajes cubiertos atendidos", detalle: `ajuste, ${d.rebalanceo_base} recolocaciones por noche` },
-          { valor: pc(res.pct_atendidos_cubiertos), nombre: "en la semana reservada", detalle: "mismo diseño, sin reajustar" },
+          { valor: pc(res.pct_atendidos_cubiertos), nombre: "en la semana reservada", detalle: "misma red y flota, sin reajustar" },
         ]}
       />
       <BloqueDimensionado d={d} />
@@ -133,11 +134,15 @@ function BloqueDimensionado({ d }: { d: Inventario }) {
           <strong>
             {P(d.cuantil)} es el primero que llega al {d.servicio_objetivo} %
           </strong>
-          : {num(elegido.flota)} patinetes y {num(elegido.anclajes)} anclajes atienden el {pc(elegido.pct_atendidos_cubiertos)} de los viajes cubiertos.{" "}
+          : {num(elegido.anclajes)} anclajes y {num(elegido.flota)} patinetes de diseño atienden el {pc(elegido.pct_atendidos_cubiertos)} de los viajes cubiertos.{" "}
           {P(anterior.cuantil)} se queda en el {pc(anterior.pct_atendidos_cubiertos)}.
         </>,
         `Sin rebalanceo, ni el diseño P100 llega al ${d.servicio_objetivo} % (${pc(sinReb[sinReb.length - 1].pct_atendidos_cubiertos)}), y para no quedarse nunca sin patinetes en todo el mes harían falta ${num(mes.flota)} patinetes y ${num(mes.anclajes)} anclajes.`,
         `Con ${maxReb} recolocaciones el diseño elegido apenas mejora (${pc(elegidoMax.pct_atendidos_cubiertos)}): con este tamaño de estaciones limita más la capacidad que el rebalanceo.`,
+        <>
+          Con estos anclajes, la curva de T34 da la menor flota que sigue en el {d.servicio_objetivo} %: <strong>{num(d.resumen.flota)} patinetes</strong>{" "}
+          ({pc(d.resumen.pct_atendidos_cubiertos)}). Es la que se usa en el resto de la página; el stock de diseño ({num(d.flota_diseno)}) solo decide cómo se reparten.
+        </>,
       ]}
       fuente="tablas/movilidad/T32_dimensionado.csv y figuras/movilidad/T32_dimensionado"
     >
@@ -203,7 +208,7 @@ function BloqueEstaciones({ d }: { d: Inventario }) {
   return (
     <Bloque
       titulo="2. Estaciones de la red elegida"
-      queMuestra={`Las ${e.length} estaciones de ${d.network_id} con el diseño ${P(d.cuantil)} y ${d.rebalanceo_base} recolocaciones por noche. El tamaño del punto son los anclajes y el color, la variable elegida.`}
+      queMuestra={`Las ${e.length} estaciones de ${d.network_id} con los anclajes del diseño ${P(d.cuantil)}, los ${num(d.resumen.flota)} patinetes elegidos y ${d.rebalanceo_base} recolocaciones por noche. El tamaño del punto son los anclajes y el color, la variable elegida.`}
       porQue="Es el catálogo que pide el enunciado. Las estaciones que pasan mucho tiempo vacías o llenas son las primeras candidatas a cambiar de tamaño o a recibir más rebalanceo."
       comoLeer="Vacía: sin ningún patinete. Llena: todos los anclajes ocupados o reservados por viajes en curso. Los porcentajes son sobre todas las horas del ajuste, también las de la noche."
       conclusiones={[
@@ -266,8 +271,8 @@ function BloqueRebalanceo({ d }: { d: Inventario }) {
         `El límite de ${d.rebalanceo_base} se agota en ${agotadas} de las ${n.length} noches, con unos ${num(kmNoche)} km por noche, y quedan de media ${num(pendientes)} patinetes por reponer.`,
         `Los ${num(r.flota)} patinetes hacen ${num(r.viajes_por_patinete_dia, 2)} viajes por patinete y día y están en viaje el ${pc(r.pct_tiempo_en_viaje)} del tiempo.`,
         <>
-          En la semana reservada, con un 18 % más de demanda diaria, el mismo diseño atiende el <strong>{pc(resBase.pct_atendidos_cubiertos)}</strong> de{" "}
-          {num(resBase.cubiertas)} viajes cubiertos: aguanta fuera de la muestra, por poco debajo del {d.servicio_objetivo} %.
+          En la semana reservada, con un 18 % más de demanda diaria, la misma red atiende el <strong>{pc(resBase.pct_atendidos_cubiertos)}</strong> de{" "}
+          {num(resBase.cubiertas)} viajes cubiertos: aguanta fuera de la muestra, aunque debajo del {d.servicio_objetivo} %.
         </>,
       ]}
       fuente="tablas/movilidad/T32_noches.csv y T32_reservada.csv"

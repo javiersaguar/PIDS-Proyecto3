@@ -420,6 +420,58 @@ def cifras() -> dict[str, str]:
         "inv_noches": num(len(noches)),
         "inv_vpd": num(float(inv["viajes_por_patinete_dia"]), 2),
         "inv_reservada_pct": num(reservada["pct_atendidos_cubiertos"], 1),
+        "inv_flota_diseno": num(base.loc[i_q, "flota"]),
+        "inv_pct_diseno": num(base.loc[i_q, "pct_atendidos_cubiertos"], 1),
+    }
+    # Asignación y matriz estación → estación (T31).
+    conc = leer("movilidad/T31_conciliacion.csv").set_index("resultado")
+    acceso = leer("movilidad/T31_acceso.csv")
+    org = fila(acceso, extremo="origen", medida="linea_recta")
+    dst = fila(acceso, extremo="destino", medida="linea_recta")
+    org_pie = fila(acceso, extremo="origen", medida="a_pie_estimada")
+    ind31 = leer("movilidad/T31_indicadores.csv").set_index("indicador")
+    est31 = leer("movilidad/T31_estaciones.csv")
+    rech = est31["rechazos_sin_patinete"] + est31["rechazos_sin_anclaje"]
+    c |= {
+        "asig_atendidos": num(conc.loc["atendido", "viajes"]),
+        "asig_pct_total": num(conc.loc["atendido", "pct_solicitudes"], 1),
+        "asig_acceso_o": num(org["media_m"]),
+        "asig_acceso_d": num(dst["media_m"]),
+        "asig_acceso_p90": num(max(org["p90_m"], dst["p90_m"])),
+        "asig_acceso_pie": num(org_pie["media_m"]),
+        "asig_pares": num(ind31.loc["pares_con_viajes", "asignables"]),
+        "asig_pares_pct": num(ind31.loc["pct_pares_posibles", "asignables"], 1),
+        "asig_circular_pct": num(ind31.loc["pct_mismo_origen_destino", "asignables"], 1),
+        "asig_top10_pct": num(ind31.loc["pct_top10_pares", "asignables"], 1),
+        "asig_asimetria": num(ind31.loc["asimetria_pct", "asignables"], 1),
+        "asig_asimetria_azar": num(ind31.loc["asimetria_aleatoria_pct", "asignables"], 1),
+        "asig_spearman": num(est31["saldo_punta_manana"].corr(est31["saldo_punta_tarde"], method="spearman"), 2),
+        "asig_rechazos": num(rech.sum()),
+        "asig_rechazos_top10": num(100 * rech.nlargest(10).sum() / rech.sum(), 1),
+    }
+    # Curva de flota (T34).
+    curva = leer("movilidad/T34_curva_flota.csv")
+    cb = curva[curva["rebalanceo_max"].eq(base_reb)].reset_index(drop=True)
+    flota_min = int(cb.loc[cb["pct_atendidos_cubiertos"].ge(95), "flota"].min())
+    mejor = cb.loc[cb["pct_atendidos_cubiertos"].idxmax()]
+    sin_reb = curva[curva["rebalanceo_max"].eq(0)]
+    comp = leer("movilidad/T34_comparacion.csv")
+    assert flota_min == int(inv["flota"]), "La flota de T32 no es la mínima de T34"
+    c |= {
+        "flota_min": num(flota_min),
+        "flota_min_pct": num(fila(cb, flota=flota_min)["pct_atendidos_cubiertos"], 1),
+        "flota_antes": num(flota_min - 25),
+        "flota_antes_pct": num(fila(cb, flota=flota_min - 25)["pct_atendidos_cubiertos"], 1),
+        "flota_max": num(mejor["flota"]),
+        "flota_max_pct": num(mejor["pct_atendidos_cubiertos"], 1),
+        "flota_700_pct": num(fila(cb, flota=700)["pct_atendidos_cubiertos"], 1),
+        "flota_700_anclaje": num(fila(cb, flota=700)["n_sin_anclaje"]),
+        "flota_min_anclaje": num(fila(cb, flota=flota_min)["n_sin_anclaje"]),
+        "flota_sin_reb_pct": num(sin_reb["pct_atendidos_cubiertos"].max(), 1),
+        "flota_vpd_min": num(fila(cb, flota=flota_min)["viajes_por_patinete_dia"], 2),
+        "flota_vpd_max": num(mejor["viajes_por_patinete_dia"], 2),
+        "flota_res_min": num(fila(comp, periodo="reservada", flota=flota_min)["pct_atendidos_cubiertos"], 1),
+        "flota_res_diseno": num(fila(comp, periodo="reservada", caso="diseño T32")["pct_atendidos_cubiertos"], 1),
     }
     return c
 

@@ -32,8 +32,8 @@ const DECISIONES = [
   ["Líneas base", "Comparar cobertura de viajes completos y distancia en cada extremo con el mismo presupuesto y radio", "T25"],
   ["Selección de la red", "Congelar los emplazamientos del ajuste antes de comprobar el acceso a pie y la transferencia temporal", "T28"],
   ["Asignación por viaje", "Estación más cercana a 300 m en cada extremo y resultado de la simulación; las 16 756 solicitudes cuadran con T32 y la tabla alimenta consumo", "T31"],
-  ["Stock y anclajes", "P90 diario de cada estación: 474 patinetes y 966 anclajes atienden el 95,9 % de los viajes cubiertos con 100 recolocaciones por noche", "T32"],
-  ["Tamaño de la flota", "400 patinetes con los 966 anclajes de T32 atienden el 95,1 % (criterio del 95 %); el máximo, 95,9 %, está en 475. Pendiente de acordar", "T34"],
+  ["Stock y anclajes", "Anclajes = P90 diario de stock y subida de cada estación (966 en total); el stock inicial reparte la flota elegida en proporción al P90 (474 de diseño)", "T32"],
+  ["Tamaño de la flota", "400 patinetes con los 966 anclajes de T32 atienden el 95,1 % (criterio del 95 %); el máximo, 95,9 %, está en 475 y queda como alternativa", "T34"],
 ];
 
 export function Fase1() {

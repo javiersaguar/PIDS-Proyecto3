@@ -269,7 +269,7 @@ export const DIAPOSITIVAS: Diapositiva[] = [
         <Cabecera
           etiqueta="Fase 1 · Inventario (T32)"
           titulo="Cada estación, dimensionada para su día malo"
-          entradilla={`Stock inicial y anclajes cubren el P${Math.round(100 * d.inventario.cuantil)} de los días de cada estación. Se simula el mes con reserva del anclaje de destino, desvíos y ${d.inventario.rebalanceo} recolocaciones por noche.`}
+          entradilla={`Los anclajes cubren el P${Math.round(100 * d.inventario.cuantil)} de los días de cada estación y la flota de ${num(d.inventario.flota)} patinetes se reparte en proporción. Se simula el mes con reserva del anclaje de destino, desvíos y ${d.inventario.rebalanceo} recolocaciones por noche.`}
         />
         <div className="cuerpo dos-iguales">
           <MapaRed estaciones={d.estaciones} lineas={d.lineas} conLineas={false} />
@@ -278,7 +278,7 @@ export const DIAPOSITIVAS: Diapositiva[] = [
             cifras={[
               { valor: num(d.inventario.anclajes), nombre: "anclajes", detalle: `de 2 a ${Math.max(...d.estaciones.map((e) => e.anclajes))} por estación (tamaño del punto)` },
               { valor: pc(d.inventario.pct), nombre: "atendidos en el ajuste", detalle: `${pc(d.inventario.sin_desvio)} sin desvíos` },
-              { valor: pc(d.inventario.reservada), nombre: "en la semana reservada", detalle: "mismo diseño, un 18 % más de demanda" },
+              { valor: pc(d.inventario.reservada), nombre: "en la semana reservada", detalle: "misma red y flota, un 18 % más de demanda" },
             ]}
           />
         </div>
@@ -316,9 +316,9 @@ export const DIAPOSITIVAS: Diapositiva[] = [
         <Cabecera etiqueta="Siguientes pasos" titulo="De la movilidad a la energía" />
         <div className="cuerpo tarjetas" style={{ alignContent: "center" }}>
           <Aparece retardo={0.2} className="tarjeta">
-            <h3>Por decidir</h3>
+            <h3>Flota decidida</h3>
             <p>
-              Flota de {num(d.flota.minima)} (criterio del {d.flota.objetivo} %) o de {num(d.flota.diseno)} (máximo de servicio y más margen si crece la demanda).
+              {num(d.flota.minima)} patinetes (criterio del {d.flota.objetivo} %). La de {num(d.flota.diseno)} queda como alternativa con más margen si crece la demanda.
             </p>
           </Aparece>
           <Aparece retardo={0.32} className="tarjeta">
