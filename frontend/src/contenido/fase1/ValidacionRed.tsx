@@ -4,6 +4,7 @@ import { useValidacionRed } from "../../localizacion/validacion";
 import { useRuta } from "../../ruta";
 import { CoberturaParcial, ElegirRed, PresupuestoFijo } from "./ModelosRed";
 import { AccesoPeatonal, TransferenciaTemporal } from "./PruebasRed";
+import { BloqueRobustez } from "./Robustez";
 
 export const TAREAS_RED = [
   { id: "t26", tarea: "T26", titulo: "Mínimo de estaciones", notebook: "T26_cobertura_parcial",
@@ -51,6 +52,7 @@ export function ValidacionRed() {
         {actual.id === "t28" && <ElegirRed datos={datos} />}
         {actual.id === "t29" && <AccesoPeatonal estado={estado} />}
         {actual.id === "t30" && <TransferenciaTemporal estado={estado} />}
+        {actual.id === "t30" && <BloqueRobustez />}
         <div className="loc-acciones val-fuentes">
           {actual.tablas.map(([archivo, titulo]) => <a key={archivo} href={TABLAS + archivo}>{titulo} · CSV</a>)}
         </div>

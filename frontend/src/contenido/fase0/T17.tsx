@@ -8,6 +8,7 @@ import { Seccion } from "../../componentes/Seccion";
 import { useDatos } from "../../datos";
 import { TIPO_DIA, fecha, indicadores, num, pc } from "../../formato";
 import { COLOR, rgba, trazaTexto } from "../../graficas";
+import { BloqueDesfase } from "./Comprobaciones";
 
 type Dia = {
   fecha: string;
@@ -100,6 +101,7 @@ export function T17() {
       <BloqueAnomalos />
       <BloqueSemana />
       <BloqueViento />
+      <BloqueDesfase />
     </Seccion>
   );
 }

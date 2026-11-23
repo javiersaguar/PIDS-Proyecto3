@@ -8,6 +8,7 @@ import { Seccion } from "../../componentes/Seccion";
 import { useDatos } from "../../datos";
 import { fecha, num, pc } from "../../formato";
 import { COLOR, ESCALA_AZUL } from "../../graficas";
+import { BloqueNoche } from "./Comprobaciones";
 
 type Dia = {
   fecha: string;
@@ -155,6 +156,7 @@ export function T12() {
       {p && <BloquePerfil p={p} />}
       <BloqueCalor />
       {m && <BloqueSimultaneos m={m} />}
+      <BloqueNoche />
     </Seccion>
   );
 }

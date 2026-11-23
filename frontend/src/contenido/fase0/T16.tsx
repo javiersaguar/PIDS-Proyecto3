@@ -7,6 +7,7 @@ import { Seccion } from "../../componentes/Seccion";
 import { useDatos } from "../../datos";
 import { indicadores, num, pc } from "../../formato";
 import { COLOR, ESCALA_AZUL, REFERENCIAS_ROMA, capaMapa, rgba, trazaCeldas, trazaEscalon, trazaReferencias, trazaTexto, trazasUmbral, type Celda } from "../../graficas";
+import { BloqueModeloFisico } from "./Comprobaciones";
 
 type FilaViaje = { periodo: string; viajes: number; energia_wh_p50: number; energia_wh_p95: number; energia_wh_max: number; pct_bateria_p50: number; pct_bateria_p95: number; pct_bateria_max: number; viajes_mayor_bateria: number };
 type Viaje = { histograma: { bordes_wh: number[]; viajes: number[] }; tabla: FilaViaje[]; bateria_wh: number; consumo_wh_km: number };
@@ -65,6 +66,7 @@ export function T16() {
         por día de la flota y por celda de destino, con diferencia de 0 Wh (tolerancia de 10⁻⁶ Wh), y un viaje de control de
         2 km da 27 Wh (tabla <code>T16_comprobacion.csv</code>).
       </p>
+      <BloqueModeloFisico />
     </Seccion>
   );
 }

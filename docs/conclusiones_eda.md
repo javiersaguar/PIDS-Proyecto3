@@ -83,12 +83,18 @@ salto entre el final de un viaje y el inicio del siguiente.
 - **Dónde.**
   - Se recogen por todo el área de servicio y reaparecen en muchos menos puntos: 628 celdas H3 de resolución 10, frente a 1 972 donde se recogen (`T11_resumen.csv`, `figuras/exploracion/T11_mapa_recolocaciones`).
   - El saldo neto por celda está en `tablas/exploracion/T11_celdas_res8.csv`: la celda que más recibe gana 90 patinetes netos en el mes.
+  - Medido con cuotas en resolución 9, las 20 celdas con más entregas reciben el 25,4 % de ellas. Las 20 principales de las recogidas reúnen el 13,9 % y las de los orígenes elegibles, el 18,0 % (`T11_concentracion_res9.csv`, figura `T11_concentracion`). El 90,3 % de las entregas cae a menos de 300 m de la red principal (T30).
+- **Viajes encadenados** (apartado 6). Son pares de viajes elegibles del mismo patinete en los que el segundo sale a menos de 50 m y como mucho 5 min después: hay 1 045, el 4,47 % de los elegibles.
+  - No parecen trayectos partidos. El segundo sigue la dirección del primero en el 28,7 % de los pares y vuelve en el 47,3 %, frente a 20,3 % y 55,5 % en pares separados de 1 a 6 h. Uno de cada cinco es una ida y vuelta.
+  - Las pausas dan un salto a los 20 min (145 pares de 20 a 21 min frente a 37–47 por minuto antes), seguramente por una regla de la aplicación.
+  - Unirlos cambia la cobertura de la red en 0,2 puntos (T30) (`T11_encadenados.csv`, figura `T11_encadenados`).
 
 | Decisión | Valor propuesto | Evidencia | Periodo | Limitaciones | Qué cambia en el plan |
 |---|---|---|---|---|---|
 | Umbral de recolocación | 200 m | `T11_saltos`, `T11_saltos_sensibilidad.csv` | Mes completo | Son indicios: puede haber viajes fuera de la muestra o deriva de GPS | Ninguno |
 | ¿Rebalanceaba el piloto? | Sí, pero con recogidas de varios días, no dentro del día | `T11_resumen.csv`, `T11_parado` | Mes completo | No hay registros del operador | El escenario de rebalanceo de la fase 1 se plantea nocturno; con estaciones de recarga desaparecen las recogidas para cargar |
 | Saldo del operador por zona | Contrastar con el saldo de T14 | `T11_celdas_res8.csv` | Mes completo | Resolución 8 | Las celdas donde el operador entrega más son candidatas a más stock inicial |
+| Viajes encadenados (≤ 50 m, ≤ 5 min) | Se mantienen como viajes separados | `T11_encadenados.csv`, `T30_robustez_encadenados.csv` | Mes completo | Sin identificador de usuario no se sabe si es la misma persona | Ninguno: la cobertura de la red cambia 0,2 puntos si se unen |
 
 ## T12. Patrones temporales y viajes simultáneos (Javier)
 
@@ -105,6 +111,9 @@ salto entre el final de un viaje y el inicio del siguiente.
   - Como mucho hay **41 viajes en curso a la vez** en el ajuste (06/02 a las 17:10) y 44 en la semana reservada.
   - El percentil 99 por minuto es 26 (`T12_simultaneos`).
   - Cada día se usan de media 487,8 patinetes distintos (máximo 633) de los 2 305 que aparecen en viajes elegibles.
+- **Noche y toque de queda** (apartado 5). En febrero de 2021 rigió en toda Italia un toque de queda de 22 a 5 h. Solo se podía salir por trabajo, necesidad o salud: DPCM de 14/01/2021, art. 1, apartado 3 (GU Serie Generale n.º 11 de 15/01/2021, supl. ord. n.º 2).
+  - Solo el 2,47 % de las salidas es de 22 a 5 h.
+  - De 21 a 22 h las salidas caen un 60,0 % (de 985 a 394), frente al 30,1 % de 20 a 21 h. 172 viajes empiezan antes de las 22 h y acaban después (`T12_noche.csv`, figura `T12_noche`).
 
 | Decisión | Valor propuesto | Evidencia | Periodo | Limitaciones | Qué cambia en el plan |
 |---|---|---|---|---|---|
@@ -112,6 +121,7 @@ salto entre el final de un viaje y el inicio del siguiente.
 | Tipos de día | Separar laborable y fin de semana en las matrices OD y en el simulador | `T12_perfil_horario`, `T12_calor_dia_hora` | Ajuste | Solo hay 6 días de fin de semana en el ajuste | Ninguno |
 | Cota inferior de la flota | 41 patinetes (máximo de viajes en curso) | `T12_simultaneos_diarios.csv` | Ajuste | Es una cota muy floja | El tamaño de flota lo decidirá dónde hacen falta patinetes, no cuántos se usan a la vez: la simulación de inventario por estación es la que manda |
 | Comparabilidad de la semana reservada | Tiene un 18 % más de demanda | `T12_viajes_diarios.csv` | Ambos | Crecimiento de un mes de invierno | La validación temporal es más exigente que un simple reparto aleatorio; decirlo en la memoria |
+| Demanda nocturna | Es la de un mes con toque de queda de 22 a 5 h: no se extrapola | `T12_noche.csv`, DPCM 14/01/2021 | Mes completo | No hay un mes sin restricciones para comparar | Limitación en la memoria; la estación nocturna recibe poca energía en este escenario |
 
 ## T13. Densidad de orígenes y destinos (Alejandro)
 
@@ -141,6 +151,7 @@ Fuentes: `tablas/exploracion/T13_resoluciones_h3.csv`, `T13_concentracion.csv` y
 | Rango de estaciones del barrido | Área de las celdas de resolución 9 que reúnen del 80 al 95 % de los extremos, cubierta con círculos de radio R en malla hexagonal: **230–387 estaciones con 200 m, 147–248 con 250 m, 102–172 con 300 m y 58–97 con 400 m** | `T13_estaciones_orden_magnitud.csv` | Ajuste | Es una cuenta de área, no una localización: supone demanda uniforme dentro de cada celda | Fija el rango de k de T25–T28 para cada radio |
 | ¿Es estable la demanda en el espacio? | Sí | `T13_estabilidad.csv` | Ajuste y reservada | Una sola semana de validación | Los candidatos del ajuste sirven para validar en T30 |
 | Marca `fuera_de_zona` | No hace falta otra regla: el único extremo aislado ya no es elegible | `T13_puntos_aislados.csv` | Mes, todos los viajes | Umbrales de la tarea, sin calibrar | Ninguno |
+| ¿Está la demanda limitada por la oferta? | **No en las celdas con más salidas.** En las 30 principales de resolución 9, la mediana del tiempo sin ningún patinete esperando es del 5,7 % de 8 a 21 h (máximo 26,5 %). Las celdas con más salidas se vacían menos (Spearman −0,44). La flota está en viaje el 0,27 % del tiempo, con 1,64 viajes por patinete activo y día | `T13_oferta_celdas.csv`, figura `T13_oferta` | Ajuste | Cota superior: no cuenta los patinetes recién entregados. 20 de las 100 celdas analizadas pasan más del 25 % del tiempo vacías | La demanda observada es la de diseño; en las celdas periféricas puede estar recortada (limitación) |
 
 ## T14. Saldo neto por zona (Alejandro)
 
@@ -238,12 +249,14 @@ diferencia 0 Wh (`tablas/exploracion/T16_comprobacion.csv`).
 | Flota: media y máximo diarios | **22,1 y 29,6 kWh/día** (38,4 y 51,4 cargas completas) | `T16_resumen.csv`, `T16_flota_diaria.csv`, figura `T16_flota_diaria` |
 | Celda de destino de resolución 8: máximo y mediana | **0,90 y 0,13 kWh/día** | `T16_resumen.csv`, `T16_energia_celdas_top20.csv`, figura `T16_energia_celdas` |
 | Energía que llega de 10 a 16 h / de 16 a 24 h / el resto del día | **33,53 % / 55,47 % / 11,00 %** | `T16_resumen.csv`, `T16_perfil_horario.csv`, figura `T16_perfil_horario` |
+| Modelo físico en llano y sin aceleraciones (97,5 kg; rodadura 0,010–0,020; área·Cd 0,40–0,70 m²) | 4,7–11,8 Wh/km; caso central 7,0 Wh/km a la velocidad media de cada viaje y 9,0 Wh/km a 20 km/h | `T16_modelo_fisico.csv`, figura `T16_modelo_fisico` |
 
 | Decisión | Valor propuesto | Evidencia | Periodo | Limitaciones | Qué cambia en el plan |
 |---|---|---|---|---|---|
 | Frecuencia de recarga | **Cada varios días** con el uso observado: ningún patinete-día pasa del 80 % de la batería y la autonomía mediana es de 45,3 días | `T16_patinete_dia_resumen.csv`, `T16_patinete_resumen.csv` | Ajuste | Supone la batería entera utilizable y llena en el primer viaje del periodo. Con una flota simulada menor cada patinete hará más viajes | Recalcular con la flota de T34; el estado de carga de T35 solo limitará si la flota baja mucho |
 | Energía por estación | **De décimas de kWh a 1 kWh al día**: la celda de resolución 8 que más recibe llega a 0,90 kWh/día | `T16_energia_celdas_top20.csv` | Ajuste | Supone que se recarga donde se deja el patinete; una estación cubrirá menos área que una celda de resolución 8 | Fija la escala de PVWatts y de la batería en T52–T55 |
 | Energía en horas de sol | Un tercio llega de 10 a 16 h y más de la mitad de 16 a 24 h | `T16_perfil_horario.csv` | Ajuste | Hora de llegada, no de carga | Con carga inmediata, la batería de la estación debe guardar unos dos tercios de la energía; la carga inteligente de T56 es la alternativa |
+| Consumo de referencia | **Se mantienen 13,5 Wh/km**, por encima de todos los casos del modelo físico en llano: es conservador | `T16_modelo_fisico.csv` | Ajuste | Parámetros supuestos; sin pendientes ni aceleraciones | El modelo completo es el de T41–T43 |
 
 ## T17. Meteorología y días anómalos (Alejandro)
 
@@ -285,7 +298,8 @@ no desaparece.
 | ¿Excluir algún día? | **No excluir ninguno** de la localización ni de las matrices. El 07/02 (lluvia) y el 13–14/02 (viento fuerte y frío) son demanda real de tiempo adverso: se marcan y no se usan como días de diseño ni como días tipo | `T17_dias_anomalos.csv`, `T17_viento_fines_de_semana.csv` | Mes | Solo el 07/02 baja del 70 % de la mediana; el 13 y el 14/02 se quedan en el 82–83 % | Marcarlos como días de tiempo adverso en el simulador |
 | ¿Entra el viento en el simulador? | Se conserva la demanda observada. Los 10 km/h adicionales se asocian con un 14 % menos de viajes de fin de semana en el modelo que controla la lluvia. | `T17_viento_diario.csv`, `T17_viento_horario.csv`, `T17_viento_horas_secas.csv` | Mes | Un episodio. Los errores típicos suponen horas independientes. | Marcar los días adversos para elegir jornadas representativas. |
 | ¿Es comparable la semana reservada? | **Con cautela.** Tiene un 18,4 % más de viajes, no llovió, fue más cálida (10,9 °C frente a 9,3 °C) y con menos viento. El tiempo explica parte de la diferencia, no toda | `T17_resumen.csv`, `T17_tendencia.csv`, `T17_cociente_semana.csv` | Mes | n = 28 con cuatro variables | La validación de T30 es más exigente que el ajuste; hay que decirlo al presentarla |
-| Restricciones por COVID en Lacio | No se afirma nada: no hemos podido leer el texto oficial de las medidas de febrero de 2021 | — | — | — | Pregunta abierta |
+| Restricciones por COVID | Toque de queda nacional de 22 a 5 h todo el mes (DPCM de 14/01/2021, art. 1.3), igual en el ajuste y en la reservada | Texto del DPCM en la Gazzetta Ufficiale; `T12_noche.csv` | Mes | Solo se ha leído el toque de queda, no el resto de medidas de la zona de Lacio | Limitación de la noche en la memoria (T12) |
+| Zona horaria de los datos | **Local (Europe/Rome)**. La caída de salidas más fuerte es de 21 a 22 h, cuando empieza el toque de queda. Desplazar la lluvia ±1 h no distingue: el 78,6 % de las horas con lluvia sigue lloviendo la hora siguiente | `T12_noche.csv`, `T17_desfase_lluvia.csv`, figura `T17_desfase_lluvia` | Mes | La prueba de la lluvia no discrimina | Ninguno |
 
 ## T18. Tarifa e importe nominal
 
@@ -333,11 +347,13 @@ Viajes elegibles del ajuste agregados por celda de origen y de destino de resolu
 | Viajes en los 20 pares más frecuentes | 14,8 % | ídem, `T20_pares_top20.csv`, `T20_pares_top20_entre_celdas.csv` |
 | Viajes entre las 30 celdas con más extremos | 51,0 % | ídem, `T20_celdas_top30.csv`, figura `figuras/movilidad/T20_od_top30` |
 | Asimetría de los pares entre celdas distintas (Σ\|M − Mᵀ\| / viajes entre celdas) | 0,223, frente a 0,204 esperable por azar (cociente 1,09) | ídem, `T20_asimetria_pares_top10.csv` |
+| Cambio del reparto entre pares del ajuste a la reservada (TVD) | 27,4 %, frente a 21,9 % solo por azar (+5,5 puntos). Entre semanas del ajuste, de +4,7 a +7,6 puntos. El 94,1 % de los viajes de la reservada va por pares ya vistos | `T20_estabilidad_pares.csv`, figura `T20_estabilidad_pares` |
 
 | Decisión | Valor propuesto | Evidencia | Periodo | Limitaciones | Qué cambia en el plan |
 |---|---|---|---|---|---|
 | ¿Hay corredores asimétricos? | No: cada par es casi simétrico (1,09 veces lo esperable por azar). El saldo de T14 es la suma de muchos pares pequeños | `T20_resumen.csv` | Ajuste | Resolución 8 | El rebalanceo se plantea por zonas, no por corredores |
 | Viajes intrazonales | El 21,4 % no sale de su celda de resolución 8 | ídem | Ajuste | Depende de la resolución | Con radios de 300 m o más, parte de ellos empezarían y acabarían en la misma estación |
+| Estabilidad de los pares | La reservada cambia lo mismo que dos semanas del ajuste: no es especial, pero cada par por separado es sobre todo ruido | `T20_estabilidad_pares.csv` | Ajuste y reservada | Una sola semana de validación | La red se valida con extremos y cobertura OD; las matrices se usan agregadas (T21–T22) |
 
 ## T21. Matrices OD por municipios y zonas urbanísticas
 
@@ -510,6 +526,7 @@ caída total. En esta muestra, **−0,03 pp** se asocian a cambios de mezcla
 horaria y **−4,38 pp** a diferencias de cobertura dentro de las franjas.
 La comparación es descriptiva y corresponde a una semana. La proximidad
 de las estaciones se evalúa antes de modelar patinetes y anclajes disponibles.
+**Robustez.** Si se unen los viajes encadenados de T11, la cobertura pasa del 80,03 % al 80,22 % en el ajuste y del 75,61 % al 75,87 % en la reservada. El 90,3 % de las entregas del operador queda a menos de 300 m de una estación, frente al 89,9 % de los orígenes y al 80,7 % de las recogidas (`T30_robustez_encadenados.csv`, `T30_entregas_operador.csv`).
 [Cobertura diaria](../resultados/tablas/movilidad/T30_cobertura_diaria.csv) · [Desglose por franja](../resultados/tablas/movilidad/T30_cobertura_franjas.csv) · [Descomposición](../resultados/tablas/movilidad/T30_efectos_temporales.csv) · [T30 en la web](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase1/t30)
 
 ## Preguntas de la exploración ya respondidas
@@ -520,6 +537,9 @@ de las estaciones se evalúa antes de modelar patinetes y anclajes disponibles.
 - ¿Explica la meteorología el 07/02 y el crecimiento del mes? **El 07/02 sí y el
   crecimiento solo en parte** (T17): el 07/02 tuvo 24,6 mm y 21 horas de lluvia, y la
   pendiente del mes baja de 10,6 a 7,6 viajes/día por día al añadir lluvia y temperatura.
+- ¿Recorta la falta de patinetes la demanda observada? **No donde está la mayoría de los viajes** (T13): las celdas con más salidas pasan sin patinetes una mediana del 5,7 % de las horas de día, y es una cota superior.
+- ¿Hay trayectos partidos en dos viajes? **Pocos** (T11): de los 1 045 pares encadenados, solo unos 90 siguen la dirección del primero más de lo esperable, y unirlos no cambia la red (T30).
+- ¿Están las horas en hora local? **Sí** (T12 y T17): la mayor caída de salidas coincide con el toque de queda de las 22 h.
 
 ## Preguntas de Alejandro: respuestas de Javier
 
@@ -543,8 +563,9 @@ de las estaciones se evalúa antes de modelar patinetes y anclajes disponibles.
    validan con cuotas (reparto de viajes entre estaciones, pares y franjas), que no dependen del
    volumen. El volumen se compara tal cual y la diferencia (+18,4 %, sin lluvia, más cálida y con
    menos viento) se presenta como resultado: la validación es más exigente que el ajuste.
-6. **COVID en Lacio.** De acuerdo: sin fuente oficial leída no se dice nada. En la memoria va
-   como limitación (no se ha podido controlar el contexto sanitario del mes).
+6. **COVID en Lacio.** Ya hay fuente oficial: el DPCM de 14/01/2021 (art. 1.3) fija el toque de queda
+   nacional de 22 a 5 h durante todo el mes. T12 lo muestra en la demanda nocturna. En la memoria va
+   como limitación: la noche observada no se extrapola a un mes sin restricciones.
 7. **Energía con la flota simulada.** Sí, pero no se rehace T16: T16 se queda como referencia
    con la flota observada. La energía con la flota y la ocupación simuladas sale de T34 y T35
    y la calculan T44–T45 (fase 2) antes de dimensionar la estación en la fase 3.

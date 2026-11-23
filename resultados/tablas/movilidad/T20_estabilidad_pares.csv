@@ -1,0 +1,6 @@
+comparacion,viajes_a,viajes_b,pares_union,pct_viajes_b_en_pares_de_a,tvd_pc,tvd_azar_pc,tvd_azar_p95_pc,exceso_pp,top20_comunes
+ajuste frente a reservada,16756,6614,2457,94.1,27.4,21.9,22.8,5.5,13
+semana 1–7 frente a 8–14,5334,5228,1799,87.3,30.8,26.1,27.1,4.7,14
+semana 8–14 frente a 15–21,5228,6194,1873,87.3,30.6,26.0,26.9,4.7,17
+semana 1–7 frente a 15–21,5334,6194,1886,86.5,33.4,25.8,26.6,7.6,14
+semana 15–21 frente a reservada,6194,6614,1997,87.9,30.4,24.9,25.9,5.5,14

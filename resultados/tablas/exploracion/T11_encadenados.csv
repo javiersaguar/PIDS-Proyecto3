@@ -1,0 +1,7 @@
+grupo,pausa_max_s,pares,pct_viajes_elegibles,pct_sigue,pct_vuelve,pct_ida_y_vuelta,dis_m_mediana_primero,dis_m_mediana_segundo
+pausa <= 60 s,60,163,0.7,28.8,44.2,22.7,1498.0,1252.0
+pausa <= 120 s,120,352,1.51,32.1,41.8,20.2,1117.0,1128.0
+pausa <= 300 s,300,1045,4.47,28.7,47.3,20.5,1074.0,1106.0
+pausa <= 600 s,600,1615,6.91,26.8,49.8,22.4,1082.0,1103.0
+pausa <= 1800 s,1800,2893,12.38,24.9,52.6,21.6,1334.0,1269.0
+referencia 1-6 h,21600,3611,15.45,20.3,55.5,17.5,1664.0,1658.0

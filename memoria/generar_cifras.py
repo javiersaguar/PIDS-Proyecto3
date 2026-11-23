@@ -341,6 +341,50 @@ def cifras() -> dict[str, str]:
             f"red_{periodo}_pie_delta": num(pie["delta_pp"], 1),
             f"red_{periodo}_ruta_p90": num(pie["p90_a_pie_m"]),
         }
+
+    # Comprobaciones de robustez (T11, T12, T13, T16, T17, T20 y T30).
+    enc = leer("exploracion/T11_encadenados.csv").set_index("pausa_max_s")
+    enc_p, enc_ref = enc.loc[300], enc.iloc[-1]
+    conc = leer("exploracion/T11_concentracion_res9.csv").set_index("serie")
+    noche = leer("exploracion/T12_noche.csv").set_index("hora")["viajes_mes"]
+    oferta = leer("exploracion/T13_oferta_celdas.csv").head(30)
+    activos = leer("exploracion/T12_simultaneos_diarios.csv")
+    fisico = leer("exploracion/T16_modelo_fisico.csv")
+    central = fila(fisico, rodadura=0.015, area_cd_m2=0.55)
+    desfase = leer("exploracion/T17_desfase_lluvia.csv").set_index("desfase_h")
+    estab = leer("movilidad/T20_estabilidad_pares.csv").set_index("comparacion")
+    semanas = estab[estab.index.str.startswith("semana") & ~estab.index.str.contains("reservada")]
+    rob = leer("movilidad/T30_robustez_encadenados.csv")
+    entregas = leer("movilidad/T30_entregas_operador.csv").set_index("puntos")["pct_a_menos_del_radio"]
+    c |= {
+        "consumo_wh_km": num(cfg["patinete"]["consumo_wh_km"], 1),
+        "enc_pares": num(enc_p["pares"]),
+        "enc_pct": num(enc_p["pct_viajes_elegibles"], 2),
+        "enc_sigue": num(enc_p["pct_sigue"], 1),
+        "enc_vuelve": num(enc_p["pct_vuelve"], 1),
+        "enc_ref_sigue": num(enc_ref["pct_sigue"], 1),
+        "enc_ref_vuelve": num(enc_ref["pct_vuelve"], 1),
+        "enc_cob_ajuste": num(fila(rob, periodo="ajuste", version="encadenados unidos")["pct_viajes_cubiertos"], 2),
+        "entregas_top20": num(conc.loc["entregas", "pct_top20_celdas"], 1),
+        "recogidas_top20": num(conc.loc["recogidas", "pct_top20_celdas"], 1),
+        "entregas_red_pct": num(entregas["entregas del operador"], 1),
+        "origenes_red_pct": num(entregas["orígenes del ajuste"], 1),
+        "noche_pct": num(100 * noche[(noche.index >= 22) | (noche.index < 5)].sum() / noche.sum(), 1),
+        "caida_22_pct": num(100 * (1 - noche[22] / noche[21]), 0),
+        "caida_21_pct": num(100 * (1 - noche[21] / noche[20]), 0),
+        "oferta_vacia_mediana": num(oferta["pct_tiempo_vacia"].median(), 1),
+        "oferta_vacia_max": num(oferta["pct_tiempo_vacia"].max(), 1),
+        "patinetes_activos_dia": num(activos.loc[activos["periodo"].eq("ajuste"), "patinetes_activos"].mean(), 1),
+        "fisico_central": num(central["wh_km_velocidad_media"], 1),
+        "fisico_crucero": num(central["wh_km_crucero"], 1),
+        "fisico_max": num(fisico[["wh_km_velocidad_media", "wh_km_crucero"]].max().max(), 1),
+        "desfase_0": num(desfase.loc[0, "deficit_pc"], 1),
+        "desfase_mas1": num(desfase.loc[1, "deficit_pc"], 1),
+        "pares_tvd": num(estab.loc["ajuste frente a reservada", "tvd_pc"], 1),
+        "pares_azar": num(estab.loc["ajuste frente a reservada", "tvd_azar_pc"], 1),
+        "pares_semanas_min": num(semanas["exceso_pp"].min(), 1),
+        "pares_semanas_max": num(semanas["exceso_pp"].max(), 1),
+    }
     return c
 
 

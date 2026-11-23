@@ -8,6 +8,7 @@ import { Seccion } from "../../componentes/Seccion";
 import { useDatos } from "../../datos";
 import { indicadores, num, pc } from "../../formato";
 import { COLOR, ESCALA_AZUL } from "../../graficas";
+import { BloqueEstabilidadPares } from "./Robustez";
 
 type Top30 = {
   celdas: { rango: number; h3: string; origenes: number; destinos: number; extremos: number }[];
@@ -53,6 +54,7 @@ export function T20() {
       <BloqueMatriz />
       {i && <BloquePares i={i} />}
       {i && <BloqueAsimetria i={i} />}
+      <BloqueEstabilidadPares />
     </Seccion>
   );
 }

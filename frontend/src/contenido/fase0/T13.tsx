@@ -8,6 +8,7 @@ import { Seccion } from "../../componentes/Seccion";
 import { useDatos } from "../../datos";
 import { num, pc } from "../../formato";
 import { COLOR, ESCALA_AZUL, capaMapa, rgba, trazaCeldas, trazaCeldasColor, trazaReferencias, type Celda } from "../../graficas";
+import { BloqueOferta } from "./Comprobaciones";
 
 type Densidad = {
   res: number;
@@ -83,6 +84,7 @@ export function T13() {
       <BloqueEstaciones />
       <BloqueAislados />
       <BloqueEstabilidad />
+      <BloqueOferta />
     </Seccion>
   );
 }

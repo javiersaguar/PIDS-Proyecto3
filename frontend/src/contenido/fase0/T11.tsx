@@ -8,6 +8,7 @@ import { Seccion } from "../../componentes/Seccion";
 import { useDatos } from "../../datos";
 import { num, pc } from "../../formato";
 import { COLOR, rgba, trazaEscalon, trazaTexto, trazasUmbral } from "../../graficas";
+import { BloqueConcentracionEntregas, BloqueEncadenados } from "./Comprobaciones";
 
 type Saltos = {
   bordes_m: number[];
@@ -88,6 +89,8 @@ export function T11() {
       <BloqueParado />
       <BloqueMapa />
       {r && <BloquePorDia r={r} />}
+      <BloqueEncadenados />
+      <BloqueConcentracionEntregas />
     </Seccion>
   );
 }

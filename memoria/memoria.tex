@@ -323,6 +323,47 @@ en un único episodio ventoso (figura~\ref{fig:viento}). La semana reservada fue
 y registró un \cifra{reservada_mas_pct}\pc{} más de viajes diarios. La validación
 comparará ese volumen observado y el reparto entre estaciones, pares y franjas.
 
+\subsection{Comprobaciones de robustez}\label{sec:robustez}
+Antes de la fase~1 se revisan seis posibles puntos débiles de los datos:
+\begin{itemize}
+  \item \textbf{Viajes encadenados} (T11). En \cifra{enc_pares} pares de viajes
+        (\cifra{enc_pct}\pc{} de los elegibles), el mismo patinete vuelve a salir a menos de
+        50~m y como mucho 5~min después. El segundo viaje sigue la dirección del primero en el
+        \cifra{enc_sigue}\pc{} de los casos y vuelve en el \cifra{enc_vuelve}\pc{}. En pares
+        separados de 1 a 6~h los porcentajes son \cifra{enc_ref_sigue}\pc{} y
+        \cifra{enc_ref_vuelve}\pc{}, así que casi ninguno es un trayecto partido. Se mantienen
+        separados: unirlos deja la cobertura de la red en el \cifra{enc_cob_ajuste}\pc{} (T30,
+        figura~\ref{fig:encadenados}).
+  \item \textbf{Toque de queda y hora local} (T12 y T17). En febrero de 2021 rigió en toda
+        Italia un toque de queda de 22 a 5~h \cite{dpcm2021}. Solo el \cifra{noche_pct}\pc{} de
+        las salidas cae en esas horas, y las salidas bajan un \cifra{caida_22_pct}\pc{} de 21 a
+        22~h, frente al \cifra{caida_21_pct}\pc{} de 20 a 21~h (figura~\ref{fig:noche}). Que la
+        caída coincida con la hora local del toque de queda confirma que las horas de los datos
+        son locales. Desplazar la lluvia una hora no lo distingue: faltan el
+        \cifra{desfase_0}\pc{} de los viajes sin desfase y el \cifra{desfase_mas1}\pc{} con
+        +1~h, porque la lluvia dura varias horas.
+  \item \textbf{Oferta frente a demanda} (T13). En las 30 celdas de resolución~9 con más
+        salidas, la mediana del tiempo de 8 a 21~h sin ningún patinete esperando es del
+        \cifra{oferta_vacia_mediana}\pc{} (máximo \cifra{oferta_vacia_max}\pc{}, cota
+        superior), con \cifra{patinetes_activos_dia} patinetes activos al día. Donde se concentra
+        la demanda, la observada no parece recortada por falta de patinetes.
+  \item \textbf{Puntos de despliegue del operador} (T11 y T30). Las 20 celdas con más entregas
+        reciben el \cifra{entregas_top20}\pc{} de ellas, frente al \cifra{recogidas_top20}\pc{}
+        de las recogidas en sus 20 celdas principales. La red elegida deja a menos de su radio
+        el \cifra{entregas_red_pct}\pc{} de las entregas, igual que los orígenes
+        (\cifra{origenes_red_pct}\pc{}).
+  \item \textbf{Consumo} (T16). En llano, sin aceleraciones y con parámetros supuestos, el
+        modelo físico del enunciado da \cifra{fisico_central}~Wh/km en el caso central a la
+        velocidad media de cada viaje y \cifra{fisico_crucero}~Wh/km a 20~km/h. Como mucho
+        llega a \cifra{fisico_max}~Wh/km, así que los \cifra{consumo_wh_km}~Wh/km de referencia
+        son conservadores. El modelo completo, con pendientes, es de la fase~2.
+  \item \textbf{Estabilidad de los pares OD} (T20). El reparto entre pares cambia un
+        \cifra{pares_tvd}\pc{} del ajuste a la reservada; solo por azar ya cambiaría un
+        \cifra{pares_azar}\pc{}. El exceso es como el de dos semanas cualesquiera del ajuste (de
+        \cifra{pares_semanas_min} a \cifra{pares_semanas_max} puntos). La red se valida con su
+        cobertura, no con pares sueltos.
+\end{itemize}
+
 \subsection{Tarifa e importe nominal (T18)}
 La regla de \cifra{tarifa_desbloqueo}~\texteuro{} por desbloqueo y
 \cifra{tarifa_minuto}~\texteuro{} por minuto, aplicada sobre los segundos registrados,
@@ -608,8 +649,11 @@ Limitaciones conocidas hasta ahora:
   \item La demanda observada es la de un servicio sin estaciones; parte de ella no tendría
         sentido con estaciones (el \cifra{circulares_pct}\pc{} son viajes circulares y, con
         300~m, andar a las estaciones tarda más que el viaje en cuatro de cada diez).
-  \item No se ha podido leer el texto oficial de las restricciones por COVID en Lacio en
-        febrero de 2021, así que no se controla el contexto sanitario del mes.
+  \item Todo el mes rigió el toque de queda nacional de 22 a 5~h \cite{dpcm2021}: la demanda
+        nocturna observada no se extrapola a un mes sin restricciones. No se controlan otras
+        medidas sanitarias del mes.
+  \item En las celdas con menos salidas, la falta de patinetes puede haber recortado la
+        demanda observada (T13).
 \end{itemize}
 \pendiente{Limitaciones de las fases 1 a 3 y, para cada una, la mejora que más impacto
 tendría (meteorología típica, viabilidad urbana de las ubicaciones, cambios de comportamiento
@@ -701,6 +745,18 @@ Las entregas netas del operador por celda siguen al saldo de los viajes
   \centering
   \includegraphics[width=0.65\textwidth]{T15_radios_acceso}
   \caption{Coste del acceso a pie según el radio de acceso, periodo de ajuste.}\label{fig:radios}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.80\textwidth]{T12_noche}
+  \caption{Salidas por hora en febrero de 2021. En gris, las horas del toque de queda nacional \cite{dpcm2021}.}\label{fig:noche}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.80\textwidth]{T11_encadenados}
+  \caption{Pausa entre dos viajes elegibles del mismo patinete que vuelve a salir a menos de 50~m. La línea discontinua marca los 5~min.}\label{fig:encadenados}
 \end{figure}
 
 \begin{figure}[H]
