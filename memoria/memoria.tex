@@ -37,7 +37,7 @@
 \setlist{itemsep=1pt,topsep=3pt}
 \setlength{\parskip}{4pt}
 \setlength{\parindent}{0pt}
-\graphicspath{{../resultados/figuras/exploracion/}{../resultados/figuras/movilidad/}}
+\graphicspath{{../resultados/figuras/exploracion/}{../resultados/figuras/movilidad/}{../resultados/figuras/consumo/}}
 \definecolor{tenue}{HTML}{526576}
 \definecolor{fondo}{HTML}{F2F5F8}
 \newcolumntype{Y}{>{\raggedright\arraybackslash}X}
@@ -52,7 +52,7 @@
 \DeclareUrlCommand\nb{\urlstyle{tt}}
 \def\UrlBreaks{\do\/\do\_\do\.}
 \setcounter{biburlnumpenalty}{100}\setcounter{biburlucpenalty}{100}\setcounter{biburllcpenalty}{100}
-\newcommand\fechaversion{23/11/2026}
+\newcommand\fechaversion{24/11/2026}
 % Apartado sin resultados todavía: qué irá y con qué tareas (docs/TAREAS.md).
 \newcommand\pendiente[1]{{\color{tenue}\small\textit{Pendiente.} #1\par}}
 
@@ -81,7 +81,7 @@
     \textbf{Grupo} & G\cifra{grupo} \\
     \textbf{Autores} & Cuevas, Alejandro \\
                      & Saguar, Javier \\
-    \textbf{Versión} & Cierre de movilidad \\
+    \textbf{Versión} & Movilidad y consumo \\
     \textbf{Fecha} & \fechaversion \\
     \textbf{Curso académico} & 2026/2027 \\
   \end{tabular}
@@ -127,7 +127,9 @@
 Esta versión cierra la fase~1 (T20--T39). Incluye localización y validación a
 pie, dimensionado de flota y plazas, comparación del rebalanceo, estado de
 carga, acceso territorial, cierres de estaciones y demanda de recarga
-equivalente. El detalle de la exploración está en los anexos.
+equivalente. El bloque de consumo (T40--T45) entrega los dos modelos por
+viaje, la demanda por destino de devolución y una simulación mensual del
+estado de carga. El detalle de la exploración está en los anexos.
 
 \newpage
 {\setstretch{1}\setlength{\parskip}{0pt}
@@ -710,17 +712,80 @@ así que el consumo por patinete y por estación se calculará con la flota de l
 
 \subsection{Comparación de los modelos de consumo}
 T40 estima los Wh de cada viaje elegible con la distancia registrada y
-13,5~Wh/km. Es la entrada de T35 y T39.
-\pendiente{Modelo B físico con rodadura, aerodinámica, pendiente y aceleración (T41),
-calibrado frente a 13,5~Wh/km (T43).}
+13,5~Wh/km. El mayor viaje requiere \cifra{consumo_a_max}~Wh de los 576~Wh
+nominales. El modelo físico reutiliza la rodadura y la aerodinámica de T16
+\cite{fisica_scooter}. Añade el trabajo gravitatorio neto, estima la densidad
+con presión y temperatura horarias \cite{openmeteo} y pasa el trabajo a
+energía de batería con los rendimientos documentados. Con velocidad media
+da \cifra{consumo_llano}~Wh/km en llano y \cifra{consumo_bruto}~Wh/km en el
+caso central del ajuste.
+
+Se aplica el factor \cifra{consumo_factor} para igualar la intensidad de
+ajuste del enunciado. Resume pérdidas y dinámica que la distancia, el
+tiempo y los extremos no permiten medir. El mismo factor da
+\cifra{consumo_b_res}~Wh/km en reserva, con una diferencia absoluta media
+de \cifra{consumo_mae}~Wh por viaje entre A y B.
 
 \subsection{Hipótesis de velocidad y pendiente}
-\pendiente{Efecto de la velocidad supuesta y del desnivel origen-destino (T42) sobre la
-energía; sensibilidad de los parámetros (T46).}
+Copernicus GLO-30 mide altura de superficie en una rejilla de un segundo
+de arco \cite{copernicus_dem}. El 95\pc{} de los desniveles absolutos de
+extremos en ajuste queda dentro de \cifra{consumo_desnivel}~m. El desnivel
+añade \cifra{consumo_desnivel_kwh}~kWh al B físico del ajuste previo al
+escalado. La velocidad media deja sin observar arranques y frenadas.
+El desnivel neto omite las subidas intermedias.
+Con el factor fijo, los rangos de rodadura y área efectiva dan
+\cifra{consumo_bajo}--\cifra{consumo_alto}~Wh/km. La sensibilidad al viento
+a 10~m proyectado sobre el rumbo origen--destino da \cifra{consumo_viento}~Wh/km.
 
 \subsection{Consumo por viaje, patinete, flota y estación}
-\pendiente{Consumo con la flota simulada (T44) y estado de carga de cada patinete a lo largo
-del mes (T45).}
+La energía de los viajes observados se agrega por patinete y día de salida.
+Para recarga se imputan a su estación de devolución los viajes que la red
+atiende. En reserva quedan \cifra{consumo_sin_destino_res} viajes sin
+destino en la red y representan \cifra{consumo_sin_destino_kwh}~kWh con A.
+Sobre el conjunto atendido se concilian viajes, patinetes, estaciones y la
+integral de los perfiles. Los picos de la tabla~\ref{tab:consumo-ab} son
+potencias medias simultáneas de la red en intervalos de 15 minutos, en el
+lado batería.
+
+\begin{table}[!htb]
+  \centering\small
+  \caption{Comparación A y B en la demanda observada y la red habitual.}\label{tab:consumo-ab}
+  \begin{tabularx}{\textwidth}{@{}Yrrrr@{}}
+    \toprule
+    Indicador & Ajuste A & Ajuste B & Reserva A & Reserva B \\
+    \midrule
+    Energía observada (kWh) & \cifra{consumo_obs_aj_a} & \cifra{consumo_obs_aj_b}
+      & \cifra{consumo_obs_res_a} & \cifra{consumo_obs_res_b} \\
+    Reposición en destinos (kWh/día) & \cifra{consumo_sim_aj_a} & \cifra{consumo_sim_aj_b}
+      & \cifra{consumo_sim_res_a} & \cifra{consumo_sim_res_b} \\
+    Pico de toda la red (kW) & \cifra{consumo_pico_aj_a} & \cifra{consumo_pico_aj_b}
+      & \cifra{consumo_pico_res_a} & \cifra{consumo_pico_res_b} \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+En reserva, la estación de mayor energía pasa de \texttt{\cifra{consumo_estacion_res_a}}
+con A a \texttt{\cifra{consumo_estacion_res_b}} con B. Aunque el pico simultáneo de red es menor con B,
+en el ajuste sube el pico individual de \cifra{consumo_picos_b} estaciones.
+Recarga adopta A por la referencia del enunciado y su mayor pico de red
+en el ajuste. Se contrasta con B al dimensionar cada emplazamiento.
+
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=0.91\textwidth]{T44_perfil_estacion}
+  \caption{Perfil de reposición en la estación de mayor energía de A en ajuste, con la misma estación en reserva.}\label{fig:consumo-estacion}
+\end{figure}
+
+\subsection{Estado de carga individual}
+La simulación conserva el inventario al pasar del ajuste a reserva.
+Cada batería parte cargada, repone energía mientras ocupa un anclaje y
+se despacha con una reserva del \cifra{consumo_reserva}\pc{}. En reserva,
+los mínimos son \cifra{consumo_soc_res_a}\pc{} con A y
+\cifra{consumo_soc_res_b}\pc{} con B (en ajuste, \cifra{consumo_soc_aj_a}\pc{}
+y \cifra{consumo_soc_aj_b}\pc{}, respectivamente). Se registran
+\cifra{consumo_rechazos_bateria} rechazos por batería en los casos con
+recarga por anclaje. El control con reinicio por periodo reproduce T35.
+La disponibilidad de potencia en la instalación se comprobará en recarga.
 
 % ------------------------------------------------------------------------------------------
 \section{Estación de recarga}
@@ -768,7 +833,10 @@ de las cubiertas). Los mapas peatonales localizan barreras de acceso y
 la comparación de cierres cuantifica las pérdidas de un fallo localizado.
 El catálogo por estación y las llegadas atendidas permiten pasar a
 dimensionar la recarga.
-\pendiente{Contraste del consumo físico y dimensionado de paneles y batería (T61).}
+La demanda de recarga en reserva asciende a \cifra{consumo_sim_res_a}~kWh/día
+según el modelo de referencia. El contraste físico cambia el emplazamiento
+de mayor energía, por lo que ambos modelos pasan a la comparación de estaciones.
+\pendiente{Dimensionado de paneles y batería de apoyo (T61).}
 
 \subsection{Decisiones de la exploración (T19)}
 La tabla~\ref{tab:decisiones} recoge lo que la exploración fija para el diseño. El

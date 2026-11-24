@@ -44,6 +44,7 @@ const t32 = json("fase1/t32_inventario.json");
 const t34 = json("fase1/t34_flota.json");
 const perfil = json("fase0/t12_perfil_horario.json");
 const cierre = json("fase1/cierre_movilidad.json");
+const consumo = json("fase2/consumo.json");
 
 const finalistas = pareto.filter((f) => f.rol);
 const recomendada = finalistas.find((f) => f.rol === "recomendada");
@@ -54,8 +55,16 @@ const zonas = (red) => {
   return z.reduce((s, f) => s + f.pct, 0) / z.length;
 };
 const ind31 = Object.fromEntries(t31.indicadores.map((f) => [f.indicador, f.atendidos]));
+const consumoA = busca(consumo.resumen, { periodo: "reservada", modelo: "a" });
+const consumoB = busca(consumo.resumen, { periodo: "reservada", modelo: "b" });
 
 const datos = {
+  consumo: {
+    a_wh_km: busca(consumo.fisico, { periodo: "ajuste" }).a_wh_km,
+    a_kwh_dia: consumoA.kwh_dia,
+    b_kwh_dia: consumoB.kwh_dia,
+    cambia_estacion: consumoA.estacion_energia_max !== consumoB.estacion_energia_max,
+  },
   embudo: {
     brutos: embudo[0].quedan,
     elegibles: embudo.at(-1).quedan,

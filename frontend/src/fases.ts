@@ -42,12 +42,10 @@ export const FASES: Fase[] = [
       "Energía por viaje, por patinete, por estación de destino y de la flota completa. Contrasta los 13,5 Wh/km del enunciado con un modelo físico sencillo y su sensibilidad.",
     fechas: "25/11–2/12",
     peso: "10 %",
-    estado: "pendiente",
+    estado: "en curso",
     tareas: "T40–T46",
     previsto: [
-      "Energía diaria de la flota y por patinete con el modelo de referencia.",
-      "Comparación del modelo de 13,5 Wh/km con el modelo físico y sensibilidad a velocidad y pendiente.",
-      "Energía que llega a cada estación de destino.",
+      "Sensibilidad por parámetro y efecto sobre el dimensionado (T46).",
     ],
   },
   {

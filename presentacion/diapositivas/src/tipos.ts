@@ -1,5 +1,6 @@
 // Forma de public/datos.json (lo genera scripts/datos.mjs).
 export type Datos = {
+  consumo: { a_wh_km: number; a_kwh_dia: number; b_kwh_dia: number; cambia_estacion: boolean };
   embudo: {
     brutos: number;
     elegibles: number;

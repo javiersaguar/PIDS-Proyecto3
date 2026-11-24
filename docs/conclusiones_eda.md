@@ -258,6 +258,12 @@ diferencia 0 Wh (`tablas/exploracion/T16_comprobacion.csv`).
 | Energía en horas de sol | Un tercio llega de 10 a 16 h y más de la mitad de 16 a 24 h | `T16_perfil_horario.csv` | Ajuste | Hora de llegada, no de carga | Con carga inmediata, la batería de la estación debe guardar unos dos tercios de la energía; la carga inteligente de T56 es la alternativa |
 | Consumo de referencia | **Se mantienen 13,5 Wh/km**, por encima de todos los casos del modelo físico en llano: es conservador | `T16_modelo_fisico.csv` | Ajuste | Parámetros supuestos; sin pendientes ni aceleraciones | El modelo completo es el de T41–T43 |
 
+**Contraste posterior.** T41 reutiliza el cálculo en llano de T16 y obtiene
+6,96 Wh/km en ajuste. T42 y T43 añaden desnivel neto, densidad horaria y
+una escala fijada con el ajuste. T44 comprueba cómo cambia la demanda por
+estación aun con totales parecidos. Los 13,5 Wh/km siguen siendo la
+referencia de recarga. [Cierre de consumo](#cierre-de-consumo-t40t45)
+
 ## T17. Meteorología y días anómalos (Alejandro)
 
 Lluvia, temperatura y viento de Roma centro según la API histórica de Open-Meteo (modelo
@@ -801,6 +807,122 @@ La fase de Consumo recibe la energía por viaje y la asignación operativa
 de T31–T32. La fase de Recarga recibe energía de tracción agregada por
 estación y los picos equivalentes, y dimensionará potencia y energía
 del lado de la instalación. [Notebook de reproducción](../movilidad/T33_T39_cierre.ipynb) · [Conclusiones en la web](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase1/decisiones)
+
+## Cierre de consumo T40–T45
+
+### T40. Control del modelo de referencia
+
+La distancia registrada convierte 2 km en **27 Wh** a 13,5 Wh/km. La
+tabla tiene 16 756 viajes del ajuste y 6 614 de la semana reservada.
+El máximo por viaje en A es **246,62 Wh** y todos caben dentro de 576 Wh.
+La comparación usa exactamente los mismos IDs de la limpieza. El Modelo A
+mantiene su cálculo anterior. [Tabla por viaje](../resultados/tablas/consumo/T40_energia_viaje.csv)
+
+### T41. Modelo físico y meteorología
+
+Se usa la masa de 22,5 kg del patinete (enunciado), 75 kg de usuario, los
+coeficientes de rodadura y aerodinámica de T16, rendimiento de tracción
+0,80 con transmisión incluida y descarga de batería 0,95. Los rangos
+0,010–0,020 de rodadura y 0,40–0,70 m² de CdA son hipótesis del modelo.
+Se usa la velocidad media de cada viaje y la ley del gas ideal para el
+aire seco con temperatura y presión horarias. Temperatura y viento
+coinciden con el archivo de T17 en las 672 horas. Se añadieron presión de
+superficie y dirección del viento de la misma consulta horaria.
+
+Se suma el trabajo de rodadura, aerodinámica y desnivel equivalente y
+se trunca en cero antes de pasarlo a batería. Las pérdidas de transmisión
+se incluyen en las de tracción. El caso central asume regeneración cero
+y velocidad media constante. No se estiman arranques sin perfiles de
+velocidad. Se aplica el viento a 10 m sobre el rumbo O–D como sensibilidad
+porque la exposición a nivel de calle y el rumbo recorrido son
+desconocidos. [Hipótesis](../consumo/config.yaml) · [Intensidades](../resultados/tablas/consumo/T41_intensidades.csv) · [Ecuaciones de fuerzas](https://doi.org/10.3390/su15118976) · [Ficha meteorológica](../datos/externos/meteorologia/open-meteo_roma_presion_viento.meta.json)
+
+### T42. Desnivel O–D
+
+GLO-30 Public aporta un DSM de **1 segundo de arco** y altura referida a
+EGM2008. Se muestrearon 46 697 coordenadas únicas al píxel más cercano.
+La exactitud vertical absoluta nominal es inferior a 4 m LE90. Los
+extremos pueden caer sobre puentes, vegetación o edificios. El desnivel
+neto permite estimar el trabajo gravitatorio equivalente con los datos
+disponibles. Un perfil de ruta mediría ascensos intermedios y bajadas
+que se cancelan en el saldo. El 95 % de los desniveles absolutos no supera
+36,71 m en ajuste y 37,89 m en reserva. La pendiente añade **9,55 kWh en
+ajuste y 4,12 kWh en reserva** al B físico antes de la calibración.
+[Ficha del archivo](../datos/externos/elevacion/copernicus_glo30_roma.meta.json) · [Indicadores](../resultados/tablas/consumo/T42_desnivel.csv) · [Especificación GLO-30](https://dataspace.copernicus.eu/explore-data/data-collections/copernicus-contributing-missions/collections-description/COP-DEM)
+
+### T43. Calibración y discrepancias
+
+El factor **1,8593** aplica al B central la relación entre 13,5 Wh/km y
+la intensidad ponderada por distancia del ajuste. Recoge dinámica y
+pérdidas omitidas bajo este modelo. Su comprobación en reserva mide la
+transferencia frente al coeficiente, a falta de telemetría. La diferencia
+absoluta media A–B es 8,50 Wh por viaje en ajuste y 8,58 Wh en reserva.
+En el cuartil más rápido del ajuste, B estima 14,17 Wh más de media que A
+para los viajes que suben y 5,27 Wh menos para los que bajan. Los
+escenarios bajo y alto conservan el mismo factor central y en ajuste
+acotan la intensidad en 9,48–17,58 Wh/km. Con el viento proyectado a 10 m
+resulta 15,32 Wh/km. [Calibración](../resultados/tablas/consumo/T43_calibracion.csv) · [Velocidad y desnivel](../resultados/tablas/consumo/T43_velocidad_desnivel.csv) · [Mayores diferencias](../resultados/tablas/consumo/T43_mayores_diferencias.csv)
+
+### T44. Consumo observado y demanda de la red
+
+La vista observada incluye todos los viajes elegibles. Imputa energía
+diaria al día de salida y usa 576 Wh para convertir a ciclos equivalentes.
+La vista simulada toma solo las devoluciones atendidas por T39 y supone
+recarga en el destino. El periodo de un viaje procede de su salida. Los
+perfiles empiezan en la devolución e integran el solape de la sesión en
+cuartos de hora y en horas, incluida la cola que pueda pasar al día
+siguiente. Los perfiles completos son dispersos, con W cero en los
+intervalos omitidos. Los P95 incluyen el calendario completo, con
+intervalos y días sin carga según su variable.
+
+| Indicador | Ajuste A | Ajuste B | Reservada A | Reservada B |
+|---|---:|---:|---:|---:|
+| Intensidad observada (Wh/km) | 13,50 | 13,50 | 13,50 | 13,54 |
+| Energía observada (kWh) | 464,81 | 464,81 | 190,40 | 190,92 |
+| Tracción imputada a destinos (kWh) | 349,53 | 348,52 | 131,30 | 131,26 |
+| Demanda por día natural (kWh/día) | 16,64 | 16,60 | 18,76 | 18,75 |
+| Pico simultáneo de la red (kW) | 3,38 | 3,19 | 3,46 | 2,86 |
+| Mayor pico individual (W) | 448,07 | 438,86 | 481,63 | 408,15 |
+
+En ajuste se atienden 12 750 viajes y 4 006 quedan sin destino de recarga
+en la red habitual. En reserva, 4 670 de 6 614 llegan a un destino y 1 944
+quedan fuera; con A representan 59,10 kWh observados. Las sumas por
+viaje, patinete y destino concuerdan para el mismo conjunto. La integración
+de ambos perfiles conserva esa energía.
+
+A identifica **891e8052a6bffff** como la estación de mayor energía en
+reserva (3,00 kWh) y B **891e8052a23ffff** (3,16 kWh). El orden por energía
+tiene Spearman 0,935 en reserva y siete estaciones comunes entre las diez
+primeras. El pico individual más alto también cambia de emplazamiento.
+Con B, el pico local es mayor en **55 estaciones del ajuste** y **38 de la
+reserva**, aunque A da un pico simultáneo de red mayor en ambos periodos.
+Para sensibilidad territorial, sobre los mismos 4 414 viajes en reserva
+y con A, las diez estaciones principales concentran el 16,90 % en la
+habitual, 16,91 % en equidad y 16,89 % en redundante. La estación máxima
+también se informa en ese subconjunto. [Conciliación](../resultados/tablas/consumo/T44_conciliacion.csv) · [Demanda](../resultados/tablas/consumo/T44_resumen.csv) · [Ranking](../resultados/tablas/consumo/T44_ranking.csv) · [Sensibilidad de red](../resultados/tablas/consumo/T44_sensibilidad_red.csv)
+
+### T45. Estado de carga
+
+Se reutilizan los 400 patinetes, 966 anclajes y la reserva del 20 % de
+T35. Se inicia febrero con la batería nominal y se arrastra el estado
+hasta fin de mes. Los mínimos en reserva son **38,92 % con A y 36,64 %
+con B**. En ambos periodos los dos modelos dan cero rechazos por batería
+y cero unidades bajo la reserva. El control de periodos con reinicio
+independiente reproduce los 12 750 y 4 670 viajes atendidos de T35 con A.
+El mes continuo atiende 4 664 viajes en reserva con ambos modelos por el
+estado de inventario heredado del ajuste. La carga supuesta en cada
+anclaje permite el balance energético de T45. La potencia de instalación
+se dimensionará con T50 y las pruebas de recarga.
+[Mínimos y rechazos](../resultados/tablas/consumo/T45_resultados.csv) · [Control T35](../resultados/tablas/consumo/T45_control_t35.csv) · [Traza por unidad](../resultados/tablas/consumo/T45_traza.csv.gz)
+
+### Decisiones para la fase 3
+
+| Decisión | Valor | Evidencia | Periodo | Limitaciones | Qué cambia en el plan |
+|---|---|---|---|---|---|
+| Demanda base | Modelo A, 13,5 Wh/km | Referencia del enunciado y mayor pico simultáneo en el ajuste (3,38 frente a 3,19 kW) | Ajuste, comprobado en reserva | Energía estimada en el lado batería | T50 aplica el rendimiento del cargador a las llegadas de A |
+| Sensibilidad local | B calibrado con k = 1,8593 | Cambia la estación de mayor kWh y sube el pico en 55 estaciones del ajuste | Ajuste, comprobado en reserva | Desnivel neto, velocidad media y coeficientes de T16 | Contrastar por estación con B al escoger el emplazamiento y dimensionar |
+| Imputación de recarga | Estación donde termina cada viaje atendido | Energía por destino conciliada con viajes e integración de perfiles | Ambos | Carga equivalente sin limitación de suministro | T50 lee la tabla de entrada T44 por llegada |
+| Margen de despacho | Reserva del 20 % de T35 | Cero rechazos por batería en la simulación con carga por anclaje | Ambos | Las restricciones de potencia de la estación quedan para recarga | Mantener la reserva en la comparación eléctrica |
 
 ## Preguntas de la exploración ya respondidas
 

@@ -453,7 +453,8 @@ export const DIAPOSITIVAS: Diapositiva[] = [
           retardo={0.5}
           items={[
             ["Flota decidida", <>{num(d.flota.minima)} patinetes (criterio del {d.flota.objetivo} %). La de {num(d.flota.diseno)} queda como alternativa con más margen si crece la demanda.</>],
-            ["Consumo (10 %)", "La energía por viaje con 13,5 Wh/km ya está (T40). Falta el modelo físico, su calibración y la suma por patinete y por estación."],
+            ["Consumo (10 %)", <>En reserva, {num(d.consumo.a_kwh_dia, 2)} kWh/día con A y {num(d.consumo.b_kwh_dia, 2)} con B.
+              {d.consumo.cambia_estacion && " La estación de mayor energía cambia."} Recarga parte de A ({num(d.consumo.a_wh_km, 1)} Wh/km) y contrasta cada estación con B.</>],
             ["Estación de recarga (20 %)", "Potencia y energía demandadas en cada estación, paneles con PVWatts y baterías para casar la generación con la recarga."],
             ["Demo 3D", "Un día de operación sobre el mapa de Roma, con las estaciones, los flujos y la maqueta de una estación."],
           ]}

@@ -523,6 +523,47 @@ def cifras() -> dict[str, str]:
         "cierre_kw_est": num(red_r["pico_estacion_kw"], 2),
         "cierre_top10": num(red_r["cuota_top10_pct"], 2),
     }
+    fisica = leer("consumo/T43_calibracion.csv")
+    f_a, f_r = (fila(fisica, periodo=p) for p in ("ajuste", "reservada"))
+    desnivel = fila(leer("consumo/T42_desnivel.csv"), periodo="ajuste")
+    reparto = leer("consumo/T44_resumen.csv")
+    observado = leer("consumo/T44_observado_flota.csv")
+    conciliacion = leer("consumo/T44_conciliacion.csv")
+    soc = leer("consumo/T45_resultados.csv")
+    ranking = fila(leer("consumo/T44_ranking.csv"), periodo="ajuste", red="habitual")
+    c |= {
+        "consumo_llano": num(f_a["llano_t16_wh_km"], 2),
+        "consumo_bruto": num(f_a["b_bruto_wh_km"], 2),
+        "consumo_factor": num(f_a["k"], 4),
+        "consumo_b_res": num(f_r["b_wh_km"], 2),
+        "consumo_a_max": num(fisica["max_a_wh"].max(), 2),
+        "consumo_mae": num(f_r["mae_wh"], 2),
+        "consumo_desnivel": num(desnivel["p95_abs_m"], 1),
+        "consumo_desnivel_kwh": num(desnivel["aporte_kwh"], 2),
+        "consumo_bajo": num(f_a["rango_bajo_wh_km"], 2),
+        "consumo_alto": num(f_a["rango_alto_wh_km"], 2),
+        "consumo_viento": num(f_a["viento_wh_km"], 2),
+        "consumo_picos_b": num(ranking["estaciones_pico_b_mayor"]),
+    }
+    for periodo, prefijo in (("ajuste", "aj"), ("reservada", "res")):
+        observado_p = fila(observado, periodo=periodo)
+        for m in ("a", "b"):
+            s = fila(reparto, periodo=periodo, modelo=m, red="habitual")
+            z = fila(soc, periodo=periodo, modelo=m)
+            c |= {
+                f"consumo_obs_{prefijo}_{m}": num(observado_p[f"energia_wh_{m}"] / 1000, 2),
+                f"consumo_sim_{prefijo}_{m}": num(s["kwh_dia"], 2),
+                f"consumo_pico_{prefijo}_{m}": num(s["pico_red_w"] / 1000, 2),
+                f"consumo_soc_{prefijo}_{m}": num(z["min_soc_pct"], 2),
+            }
+            if periodo == "reservada":
+                c[f"consumo_estacion_res_{m}"] = str(s["estacion_energia_max"])
+    conc_res = fila(conciliacion, periodo="reservada", modelo="a", red="habitual")
+    zres = fila(soc, periodo="reservada", modelo="a")
+    c |= {"consumo_sin_destino_res": num(conc_res["sin_destino_en_red"]),
+          "consumo_sin_destino_kwh": num(conc_res["sin_destino_wh"] / 1000, 2),
+          "consumo_reserva": num(zres["reserva_pct"]),
+          "consumo_rechazos_bateria": num(soc["rechazos_bateria"].sum())}
     return c
 
 
