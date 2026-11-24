@@ -28,7 +28,7 @@ El reparto y la revisión cruzada de cada bloque están en [PLAN.md, sección 10
 | Fase 1 · Operación, incidencias y comparación de redes | T35–T39 | Javier (T36 con Alejandro) |
 | Fase 2 · Consumo | T40–T46 | Javier |
 | Fase 3 · Estación de recarga, PVWatts y balance | T50–T59 | Alejandro |
-| Fase 4 · Conclusiones, memoria y entrega | T60–T66 | Los dos (T62 Javier, T63 Alejandro) |
+| Fase 4 · Conclusiones, memoria y entrega | T60–T66 | Los dos (T62, T64 y T65 Javier, T63 Alejandro) |
 | Demo 3D | T70–T75 | Alejandro (T70, T71) |
 | Experimentos integrados | T80–T82 | Javier |
 
@@ -57,7 +57,7 @@ responde a una pregunta y deja una tabla o figura que se cita en `docs/conclusio
 | T16 | Kilómetros y energía de referencia por patinete y día, con contraste en llano con el modelo físico | R | Alejandro | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/dbb1b7911b64e8a4b35a72d83bf8bbde93495cd7) · [Notebook](https://github.com/javiersaguar/PIDS-Proyecto3/commit/19ffdcb1bd5233d38151985db2b5918cb5909fe5) |
 | T17 | Meteorología frente a demanda, días anómalos y comprobación de la hora local | E | Alejandro | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/aba574d0bcaf45023cb66aaa73f23ed4b0b08dec) · [Notebook](https://github.com/javiersaguar/PIDS-Proyecto3/commit/19ffdcb1bd5233d38151985db2b5918cb5909fe5) |
 | T18 | Modelo de tarifa e ingresos | E | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/af9efdc77e0f7c3f07e3f5cdb1d7d45626d65070) · [Notebook](../exploracion/T18_tarifa_ingresos.ipynb) · [Web](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase0/t18) |
-| T19 | Conclusiones de la exploración (`docs/conclusiones_eda.md`) y seguimiento del 23/11 | R | Los dos | revisión | [Conclusiones cerradas](conclusiones_eda.md#t19-cierre-de-la-exploración) · [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/af9efdc77e0f7c3f07e3f5cdb1d7d45626d65070) · [Parte de Alejandro](https://github.com/javiersaguar/PIDS-Proyecto3/commit/582fcba0ad9bd11fe2898c06c4ce125d093c77e8) · Preparado para el seguimiento del 23/11 |
+| T19 | Conclusiones de la exploración (`docs/conclusiones_eda.md`) y seguimiento del 23/11 | R | Los dos | revisión | [Conclusiones](conclusiones_eda.md#t19-cierre-de-la-exploración) · [Cierre inicial](https://github.com/javiersaguar/PIDS-Proyecto3/commit/af9efdc77e0f7c3f07e3f5cdb1d7d45626d65070) · [Parte de Alejandro](https://github.com/javiersaguar/PIDS-Proyecto3/commit/582fcba0ad9bd11fe2898c06c4ce125d093c77e8) · [Contraste de Javier](conclusiones_eda.md#contraste-de-javier-sobre-t13t17) · Pendiente de confirmar la revisión cruzada de Alejandro |
 
 ## Fase 1. Movilidad (60 %)
 
@@ -117,10 +117,10 @@ responde a una pregunta y deja una tabla o figura que se cita en `docs/conclusio
 |---|---|---|---|---|---|
 | T60 | Probar el diseño con días difíciles, demanda punta adicional y producción solar baja | E | | pendiente | |
 | T61 | Conclusiones y limitaciones | R | | pendiente | |
-| T62 | Memoria `G05-P3.pdf` (LaTeX en `memoria/`) | R | Javier | en curso | |
+| T62 | Memoria `G05-P3.pdf` (LaTeX en `memoria/`) | R | Javier | en curso | [Memoria](../memoria/G05-P3.pdf) · [Metodología de movilidad y consumo](https://github.com/javiersaguar/PIDS-Proyecto3/commit/a7471e467e1291966e96c4af492f617cf9a7694f) · Pendiente de incorporar recarga y las conclusiones finales |
 | T63 | Presentación en HTML | R | Alejandro | en curso | [Diapositivas](../presentacion/diapositivas/) con las fases 0, 1 y 2 (14 diapositivas, hasta T45); `npm run html` genera [presentacion.html](../presentacion/presentacion.html) · [Versión animada en la web](https://javiersaguar.github.io/PIDS-Proyecto3/presentacion/) |
 | T64 | Reproducción en limpio | R | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/01e28fd3a20d38fa3ee1221336b7b4d8e7c7df50) · [Instrucciones](../README.md#cómo-ejecutar) |
-| T65 | Script de empaquetado `G05-P3.zip` | R | | pendiente | |
+| T65 | Script de empaquetado `G05-P3.zip` | R | Javier | hecha | [Script](../empaquetar.py) · [Instrucciones](../README.md#paquete-de-entrega) · [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/418f97dc7dfeef60c8ef78787c158519985592ae) |
 | T66 | Ensayo de la defensa | R | | pendiente | |
 
 ## Demo 3D para la defensa
