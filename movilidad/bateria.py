@@ -16,6 +16,7 @@ class Carga:
     horas_recarga: float
     reserva_pct: float = 0
     recarga_en_anclaje: bool = True
+    registrar_traza: bool = False
 
 
 class FlotaElectrica:
@@ -35,6 +36,15 @@ class FlotaElectrica:
         self.unidades = [set(range(a, b)) for a, b in zip(cortes[:-1], cortes[1:])]
         self.recargada = 0.
         self.gastada = 0.
+        self.traza = [] if carga.registrar_traza else None
+        if self.traza is not None:
+            for estacion, unidades in enumerate(self.unidades):
+                for unidad in sorted(unidades):
+                    self.registrar(unidad, estacion, inicio, "inicio", self.capacidad)
+
+    def registrar(self, unidad, estacion, t, evento, energia):
+        if self.traza is not None:
+            self.traza.append((unidad, t, estacion, evento, energia))
 
     def nivel(self, unidad, t):
         return min(self.capacidad, self.energia[unidad] + (t - self.desde[unidad]) * self.wh_por_s)
@@ -57,19 +67,25 @@ class FlotaElectrica:
         self.energia[unidad] -= self.consumo[viaje]
         self.gastada += self.consumo[viaje]
         assert self.energia[unidad] >= -1e-8
+        self.registrar(unidad, estacion, t, "salida", self.energia[unidad])
 
-    def llegar(self, unidad, estacion, t):
+    def llegar(self, unidad, estacion, t, evento="llegada"):
         self.desde[unidad] = t
         self.unidades[estacion].add(unidad)
+        self.registrar(unidad, estacion, t, evento, self.energia[unidad])
 
     def mover(self, origen, destino, t):
         unidad = min(self.unidades[origen], key=lambda u: (-self.nivel(u, t), u))
         self.salir(unidad, origen, t)
-        self.llegar(unidad, destino, t)
+        self.llegar(unidad, destino, t, "rebalanceo")
 
     def balance(self, t, inventario):
         assert np.array_equal(inventario, [len(s) for s in self.unidades])
         final = sum(self.nivel(u, t) for s in self.unidades for u in s)
+        if self.traza is not None:
+            for estacion, unidades in enumerate(self.unidades):
+                for unidad in sorted(unidades):
+                    self.registrar(unidad, estacion, t, "fin", self.nivel(unidad, t))
         recarga = self.recargada + final - self.energia.sum()
         pendiente = self.capacidad * len(self.energia) - final
         assert np.isclose(self.gastada, recarga + pendiente)

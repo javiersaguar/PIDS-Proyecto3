@@ -159,6 +159,17 @@ def test_repartir_flota():
     assert repartir_flota([2, 4, 2], [3, 5, 3], 11).tolist() == [3, 5, 3]
 
 
+def test_traza_carga_opcional_no_cambia_resultado():
+    dem = demanda([(T0, T0 + 60, [0], [0]), (T0 + 420, T0 + 480, [0], [0])])
+    wh = np.array([70.25, 30.5])
+    base = sim(dem, red(1), [1], [1], carga=Carga(wh, 100, 1))
+    r = sim(dem, red(1), [1], [1], carga=Carga(wh, 100, 1, registrar_traza=True))
+    assert base.traza_carga is None and r.resumen == base.resumen
+    assert r.viajes.equals(base.viajes)
+    assert r.traza_carga["evento"].tolist() == ["inicio", "salida", "llegada", "salida", "llegada", "fin"]
+    assert np.allclose(r.traza_carga["energia_wh"], [100, 29.75, 29.75, 9.25, 9.25, 100])
+
+
 if __name__ == "__main__":
     pruebas = [f for nombre, f in sorted(globals().items()) if nombre.startswith("test_")]
     for f in pruebas:

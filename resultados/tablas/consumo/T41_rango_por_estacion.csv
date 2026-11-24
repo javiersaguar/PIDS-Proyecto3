@@ -1,0 +1,7 @@
+periodo,caso,total_kwh,estacion_max,max_kwh,top_pct
+ajuste,escenario_bajo_wh,244.597064337,891e8052a23ffff,5.134347756,15.178603352
+ajuste,escenario_alto_wh,454.115952243,891e8052a23ffff,8.451248678,14.719352696
+ajuste,escenario_viento_10m_wh,395.568006796,891e8052a23ffff,7.444860782,14.698449979
+reservada,escenario_bajo_wh,92.149838596,891e8052a23ffff,2.382778815,16.696104209
+reservada,escenario_alto_wh,170.982328655,891e8052a23ffff,3.943214416,16.298162856
+reservada,escenario_viento_10m_wh,139.672411572,891e8052a23ffff,3.121842870,16.168289398

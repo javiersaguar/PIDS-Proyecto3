@@ -212,6 +212,7 @@ class Resultado:
     estaciones: pd.DataFrame
     noches: pd.DataFrame
     resumen: dict
+    traza_carga: pd.DataFrame | None = None
 
 
 def simular(dem, red, stock, anclajes, rebalanceo_max, *, desvio=True, hora_corte=HORA_CORTE,
@@ -436,6 +437,9 @@ def simular(dem, red, stock, anclajes, rebalanceo_max, *, desvio=True, hora_cort
         "patinetes_movidos": int(noches["patinetes_movidos"].sum()),
         "km_rebalanceo": float(noches["km"].sum()),
     }
+    traza = None
     if electrica is not None:
         resumen.update(electrica.balance(t_fin, inv))
-    return Resultado(viajes, estaciones, noches, resumen)
+        if electrica.traza is not None:
+            traza = pd.DataFrame(electrica.traza, columns=["unidad", "t", "estacion", "evento", "energia_wh"])
+    return Resultado(viajes, estaciones, noches, resumen, traza)
