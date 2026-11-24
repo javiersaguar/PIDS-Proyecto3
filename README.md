@@ -69,6 +69,25 @@ base de OpenStreetMap guardado en `datos/externos/osm/`. Funciona sin conexión.
 ← → capítulos, espacio reloj, H oculta el panel, T cambia de tema y F pantalla completa;
 `?tema=claro` en la URL lo abre con el tema claro.
 
+## Paquete de entrega
+
+Con la memoria compilada y guardada en la misma revisión que el código, ejecutar
+desde una copia Git del proyecto:
+
+```powershell
+.venv\Scripts\python empaquetar.py
+```
+
+El script lee una instantánea de `HEAD` y genera
+`build/entrega/G05-P3.zip` con `G05-P3.pdf` y `G05-P3_code/` en la raíz.
+El número de grupo se lee de la configuración archivada. El código incluye las
+entradas versionadas, las instrucciones y los resultados de esa misma revisión.
+`--destino <directorio>` permite guardar el ZIP en otra carpeta.
+
+Ejecutar el comando sobre la revisión final cuando estén incorporados la memoria
+y los resultados de recarga. El PDF de la revisión se copia tal como está.
+[Formato de entrega](docs/enunciado.md#entregable)
+
 ## Estructura
 
 | Carpeta | Contenido |
