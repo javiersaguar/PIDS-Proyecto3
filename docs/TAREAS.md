@@ -66,12 +66,12 @@ responde a una pregunta y deja una tabla o figura que se cita en `docs/conclusio
 
 | ID | Tarea | Tipo | Responsable | Estado | Entrega |
 |---|---|---|---|---|---|
-| T40 | Modelo A: 13,5 Wh/km por viaje | R | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/bec59b007fd947783db0975e6f38db245fbbef33) · [Modelo A](../consumo/modelo_a.py) · [Tabla por viaje](../resultados/tablas/consumo/T40_energia_viaje.csv) |
-| T41 | Modelo B físico con parámetros referenciados | R | | pendiente | |
-| T42 | Desnivel origen-destino con modelo de elevaciones | E | | pendiente | |
-| T43 | Calibración del modelo B frente a 13,5 Wh/km | R | | pendiente | Punto de partida: T16, apartado 9 (en llano da 7–9 Wh/km en el caso central) |
-| T44 | Consumo por viaje, patinete, flota y estación | R | | pendiente | |
-| T45 | Estado de carga por patinete a lo largo del mes | E | | pendiente | |
+| T40 | Modelo A: 13,5 Wh/km por viaje | R | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/bec59b007fd947783db0975e6f38db245fbbef33) · [Modelo A](../consumo/modelo_a.py) · [Tabla por viaje](../resultados/tablas/consumo/T40_energia_viaje.csv) · [Control T40](../consumo/test_consumo.py) · [Ruta web tras integrar](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase2/t40) |
+| T41 | Modelo B físico con parámetros referenciados | R | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/345db580e817a67f9065f7353a40c64cc774544e) · [Notebook](../consumo/T41_T43_modelo_b.ipynb) · [Ruta web tras integrar](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase2/t41) |
+| T42 | Desnivel origen-destino con modelo de elevaciones | E | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/345db580e817a67f9065f7353a40c64cc774544e) · [Notebook](../consumo/T41_T43_modelo_b.ipynb) · [Ruta web tras integrar](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase2/t42) |
+| T43 | Calibración del modelo B frente a 13,5 Wh/km | R | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/345db580e817a67f9065f7353a40c64cc774544e) · [Notebook](../consumo/T41_T43_modelo_b.ipynb) · [Ruta web tras integrar](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase2/t43) |
+| T44 | Consumo por viaje, patinete, flota y estación | R | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/b6087f159facf80c7d68344a515e49c3e7156ed0) · [Notebook](../consumo/T44_T45_agregados.ipynb) · [Ruta web tras integrar](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase2/t44) |
+| T45 | Estado de carga por patinete a lo largo del mes | E | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/b6087f159facf80c7d68344a515e49c3e7156ed0) · [Notebook](../consumo/T44_T45_agregados.ipynb) · [Ruta web tras integrar](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase2/t45) |
 | T46 | Sensibilidad (tornado) | E | | pendiente | |
 
 ## Fase 3. Estación de recarga (20 %)
