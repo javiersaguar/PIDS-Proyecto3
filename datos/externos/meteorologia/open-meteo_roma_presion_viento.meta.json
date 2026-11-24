@@ -1,0 +1,15 @@
+{
+  "fecha_descarga_utc": "2026-11-24T12:02:55.901941+00:00",
+  "fichero": "open-meteo_roma_presion_viento.json",
+  "sha256": "be5fc80bd3e4b68ed4a7e188c1a445dfe3d166eaf49dcb2754ea816325a5d0ed",
+  "url": "https://archive-api.open-meteo.com/v1/archive?latitude=41.8967&longitude=12.4822&start_date=2021-02-01&end_date=2021-02-28&timezone=Europe%2FRome&hourly=temperature_2m%2Csurface_pressure%2Cwind_speed_10m%2Cwind_direction_10m",
+  "documentacion": "https://open-meteo.com/en/docs/historical-weather-api",
+  "fuente": "Open-Meteo Historical Weather API, best_match como en T17",
+  "licencia": "CC BY 4.0",
+  "referencia_t17": "open-meteo_roma_2021-02_2026-11-18.json",
+  "coinciden_valores": {
+    "temperature_2m": true,
+    "wind_speed_10m": true
+  },
+  "atribucion": "Open-Meteo y Copernicus Climate Change Service"
+}

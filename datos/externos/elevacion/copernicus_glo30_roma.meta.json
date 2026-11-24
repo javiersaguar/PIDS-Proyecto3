@@ -1,0 +1,21 @@
+{
+  "fecha_descarga_utc": "2026-11-24T12:02:55.581034+00:00",
+  "fichero": "copernicus_glo30_roma.csv.gz",
+  "sha256": "316a3dcd9e168e687c9865a8d71455f321e3cce5f9d6f22af3fa560a0c725b8c",
+  "fuente": "Copernicus DEM GLO-30 Public (DSM)",
+  "documentacion": "https://dataspace.copernicus.eu/explore-data/data-collections/copernicus-contributing-missions/collections-description/COP-DEM",
+  "licencia": "https://copernicus-dem-30m.s3.amazonaws.com/readme.html#license",
+  "atribucion": "Copernicus WorldDEM-30 © DLR e.V. 2010–2014 y © Airbus Defence and Space GmbH 2014–2018, distribuido por la UE y ESA.",
+  "datum_vertical": "EGM2008",
+  "resolucion_arcsec": 1,
+  "exactitud_vertical_absoluta_le90_m_menor_que": 4,
+  "exactitud_vertical_relativa_le90_m_pendiente_hasta_20_pct_menor_que": 2,
+  "puntos_unicos": 46697,
+  "interpolacion": "centro de píxel más cercano",
+  "teselas": [
+    {
+      "url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N41_00_E012_00_DEM/Copernicus_DSM_COG_10_N41_00_E012_00_DEM.tif",
+      "sha256_geotiff": "6bb6f0bf79085f0daab26318341959f239856c1f82d55e49f651c2c9d355eb6e"
+    }
+  ]
+}

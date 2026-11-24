@@ -1,0 +1,31 @@
+# Hipótesis de los experimentos de consumo. La capacidad, masa y tiempo
+# nominales del patinete se leen de config.yaml en la raíz.
+modelo_b:
+  masa_usuario_kg: 75.0  # Hipótesis de T16; orden de magnitud en https://doi.org/10.3390/su15118976
+  gravedad_m_s2: 9.81  # Aproximación de T16 a la gravedad convencional.
+  densidad_referencia_kg_m3: 1.225  # Atmósfera estándar de T16 a nivel del mar.
+  gas_aire_seco_j_kg_k: 287.05  # Constante específica del aire seco.
+  eta_traccion: 0.80  # Supuesto de T16 para el motor y la transmisión en conjunto.
+  eta_transmision: 1.0  # Ya contabilizada en eta_traccion; evita descontarla dos veces.
+  eta_descarga: 0.95  # Supuesto de T16 para pérdidas en la descarga.
+  regeneracion: 0.0  # Referencia sin recuperación, a falta de telemetría.
+  velocidad_crucero_km_h: 20.0  # Comparación de T16 con la velocidad media GPS.
+  escenarios:
+    bajo: {crr: 0.010, cda_m2: 0.40}
+    central: {crr: 0.015, cda_m2: 0.55}
+    alto: {crr: 0.020, cda_m2: 0.70}
+  # Rangos de T16. La fuerza aerodinámica sigue el esquema de
+  # https://doi.org/10.3390/su15118976; los coeficientes no son mediciones de Helbiz.
+fuentes:
+  elevacion_meta: elevacion/copernicus_glo30_roma.meta.json
+  meteo_t17: meteorologia/open-meteo_roma_2021-02_2026-11-18.json
+  meteo_consumo_meta: meteorologia/open-meteo_roma_presion_viento.meta.json
+  dem: https://copernicus-dem-30m.s3.amazonaws.com
+  coordenadas_decimales: 7  # Cuantización menor de 2 cm, por debajo del tamaño de píxel.
+analisis:
+  red_diseno: habitual  # Decisión T28/T39.
+  redes_sensibilidad: [equidad, redundante]
+  reserva_t35: reserva20  # Lee la cifra y el régimen de carga del escenario publicado de T35.
+  cuantil_demanda: 0.95  # Percentil de días e intervalos para documentar la cola de demanda (plan).
+  paso_perfil_min: 15  # Intervalo de diseño de la sección 6 del plan.
+  top_concentracion: 10  # Estaciones de mayor energía, mismo indicador que T39.
