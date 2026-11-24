@@ -33,4 +33,4 @@ cuando ya existan los derivados de T31 y T39. Los notebooks usan los externos
 archivados. `python consumo/fuentes.py` permite actualizarlos explícitamente
 a partir de GLO-30 y la consulta de Open-Meteo. El análisis verifica su huella.
 La [entrada para recarga](../datos/procesados/README.md#entrega-de-consumo-a-recarga)
-se regenera con T44. [Conclusiones](../docs/conclusiones_eda.md#cierre-de-consumo-t40t45)
+se regenera con T44. [Conclusiones](../docs/conclusiones_eda.md#cierre-de-consumo-t40t46)

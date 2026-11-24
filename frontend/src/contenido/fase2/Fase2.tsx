@@ -14,6 +14,7 @@ type Fisico = {
   periodo: Periodo; viajes: number; distancia_km: number; a_wh_km: number; b_wh_km: number; b_bruto_wh_km: number;
   k: number; llano_t16_wh_km: number; llano_horario_wh_km: number; viento_wh_km: number;
   rango_bajo_wh_km: number; rango_alto_wh_km: number; mae_wh: number; p95_abs_wh: number; max_a_wh: number;
+  traccion_nula_b: number; cero_calibracion_total: number;
 };
 type Desnivel = {
   periodo: Periodo; viajes: number; suben: number; bajan: number; p95_abs_m: number; aporte_kwh: number; aporte_medio_wh: number;
@@ -40,6 +41,12 @@ type Datos = {
   estacion_inicial: string; n_top: number;
   observado_diario: { periodo: Periodo; fecha: string; viajes: number; energia_wh_a: number; energia_wh_b: number }[];
 };
+type Tornado = {
+  factor: string; parametro: string; valor: string; periodo: Periodo; k: number; fisico_wh_km: number; kwh_dia: number;
+  estacion_max: string; estacion_max_kwh_dia: number; pico_red_kw: number; spearman_central: number; comunes_top10: number;
+  misma_estacion_max: boolean; cambio_estacion_max_kwh_dia_pct: number; cambio_pico_red_kw_pct: number;
+};
+type Sensibilidad = { tornado: Tornado[]; central: Record<Periodo, string> };
 type Perfiles = { minutos: number[]; perfiles: { periodo: Periodo; station_id: string; a: number[]; b: number[] }[] };
 
 const PERIODOS = [{ valor: "ajuste", texto: "Ajuste" }, { valor: "reservada", texto: "Semana reservada" }] as const;
@@ -50,6 +57,7 @@ const TAREAS = [
   { id: "t43", titulo: "Calibración", objetivo: "Ajustar una sola escala y comprobar su transferencia." },
   { id: "t44", titulo: "Demanda por estación", objetivo: "Conciliar la energía observada con la reposición en destinos atendidos." },
   { id: "t45", titulo: "Estado de carga", objetivo: "Seguir la batería de cada unidad simulada durante todo febrero." },
+  { id: "t46", titulo: "Sensibilidad", objetivo: "Medir qué hipótesis cambian la estación con más energía, su demanda diaria y el pico de la red." },
 ];
 const BASE = "https://github.com/javiersaguar/PIDS-Proyecto3/blob/main/";
 const color = { a: "#306eae", b: "#a45c2f" };
@@ -84,22 +92,28 @@ export function Fase2() {
         {actual.id === "t43" && <Calibracion fila={f} hist={datos.histogramas.find((x) => x.periodo === periodo)!} />}
         {actual.id === "t44" && <Demanda datos={datos} periodo={periodo} />}
         {actual.id === "t45" && <Baterias datos={datos} periodo={periodo} />}
-        <p className="fuente"><a href={BASE + (actual.id >= "t44" ? "consumo/T44_T45_agregados.ipynb" : "consumo/T41_T43_modelo_b.ipynb")}>
+        {actual.id === "t46" && <Tornados periodo={periodo} />}
+        <p className="fuente"><a href={BASE + (actual.id === "t46" ? "consumo/T46_sensibilidad.ipynb"
+          : actual.id >= "t44" ? "consumo/T44_T45_agregados.ipynb" : "consumo/T41_T43_modelo_b.ipynb")}>
           Notebook ejecutado y resultados</a></p>
       </>}
     </Seccion>
     <section className="seccion" id="decisiones">
-      <header><div><div className="etiqueta">Consumo</div><h2>Decisiones de T40–T45</h2></div>
+      <header><div><div className="etiqueta">Consumo</div><h2>Decisiones de T40–T46</h2></div>
         <p>Criterios para pasar de los viajes atendidos al dimensionado eléctrico de las estaciones.</p></header>
       {datos && <TablaDesplegable titulo="Evidencia, periodo y decisión" cabeceras={["Decisión", "Evidencia", "Efecto en el proyecto"]}
         filas={[
           ["A como referencia de recarga", "Coeficiente del enunciado y pico de red superior en ajuste", "Dimensionar la demanda base con A"],
           ["B como sensibilidad por estación", num(datos.ranking.find((r) => r.periodo === "ajuste")!.spearman, 3) +
-            " de Spearman en ajuste. Cambia la estación con mayor energía.", "Comprobar las cargas locales con ambos modelos"],
+            " de Spearman en ajuste. La estación con más energía cambia por el desnivel.", "Comprobar las cargas locales con ambos modelos"],
+          ["Calibrar solo rodadura y aire", "El desnivel conserva su trabajo físico y ningún viaje queda en 0 Wh (antes " +
+            num(datos.fisico.find((x) => x.periodo === "ajuste")!.cero_calibracion_total) + " en el ajuste)", "B más fiel en subidas y bajadas"],
+          ["Margen de ±20 % en la demanda", "T46: los coeficientes físicos mueven poco la demanda; el coeficiente de referencia la mueve en proporción",
+            "Probar el dimensionado de T50–T55 con ese margen"],
           ["Reposición en el destino atendido", "Suma reconciliada de viajes, patinetes y estaciones", "Usar T44_entrada_recarga.parquet en T50"],
           ["Reserva operativa de T35", pc(datos.soc[0].reserva_pct, 0) + " en las simulaciones de ambos modelos", "Evaluar la potencia disponible en la fase 3"],
         ]} />}
-      <p><a href={BASE + "docs/conclusiones_eda.md#cierre-de-consumo-t40t45"}>Evidencia y limitaciones en el repositorio</a></p>
+      <p><a href={BASE + "docs/conclusiones_eda.md#cierre-de-consumo-t40t46"}>Evidencia y limitaciones en el repositorio</a></p>
     </section>
   </>;
 }
@@ -121,9 +135,10 @@ function Referencia({ datos, fisico: f }: { datos: Datos; fisico: Fisico }) {
 function Fisica({ fila: f }: { fila: Fisico }) {
   return <Bloque titulo="Efecto de la física y los supuestos" queMuestra="Intensidad de los viajes con llano T16, desnivel neto y escenarios de sensibilidad."
     porQue="Velocidad y pendiente redistribuyen el consumo entre viajes."
-    comoLeer="Las tres primeras barras son previas a calibración. Las demás conservan el factor central del ajuste."
+    comoLeer="Las tres primeras barras son previas a la calibración. Las demás usan la escala central del ajuste, que multiplica solo rodadura y aire. El viento se reduce de 10 m a la altura del conductor."
     conclusiones={["En llano, " + num(f.llano_t16_wh_km, 2) + " Wh/km con la densidad de T16.",
-      "Con densidad horaria y desnivel neto, " + num(f.b_bruto_wh_km, 2) + " Wh/km antes de escalar."]}
+      "Con densidad horaria, desnivel neto y la electrónica de a bordo, " + num(f.b_bruto_wh_km, 2) + " Wh/km antes de escalar.",
+      "Con viento a la altura del conductor, " + num(f.viento_wh_km, 2) + " Wh/km."]}
     fuente="T41_intensidades.csv, Copernicus GLO-30 y Open-Meteo">
     <Grafica descripcion="Intensidad del Modelo B por escenario físico" alto={325} trazas={[{
       type: "bar", x: ["Llano T16", "Llano horario", "B físico", "B bajo", "B central", "B alto", "B con viento"],
@@ -151,8 +166,10 @@ function Calibracion({ fila: f, hist: h }: { fila: Fisico; hist: Hist }) {
     <Bloque titulo="Comparación por viaje" queMuestra="Número de viajes por combinación de Wh de los modelos A y B calibrado."
       porQue="La intensidad total igualada puede ocultar diferencias por viaje o estación."
       comoLeer="La diagonal marca la coincidencia. Por encima, B asigna mayor energía que A."
-      conclusiones={["Factor del ajuste k = " + num(f.k, 4) + ". En este periodo B da " + num(f.b_wh_km, 2) + " Wh/km.",
-        "Diferencia absoluta media de " + num(f.mae_wh, 2) + " Wh por viaje. El P95 es " + num(f.p95_abs_wh, 2) + " Wh."]}
+      conclusiones={["Escala de rodadura y aire del ajuste k = " + num(f.k, 4) + ". En este periodo B da " + num(f.b_wh_km, 2) + " Wh/km.",
+        "Diferencia absoluta media de " + num(f.mae_wh, 2) + " Wh por viaje. El P95 es " + num(f.p95_abs_wh, 2) + " Wh.",
+        "Ningún viaje queda en 0 Wh: " + num(f.traccion_nula_b) + " bajan sin tracción y solo gastan la electrónica. Escalando toda la energía quedaban " +
+        num(f.cero_calibracion_total) + " en cero."]}
       fuente="T43_calibracion.csv y T43_viajes.csv.gz">
       <Grafica descripcion="Dispersión de energía A y B por viaje" alto={345} trazas={[{
         type: "heatmap", x: h.centros_wh, y: h.centros_wh, z: h.densidad, colorscale: "Blues",
@@ -224,4 +241,57 @@ function Baterias({ datos, periodo }: { datos: Datos; periodo: Periodo }) {
     })} capa={{ yaxis: { title: { text: "Carga (%)" }, range: [0, 105] },
       shapes: [{ type: "line", xref: "paper", yref: "y", x0: 0, x1: 1, y0: t[0].reserva_pct, y1: t[0].reserva_pct, line: { dash: "dot" } }] }} />
   </Bloque>;
+}
+
+type Cambio = "cambio_estacion_max_kwh_dia_pct" | "cambio_pico_red_kw_pct";
+
+function Tornados({ periodo }: { periodo: Periodo }) {
+  const { datos, error } = useDatos<Sensibilidad>("fase2/sensibilidad");
+  if (!datos) return <Cargando error={error} />;
+  const t = datos.tornado.filter((x) => x.periodo === periodo);
+  const centro = t.find((x) => x.parametro === "central")!;
+  const casos = t.filter((x) => x.parametro !== "central");
+  const rango = (f: string, c: Cambio) => {
+    const v = casos.filter((x) => x.factor === f).map((x) => x[c]);
+    return [Math.min(0, ...v), Math.max(0, ...v)];
+  };
+  const amplitud = (f: string) => Math.max(...rango(f, "cambio_pico_red_kw_pct").map(Math.abs));
+  const orden = [...new Set(casos.map((x) => x.factor))].sort((a, b) => amplitud(a) - amplitud(b));
+  const fisicos = casos.filter((x) => !["referencia_relativa", "calibracion"].includes(x.parametro));
+  const maximo = (c: Cambio) => Math.max(...fisicos.map((x) => Math.abs(x[c])));
+  const cambian = [...new Set(casos.filter((x) => !x.misma_estacion_max && x.parametro !== "referencia_relativa")
+    .map((x) => x.factor.toLowerCase()))];
+  const ref = casos.filter((x) => x.parametro === "referencia_relativa").map((x) => x.pico_red_kw);
+  const trazas = (c: Cambio) => [{
+    type: "bar" as const, orientation: "h" as const, y: orden, base: orden.map((f) => rango(f, c)[0]),
+    x: orden.map((f) => rango(f, c)[1] - rango(f, c)[0]), marker: { color: color.a },
+    customdata: orden.map((f) => rango(f, c)[1]),
+    hovertemplate: "%{y}<br>De %{base:.1f} % a %{customdata:.1f} %<extra></extra>",
+  }];
+  const capa = { xaxis: { title: { text: "Cambio frente al caso central (%)" }, zeroline: true }, yaxis: { automargin: true } };
+  return <>
+    <Bloque titulo="Qué hipótesis mueven la demanda de recarga"
+      queMuestra="Cambio de la energía diaria de la estación que más recibe al mover un parámetro cada vez."
+      porQue="La fase 3 dimensiona una estación concreta: importa si cambia cuál es y cuánta energía pide."
+      comoLeer="Cada barra va del menor al mayor cambio frente al caso central. En cada caso se recalibra la escala para que el ajuste dé 13,5 Wh/km, salvo en el contraste del coeficiente de referencia."
+      conclusiones={["Los parámetros físicos mueven la energía de la estación máxima como mucho un " + pc(maximo("cambio_estacion_max_kwh_dia_pct"), 1) +
+        " y el pico de la red un " + pc(maximo("cambio_pico_red_kw_pct"), 1) + ".",
+        "La estación con más energía es " + centro.estacion_max + " (" + num(centro.estacion_max_kwh_dia, 3) + " kWh/día)." +
+        (cambian.length ? " Solo cambia con: " + cambian.join(", ") + "." : " No cambia en ningún caso."),
+        "Un ±20 % en el coeficiente de referencia lleva el pico de la red de " + num(Math.min(...ref), 2) + " a " +
+        num(Math.max(...ref), 2) + " kW: es la incertidumbre que debe probar el dimensionado."]}
+      fuente="T46_tornado.csv">
+      <Grafica descripcion="Cambio de la energía diaria de la estación máxima por parámetro" alto={380}
+        trazas={trazas("cambio_estacion_max_kwh_dia_pct")} capa={capa} />
+    </Bloque>
+    <Bloque titulo="Pico simultáneo de la red" queMuestra="Cambio del pico de potencia de todas las estaciones juntas por parámetro."
+      porQue="El pico de la red es la referencia para la potencia de los cargadores y de la conexión."
+      comoLeer="Igual que la gráfica anterior. La potencia es la de T44, en el lado de la batería."
+      conclusiones={["Pico central: " + num(centro.pico_red_kw, 2) + " kW en este periodo."]} fuente="T46_tornado.csv">
+      <Grafica descripcion="Cambio del pico simultáneo de la red por parámetro" alto={380} trazas={trazas("cambio_pico_red_kw_pct")} capa={capa} />
+    </Bloque>
+    <TablaDesplegable titulo="Todos los casos" cabeceras={["Parámetro", "Valor", "Escala k", "kWh/día de la red", "Estación máxima", "kWh/día", "Pico red (kW)", "Spearman"]}
+      filas={t.map((x) => [x.factor, x.parametro === "central" ? "central" : x.valor, num(x.k, 3), num(x.kwh_dia, 2), x.estacion_max,
+        num(x.estacion_max_kwh_dia, 3), num(x.pico_red_kw, 2), num(x.spearman_central, 3)])} />
+  </>;
 }

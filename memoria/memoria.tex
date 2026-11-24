@@ -720,11 +720,16 @@ energía de batería con los rendimientos documentados. Con velocidad media
 da \cifra{consumo_llano}~Wh/km en llano y \cifra{consumo_bruto}~Wh/km en el
 caso central del ajuste.
 
-Se aplica el factor \cifra{consumo_factor} para igualar la intensidad de
-ajuste del enunciado. Resume pérdidas y dinámica que la distancia, el
-tiempo y los extremos no permiten medir. El mismo factor da
-\cifra{consumo_b_res}~Wh/km en reserva, con una diferencia absoluta media
-de \cifra{consumo_mae}~Wh por viaje entre A y B.
+La escala \cifra{consumo_factor} multiplica solo la rodadura y el aire para
+igualar la intensidad de ajuste del enunciado. Resume arranques, frenadas,
+rodeos y pérdidas que la distancia, el tiempo y los extremos no permiten
+medir, y que crecen con la distancia. El desnivel conserva su trabajo físico
+y la electrónica de a bordo añade una potencia constante de 3~W, también en
+las bajadas. Así ningún viaje queda en 0~Wh: \cifra{consumo_traccion_nula}
+viajes del ajuste bajan sin tracción y solo gastan la electrónica, frente a
+los \cifra{consumo_ceros_antes} que quedaban en cero al escalar toda la
+energía. La misma escala da \cifra{consumo_b_res}~Wh/km en reserva, con una
+diferencia absoluta media de \cifra{consumo_mae}~Wh por viaje entre A y B.
 
 \subsection{Hipótesis de velocidad y pendiente}
 Copernicus GLO-30 mide altura de superficie en una rejilla de un segundo
@@ -734,8 +739,17 @@ añade \cifra{consumo_desnivel_kwh}~kWh al B físico del ajuste previo al
 escalado. La velocidad media deja sin observar arranques y frenadas.
 El desnivel neto omite las subidas intermedias.
 Con el factor fijo, los rangos de rodadura y área efectiva dan
-\cifra{consumo_bajo}--\cifra{consumo_alto}~Wh/km. La sensibilidad al viento
-a 10~m proyectado sobre el rumbo origen--destino da \cifra{consumo_viento}~Wh/km.
+\cifra{consumo_bajo}--\cifra{consumo_alto}~Wh/km. El viento de 10~m se
+lleva a la altura del conductor con el perfil logarítmico y se proyecta sobre
+el rumbo origen--destino; como escenario da \cifra{consumo_viento}~Wh/km.
+
+T46 mueve un parámetro cada vez y recalibra la escala. Los parámetros
+físicos cambian como mucho un \cifra{consumo_t46_estacion}\pc{} la energía
+diaria de la estación que más recibe, y el orden de las estaciones apenas se
+altera (Spearman de al menos \cifra{consumo_t46_spearman}). Lo que más pesa es
+el coeficiente de referencia: un $\pm$20\pc{} lleva el pico de la red del
+ajuste de \cifra{consumo_t46_pico_bajo} a \cifra{consumo_t46_pico_alto}~kW,
+así que el dimensionado de la estación debe probar ese margen.
 
 \subsection{Consumo por viaje, patinete, flota y estación}
 La energía de los viajes observados se agrega por patinete y día de salida.
@@ -765,7 +779,8 @@ lado batería.
 \end{table}
 
 En reserva, la estación de mayor energía pasa de \texttt{\cifra{consumo_estacion_res_a}}
-con A a \texttt{\cifra{consumo_estacion_res_b}} con B. Aunque el pico simultáneo de red es menor con B,
+con A a \texttt{\cifra{consumo_estacion_res_b}} con B. En el ajuste la diferencia se debe al
+desnivel: sin él, B elige la misma estación que A (T46). Aunque el pico simultáneo de red es menor con B,
 en el ajuste sube el pico individual de \cifra{consumo_picos_b} estaciones.
 Recarga adopta A por la referencia del enunciado y su mayor pico de red
 en el ajuste. Se contrasta con B al dimensionar cada emplazamiento.

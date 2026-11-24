@@ -564,6 +564,15 @@ def cifras() -> dict[str, str]:
           "consumo_sin_destino_kwh": num(conc_res["sin_destino_wh"] / 1000, 2),
           "consumo_reserva": num(zres["reserva_pct"]),
           "consumo_rechazos_bateria": num(soc["rechazos_bateria"].sum())}
+    tornado = leer("consumo/T46_tornado.csv")
+    fisicos = tornado.loc[~tornado["parametro"].isin(["central", "referencia_relativa", "calibracion"])]
+    referencia = tornado.loc[tornado["parametro"].eq("referencia_relativa") & tornado["periodo"].eq("ajuste")]
+    c |= {"consumo_traccion_nula": num(f_a["traccion_nula_b"]),
+          "consumo_ceros_antes": num(f_a["cero_calibracion_total"]),
+          "consumo_t46_estacion": num(fisicos["cambio_estacion_max_kwh_dia_pct"].abs().max(), 1),
+          "consumo_t46_spearman": num(fisicos["spearman_central"].min(), 3),
+          "consumo_t46_pico_bajo": num(referencia["pico_red_kw"].min(), 2),
+          "consumo_t46_pico_alto": num(referencia["pico_red_kw"].max(), 2)}
     return c
 
 

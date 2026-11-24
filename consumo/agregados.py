@@ -196,7 +196,7 @@ def publicar_agregados():
 
 
 def rango_modelo_b(v, l, est, n_top):
-    campos = ["escenario_bajo_wh", "escenario_alto_wh", "escenario_viento_10m_wh"]
+    campos = ["escenario_bajo_wh", "escenario_alto_wh", "escenario_viento_wh"]
     llegadas = l.merge(v[["trip_id", *campos]], on="trip_id", validate="one_to_one")
     filas = []
     for periodo, g in llegadas.groupby("periodo"):

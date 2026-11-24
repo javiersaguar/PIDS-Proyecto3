@@ -181,7 +181,7 @@ Calcular la energía de tracción de cada viaje como `E_wh = 13,5 × dis_m / 1 0
 
 **Evidencia de cierre.** Conciliar las sumas por viaje, flota y estación sobre los mismos conjuntos. Entregar una tabla por viaje y un contraste de modelos con el cambio observado sobre el dimensionado.
 
-La fase deja el Modelo A (13,5 Wh/km) como demanda base de recarga y el Modelo B calibrado como sensibilidad por estación. El factor de escala, 1,8593, se fija en el ajuste y da 13,54 Wh/km en la semana reservada. Con la red elegida se reponen 16,64 kWh/día en el ajuste y 18,76 kWh/día en la semana reservada, y las sumas por viaje, patinete, flota y estación cuadran. Con carga en cada anclaje y reserva del 20 %, ningún patinete se queda sin batería. Queda la sensibilidad de T46. [Cierre y evidencia](conclusiones_eda.md#cierre-de-consumo-t40t45)
+La fase deja el Modelo A (13,5 Wh/km) como demanda base de recarga y el Modelo B calibrado como sensibilidad por estación. El factor de escala, 1,8593, se fija en el ajuste y da 13,54 Wh/km en la semana reservada. Con la red elegida se reponen 16,64 kWh/día en el ajuste y 18,76 kWh/día en la semana reservada, y las sumas por viaje, patinete, flota y estación cuadran. Con carga en cada anclaje y reserva del 20 %, ningún patinete se queda sin batería. Queda la sensibilidad de T46. [Cierre y evidencia](conclusiones_eda.md#cierre-de-consumo-t40t46)
 
 ## 6. Estaciones de recarga
 

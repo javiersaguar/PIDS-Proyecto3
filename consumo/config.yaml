@@ -8,8 +8,23 @@ modelo_b:
   eta_traccion: 0.80  # Supuesto de T16 para el motor y la transmisión en conjunto.
   eta_transmision: 1.0  # Ya contabilizada en eta_traccion; evita descontarla dos veces.
   eta_descarga: 0.95  # Supuesto de T16 para pérdidas en la descarga.
-  regeneracion: 0.0  # Referencia sin recuperación, a falta de telemetría.
+  regeneracion: 0.0  # Sin recuperación. Con un solo tramo neto por viaje no influye: un viaje que
+  # baja en neto ya queda en cero tracción; mediría algo con perfiles de velocidad y altura.
   velocidad_crucero_km_h: 20.0  # Comparación de T16 con la velocidad media GPS.
+  # La calibración escala solo rodadura y aire (pérdidas que crecen con la distancia:
+  # arranques, frenadas, rodeos). El trabajo gravitatorio del desnivel conserva su valor físico.
+  calibracion: rodadura_aire
+  # Electrónica de a bordo (controlador, módulo de conexión y luces) durante el viaje.
+  # Hipótesis sin dato del fabricante: se varía entre 0 y 10 W en T46.
+  potencia_auxiliar_w: 3.0
+  # Viento de Open-Meteo (10 m) llevado a la altura del conductor con el perfil logarítmico
+  # neutro. Rugosidad: clase «muy rugosa» (0,5 m) de la clasificación de Davenport recogida en
+  # la guía de instrumentos de la OMM (WMO-No. 8); el centro urbano supera 1 m y dentro de la
+  # capa de edificios el perfil solo es una aproximación, por eso el viento es un escenario.
+  viento:
+    altura_conductor_m: 1.2
+    altura_medida_m: 10.0
+    rugosidad_m: 0.5
   escenarios:
     bajo: {crr: 0.010, cda_m2: 0.40}
     central: {crr: 0.015, cda_m2: 0.55}
@@ -22,6 +37,16 @@ fuentes:
   meteo_consumo_meta: meteorologia/open-meteo_roma_presion_viento.meta.json
   dem: https://copernicus-dem-30m.s3.amazonaws.com
   coordenadas_decimales: 7  # Cuantización menor de 2 cm, por debajo del tamaño de píxel.
+# T46: cada parámetro se mueve solo, el resto queda en el caso central y se recalibra la escala.
+sensibilidad:
+  crr: [0.010, 0.020]
+  cda_m2: [0.40, 0.70]
+  masa_usuario_kg: [60.0, 90.0]
+  eta_traccion: [0.70, 0.90]
+  potencia_auxiliar_w: [0.0, 10.0]
+  rugosidad_viento_m: [0.25, 1.0]
+  # Contraste de escala: coeficiente de referencia ±20 % (no es un rango medido).
+  referencia_relativa: [0.8, 1.2]
 analisis:
   red_diseno: habitual  # Decisión T28/T39.
   redes_sensibilidad: [equidad, redundante]

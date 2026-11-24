@@ -50,6 +50,7 @@ PASOS = [
     # Fase 2. Consumo
     "consumo/T41_T43_modelo_b.ipynb",
     "consumo/T44_T45_agregados.ipynb",
+    "consumo/T46_sensibilidad.ipynb",
     "consumo/test_consumo.py",
 ]
 
