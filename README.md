@@ -33,6 +33,15 @@ python -m venv .venv
 salidas y regenera las tablas, las figuras y los datos de la web. Para trabajar en un
 notebook, ábrelo en VS Code o Jupyter con el kernel de `.venv`.
 
+Si T21 indica que no encuentra la DLL de GDAL en Windows, añade la carpeta de
+bibliotecas que incluye Pyogrio al `PATH` de esa terminal para retomar el análisis.
+
+```powershell
+$gdal = (Resolve-Path -LiteralPath .venv/Lib/site-packages/pyogrio.libs).Path
+$env:Path = "$gdal;$env:Path"
+.venv\Scripts\python ejecutar_todo.py --desde movilidad/T21_matrices_od_administrativas.ipynb
+```
+
 Todos los parámetros están en `config.yaml`. Los viajes limpios se cargan con
 `from comun.datos import cargar_viajes`, que regenera
 `datos/procesados/viajes_limpios.parquet` si falta o si cambian los parámetros de limpieza.
@@ -87,6 +96,11 @@ entradas versionadas, las instrucciones y los resultados de esa misma revisión.
 Ejecutar el comando sobre la revisión final cuando estén incorporados la memoria
 y los resultados de recarga. El PDF de la revisión se copia tal como está.
 [Formato de entrega](docs/enunciado.md#entregable)
+
+Al repetir T26–T27, los límites de tiempo del optimizador pueden cambiar las
+cotas y algunos emplazamientos de las redes alternativas. Para cotejar las
+cifras publicadas, el ZIP conserva las tablas y las ubicaciones de la
+revisión que produjo la memoria.
 
 ## Estructura
 
