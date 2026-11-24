@@ -4,8 +4,9 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -p . && vite build",
+    "tareas": "node scripts/tareas.mjs",
+    "dev": "node scripts/tareas.mjs && vite",
+    "build": "node scripts/tareas.mjs && tsc -p . && vite build",
     "preview": "vite preview"
   },
   "dependencies": {

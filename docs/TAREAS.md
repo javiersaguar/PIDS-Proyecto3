@@ -10,6 +10,28 @@ enunciado, `E` extra.
 Las fases 1 a 4 coinciden con los apartados del enunciado. La fase 0 deja los datos
 limpios y fija los parámetros que usan las demás. Líder del proyecto 3: Javier Saguar.
 
+## Bloques
+
+Cada tarea pertenece a un bloque de trabajo. La web lee esta tabla y los estados de
+las tablas de cada fase para enseñar el avance en la [página de inicio](https://javiersaguar.github.io/PIDS-Proyecto3/#/inicio/seguimiento).
+El reparto y la revisión cruzada de cada bloque están en [PLAN.md, sección 10](PLAN.md#10-calendario-y-reparto).
+
+| Bloque | Tareas | Responsable |
+|---|---|---|
+| Puesta en marcha y organización | T01–T09 | Javier (T05, los dos) |
+| Fase 0 · Limpieza, recolocaciones, patrones temporales y tarifa | T10–T12, T18 | Javier |
+| Fase 0 · Exploración espacial, recorridos, energía de referencia y meteorología | T13–T17 | Alejandro |
+| Fase 0 · Cierre de la exploración | T19 | Los dos |
+| Fase 1 · Matrices OD y zonificaciones | T20–T23 | Alejandro (T20) y Javier (T21–T23) |
+| Fase 1 · Candidatos, localización y validación de la red | T24–T30 | Javier |
+| Fase 1 · Asignación, inventario, rebalanceo y flota | T31–T34 | Alejandro (T31, T34) y Javier (T32, T33) |
+| Fase 1 · Operación, incidencias y comparación de redes | T35–T39 | Javier (T36 con Alejandro) |
+| Fase 2 · Consumo | T40–T46 | Javier (T40–T45) |
+| Fase 3 · Estación de recarga, PVWatts y balance | T50–T59 | Alejandro |
+| Fase 4 · Conclusiones, memoria y entrega | T60–T66 | Los dos (T62 Javier, T63 Alejandro) |
+| Demo 3D | T70–T75 | Alejandro (T70, T71) |
+| Experimentos integrados | T80–T82 | Javier |
+
 ## Fase 0. Datos: puesta en marcha, limpieza y exploración (hasta el 23/11)
 
 Detalle en [PLAN.md, sección 3](PLAN.md#3-datos-y-exploración). Cada tarea de exploración
@@ -66,12 +88,12 @@ responde a una pregunta y deja una tabla o figura que se cita en `docs/conclusio
 
 | ID | Tarea | Tipo | Responsable | Estado | Entrega |
 |---|---|---|---|---|---|
-| T40 | Modelo A: 13,5 Wh/km por viaje | R | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/bec59b007fd947783db0975e6f38db245fbbef33) · [Modelo A](../consumo/modelo_a.py) · [Tabla por viaje](../resultados/tablas/consumo/T40_energia_viaje.csv) · [Control T40](../consumo/test_consumo.py) · [Ruta web tras integrar](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase2/t40) |
-| T41 | Modelo B físico con parámetros referenciados | R | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/345db580e817a67f9065f7353a40c64cc774544e) · [Notebook](../consumo/T41_T43_modelo_b.ipynb) · [Ruta web tras integrar](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase2/t41) |
-| T42 | Desnivel origen-destino con modelo de elevaciones | E | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/345db580e817a67f9065f7353a40c64cc774544e) · [Notebook](../consumo/T41_T43_modelo_b.ipynb) · [Ruta web tras integrar](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase2/t42) |
-| T43 | Calibración del modelo B frente a 13,5 Wh/km | R | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/345db580e817a67f9065f7353a40c64cc774544e) · [Notebook](../consumo/T41_T43_modelo_b.ipynb) · [Ruta web tras integrar](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase2/t43) |
-| T44 | Consumo por viaje, patinete, flota y estación | R | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/b6087f159facf80c7d68344a515e49c3e7156ed0) · [Notebook](../consumo/T44_T45_agregados.ipynb) · [Ruta web tras integrar](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase2/t44) |
-| T45 | Estado de carga por patinete a lo largo del mes | E | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/b6087f159facf80c7d68344a515e49c3e7156ed0) · [Notebook](../consumo/T44_T45_agregados.ipynb) · [Ruta web tras integrar](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase2/t45) |
+| T40 | Modelo A: 13,5 Wh/km por viaje | R | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/bec59b007fd947783db0975e6f38db245fbbef33) · [Modelo A](../consumo/modelo_a.py) · [Tabla por viaje](../resultados/tablas/consumo/T40_energia_viaje.csv) · [Control T40](../consumo/test_consumo.py) · [Web](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase2/t40) |
+| T41 | Modelo B físico con parámetros referenciados | R | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/345db580e817a67f9065f7353a40c64cc774544e) · [Notebook](../consumo/T41_T43_modelo_b.ipynb) · [Web](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase2/t41) |
+| T42 | Desnivel origen-destino con modelo de elevaciones | E | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/345db580e817a67f9065f7353a40c64cc774544e) · [Notebook](../consumo/T41_T43_modelo_b.ipynb) · [Web](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase2/t42) |
+| T43 | Calibración del modelo B frente a 13,5 Wh/km | R | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/345db580e817a67f9065f7353a40c64cc774544e) · [Notebook](../consumo/T41_T43_modelo_b.ipynb) · [Web](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase2/t43) |
+| T44 | Consumo por viaje, patinete, flota y estación | R | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/b6087f159facf80c7d68344a515e49c3e7156ed0) · [Notebook](../consumo/T44_T45_agregados.ipynb) · [Web](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase2/t44) |
+| T45 | Estado de carga por patinete a lo largo del mes | E | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/b6087f159facf80c7d68344a515e49c3e7156ed0) · [Notebook](../consumo/T44_T45_agregados.ipynb) · [Web](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase2/t45) |
 | T46 | Sensibilidad (tornado) | E | | pendiente | |
 
 ## Fase 3. Estación de recarga (20 %)
@@ -96,7 +118,7 @@ responde a una pregunta y deja una tabla o figura que se cita en `docs/conclusio
 | T60 | Probar el diseño con días difíciles, demanda punta adicional y producción solar baja | E | | pendiente | |
 | T61 | Conclusiones y limitaciones | R | | pendiente | |
 | T62 | Memoria `G05-P3.pdf` (LaTeX en `memoria/`) | R | Javier | en curso | |
-| T63 | Presentación en HTML | R | Alejandro | en curso | [Diapositivas](../presentacion/diapositivas/) con datos 0 y 1 hasta T34; `npm run html` genera [presentacion.html](../presentacion/presentacion.html) · [Versión animada en la web](https://javiersaguar.github.io/PIDS-Proyecto3/presentacion/) |
+| T63 | Presentación en HTML | R | Alejandro | en curso | [Diapositivas](../presentacion/diapositivas/) con las fases 0, 1 y 2 (14 diapositivas, hasta T45); `npm run html` genera [presentacion.html](../presentacion/presentacion.html) · [Versión animada en la web](https://javiersaguar.github.io/PIDS-Proyecto3/presentacion/) |
 | T64 | Reproducción en limpio | R | | pendiente | |
 | T65 | Script de empaquetado `G05-P3.zip` | R | | pendiente | |
 | T66 | Ensayo de la defensa | R | | pendiente | |

@@ -15,3 +15,5 @@ memoria/build/
 # Web: dependencias y compilación (la publica el flujo de GitHub Actions)
 frontend/node_modules/
 frontend/dist/
+# Se genera desde docs/TAREAS.md al compilar o arrancar la web
+frontend/src/tareas.json

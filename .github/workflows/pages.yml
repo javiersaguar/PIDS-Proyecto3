@@ -9,6 +9,7 @@ on:
       - "frontend/**"
       - "presentacion/diapositivas/**"
       - "resultados/tablas/**"
+      - "docs/TAREAS.md"
       - ".github/workflows/pages.yml"
   workflow_dispatch:
 

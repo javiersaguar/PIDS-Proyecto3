@@ -51,7 +51,7 @@ const TAREAS = [
   { id: "t44", titulo: "Demanda por estación", objetivo: "Conciliar la energía observada con la reposición en destinos atendidos." },
   { id: "t45", titulo: "Estado de carga", objetivo: "Seguir la batería de cada unidad simulada durante todo febrero." },
 ];
-const BASE = "https://github.com/javiersaguar/PIDS-Proyecto3/blob/javier-saguar/";
+const BASE = "https://github.com/javiersaguar/PIDS-Proyecto3/blob/main/";
 const color = { a: "#306eae", b: "#a45c2f" };
 const modelos = ["a", "b"] as const;
 

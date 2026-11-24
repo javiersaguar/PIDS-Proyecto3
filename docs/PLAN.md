@@ -74,7 +74,7 @@ flowchart LR
 | `viajes_limpios.parquet` | `trip_id`, `idS`, `tsO` y `tsD` en `Europe/Rome`, `lonO`, `latO`, `lonD`, `latD`, `dis_m`, `tt_s`, `vel_kmh`, `price_eur`, `periodo` (`ajuste` o `reservada`), `motivo` con todas las marcas separadas por `;` y `elegible` | Exploración, movilidad y consumo |
 | Catálogo de estaciones por red | `station_id`, coordenadas, área de cobertura, capacidad en anclajes y stock inicial | Simulador y frontend |
 | Asignaciones y eventos | `scenario_id`, `trip_id`, estaciones asignadas, distancias, estado y causa primaria de rechazo, salida y llegada efectivas | Recarga, indicadores y frontend |
-| Consumo por viaje | `trip_id`, `energy_wh` por modelo, parámetros de referencia y control de valores extremos | Recarga y balance de flota |
+| Consumo por viaje (`T43_energia_viaje.parquet`) y llegadas con energía (`T44_entrada_recarga.parquet`) | `trip_id`, `idS`, `red`, `periodo`, `tsD`, `estacion_destino`, `energia_wh_a` y `energia_wh_b`; clave `(red, trip_id)` y sumas conciliadas por viaje, patinete, flota y estación | Recarga y balance de flota |
 | Series de recarga y energía | Estación, principio y duración del intervalo, demanda, generación, batería, red y demanda pendiente o sin servir | Dimensionado, memoria y demo |
 | Exportación de demo | `run_id`, esquema, escenarios, geometrías, series y resúmenes obtenidos de las tablas anteriores | Frontend |
 
@@ -180,6 +180,8 @@ Calcular la energía de tracción de cada viaje como `E_wh = 13,5 × dis_m / 1 0
 5. Recalcular un escenario bajo, central y alto variando los parámetros dominantes. Comparar si cambia la estación crítica, su pico de potencia o el tamaño de batería recomendado. Priorizar las incertidumbres que alteren una decisión.
 
 **Evidencia de cierre.** Conciliar las sumas por viaje, flota y estación sobre los mismos conjuntos. Entregar una tabla por viaje y un contraste de modelos con el cambio observado sobre el dimensionado.
+
+La fase deja el Modelo A (13,5 Wh/km) como demanda base de recarga y el Modelo B calibrado como sensibilidad por estación. El factor de escala, 1,8593, se fija en el ajuste y da 13,54 Wh/km en la semana reservada. Con la red elegida se reponen 16,64 kWh/día en el ajuste y 18,76 kWh/día en la semana reservada, y las sumas por viaje, patinete, flota y estación cuadran. Con carga en cada anclaje y reserva del 20 %, ningún patinete se queda sin batería. Queda la sensibilidad de T46. [Cierre y evidencia](conclusiones_eda.md#cierre-de-consumo-t40t45)
 
 ## 6. Estaciones de recarga
 
@@ -333,7 +335,9 @@ Cada escenario apunta a una sola red y a sus propias series. Guardar en el manif
 | 30/11 · seguimiento | Redes candidatas, evaluación fuera del ajuste, contraste peatonal y territorial, primer simulador de inventario y modelo de consumo. | Conectar la red de referencia al simulador y preparar los estados de operación y rechazo. |
 | 09/12 · seguimiento | Comparaciones de cierres, anclajes y rebalanceo. Estación dimensionada, balance base y comparación de baterías. | Comparar el cierre en ambas redes y enlazar la maqueta con el balance de la estación. |
 | 14/12 · revisión | Sensibilidad a días difíciles, carga inteligente y despliegue por etapas. Figuras y tablas de las doce mejoras, memoria casi final y reproducción en limpio. | Guion ensayado, resultados cotejados con la memoria, compilación sin red y respaldo grabado. |
-| 14–16/12 · cierre | Memoria, código reproducible, presentación PDF y revisión del paquete. | Pasar la versión congelada al equipo que se usará en la defensa. |
+| 14–16/12 · cierre | Memoria, código reproducible, presentación en HTML y revisión del paquete. | Pasar la versión congelada al equipo que se usará en la defensa. |
+
+**Estado a 24/11.** Hay 45 de 72 tareas hechas. Las fases 0 y 1 están terminadas, a falta de la revisión cruzada de T19. El consumo se adelantó y T40–T45 están hechas; falta la sensibilidad de T46. Para el seguimiento del 30/11 quedan T46, el arranque de la estación de recarga (T50–T55) y los experimentos de anclajes y despliegue (T80–T81). La memoria (T62), la presentación (T63) y la demo (T70–T71) avanzan en paralelo. El avance de cada bloque se calcula con [TAREAS.md](TAREAS.md) y se publica en la [web](https://javiersaguar.github.io/PIDS-Proyecto3/#/inicio/seguimiento).
 
 **Fases de trabajo.** Las fases 1 a 4 coinciden con los apartados del enunciado. El seguimiento de cada tarea está en [TAREAS.md](TAREAS.md).
 
@@ -348,15 +352,23 @@ Cada escenario apunta a una sola red y a sus propias series. Guardar en el manif
 
 **Reparto**
 
-| Bloque | Responsable | Revisión y cruce |
-| --- | --- | --- |
-| Fase 0: entorno, limpieza, recolocaciones y patrones temporales | Javier | Alejandro contrasta umbrales y recuentos. |
-| Fase 0: exploración espacial, recorridos, energía de referencia y meteorología | Alejandro | Javier comprueba que cada conclusión cita su tabla o figura. |
-| Candidatos y stock de flota | Javier | Alejandro contrasta hipótesis y recuentos. |
-| Matrices OD y contraste de zonificaciones | Alejandro | Javier conecta las matrices con la red elegida y el mapa. |
-| Consumo, estación, PVWatts y balance | Alejandro | Javier revisa unidades, capacidad física, trazas e indicadores. |
-| Simulación de incidencias, integración y frontend | Javier | Alejandro contrasta con las tablas de movilidad y energía. |
-| Exportador, escenarios, memoria y defensa | Ambos | Acordar el esquema antes de integrar y revisar la misma ejecución en la memoria y la demo. |
+Cada tarea pertenece a un bloque. La tabla de bloques de [TAREAS.md](TAREAS.md#bloques) es la que usa la web; esta añade quién revisa cada bloque y su avance a 24/11.
+
+| Bloque | Tareas | Responsable | Revisión y cruce | Avance a 24/11 |
+| --- | --- | --- | --- | --- |
+| Puesta en marcha y organización | T01–T09 | Javier (T05, los dos) | Alejandro reproduce el entorno en su copia. | 9 de 9 |
+| Fase 0 · Limpieza, recolocaciones, patrones temporales y tarifa | T10–T12, T18 | Javier | Alejandro contrasta umbrales y recuentos. | 4 de 4 |
+| Fase 0 · Exploración espacial, recorridos, energía de referencia y meteorología | T13–T17 | Alejandro | Javier comprueba que cada conclusión cita su tabla o figura. | 5 de 5 |
+| Fase 0 · Cierre de la exploración | T19 | Los dos | Revisión cruzada de `conclusiones_eda.md`. | En revisión |
+| Fase 1 · Matrices OD y zonificaciones | T20–T23 | Alejandro (T20) y Javier (T21–T23) | Cada uno revisa la parte del otro; Javier conecta las matrices con la red elegida y el mapa. | 4 de 4 |
+| Fase 1 · Candidatos, localización y validación de la red | T24–T30 | Javier | Alejandro contrasta hipótesis y recuentos. | 7 de 7 |
+| Fase 1 · Asignación, inventario, rebalanceo y flota | T31–T34 | Alejandro (T31, T34) y Javier (T32, T33) | Cada uno revisa las sumas del otro. | 4 de 4 |
+| Fase 1 · Operación, incidencias y comparación de redes | T35–T39 | Javier (T36 con Alejandro) | Alejandro contrasta con las tablas de movilidad y energía y aprueba T36. | 5 de 5 |
+| Fase 2 · Consumo | T40–T46 | Javier (T40–T45) | Alejandro revisa unidades, hipótesis de `consumo/config.yaml` y la tabla de entrada a recarga. | 6 de 7 |
+| Fase 3 · Estación de recarga, PVWatts y balance | T50–T59 | Alejandro | Javier revisa unidades, capacidad física, trazas e indicadores. | 0 de 10 |
+| Fase 4 · Conclusiones, memoria y entrega | T60–T66 | Los dos (T62 Javier, T63 Alejandro) | Revisar la misma ejecución en la memoria y la demo. | 0 de 7, dos en curso |
+| Demo 3D | T70–T75 | Alejandro (T70, T71) | Acordar el esquema antes de integrar; Javier aporta los escenarios del simulador. | 0 de 6, dos en curso |
+| Experimentos integrados | T80–T82 | Javier | Alejandro contrasta con las tablas de movilidad. | 1 de 3 |
 
 **Líder del proyecto 3.** Javier Saguar coordina el reparto y los seguimientos de los lunes y revisa lo que entra en `main`. En cada seguimiento se cierran las hipótesis del siguiente hito y se comprueban las dependencias de las doce mejoras. [Calendario de la asignatura](enunciado.md#calendario) · [Seguimiento de tareas](TAREAS.md)
 

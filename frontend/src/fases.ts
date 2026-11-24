@@ -1,3 +1,4 @@
+// El estado de cada fase se calcula con sus tareas de docs/TAREAS.md (tareas.ts).
 export type Fase = {
   id: string;
   pestana: string;
@@ -5,7 +6,6 @@ export type Fase = {
   descripcion: string;
   fechas: string;
   peso?: string;
-  estado: "en curso" | "pendiente" | "cerrada";
   tareas: string;
   previsto: string[];
 };
@@ -18,7 +18,6 @@ export const FASES: Fase[] = [
     descripcion:
       "Deja los viajes limpios y fija los parámetros que usan las demás fases. Cada análisis responde a una pregunta y alimenta una decisión: umbrales de limpieza, franjas horarias, tipos de día, rejilla de candidatos, radios de acceso, rebalanceo y energía de referencia.",
     fechas: "18–23/11",
-    estado: "en curso",
     tareas: "T10–T19",
     previsto: [],
   },
@@ -30,7 +29,6 @@ export const FASES: Fase[] = [
       "Matrices origen–destino, redes candidatas de estaciones y la recomendación de cuántas estaciones, dónde, con cuántos anclajes y con qué flota. Muestra cuánto acceso se gana con cada incremento de infraestructura.",
     fechas: "23/11–4/12",
     peso: "60 %",
-    estado: "cerrada",
     tareas: "T20–T39",
     previsto: [],
   },
@@ -42,7 +40,6 @@ export const FASES: Fase[] = [
       "Energía por viaje, por patinete, por estación de destino y de la flota completa. Contrasta los 13,5 Wh/km del enunciado con un modelo físico sencillo y su sensibilidad.",
     fechas: "25/11–2/12",
     peso: "10 %",
-    estado: "en curso",
     tareas: "T40–T46",
     previsto: [
       "Sensibilidad por parámetro y efecto sobre el dimensionado (T46).",
@@ -56,7 +53,6 @@ export const FASES: Fase[] = [
       "Curvas de potencia demandada en todas las estaciones y diseño de una estación concreta con paneles fotovoltaicos y baterías, con su balance energético hora a hora.",
     fechas: "30/11–9/12",
     peso: "20 %",
-    estado: "pendiente",
     tareas: "T50–T59",
     previsto: [
       "Curvas de demanda cada 15 minutos por estación.",
@@ -72,7 +68,6 @@ export const FASES: Fase[] = [
       "Respuestas a las preguntas iniciales con cifras, límites del estudio y experimentos integrados de movilidad y recarga.",
     fechas: "9–16/12",
     peso: "10 %",
-    estado: "pendiente",
     tareas: "T60–T66",
     previsto: [
       "Resumen de la red recomendada: estaciones, anclajes, patinetes, cobertura y energía.",
