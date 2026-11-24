@@ -692,6 +692,20 @@ El pico simultáneo es \cifra{cierre_kw_red}~kW y el mayor pico individual,
 incorporará después el rendimiento y el suministro.
 \href{https://javiersaguar.github.io/PIDS-Proyecto3/\#/fase1/t39}{Comparación interactiva}.
 
+\subsection{Reparto de anclajes y despliegue por etapas (T80--T81)}
+Con la flota y los anclajes fijos, trasladar diez anclajes con una búsqueda
+voraz gana \cifra{t80_voraz_aj} viajes en el ajuste, donde se eligen, y solo
+\cifra{t80_voraz_res} en la reserva; llevarlos a las estaciones más usadas da
+\cifra{t80_uso_res}. El reparto de T32 ya está cerca de su óptimo y se mantiene.
+Un despliegue por etapas con módulos de cuatro anclajes empieza con
+\cifra{t81_anc_inicial} anclajes y pierde \cifra{t81_perdida_inicial} viajes en
+la reserva frente al despliegue completo, casi todos por devoluciones sin
+hueco. Tras tres ampliaciones semanales (\cifra{t81_modulos} módulos,
+\cifra{t81_anc_final} anclajes) la diferencia baja a \cifra{t81_perdida_final}
+viajes y cada módulo recupera \cifra{t81_por_modulo}. Es una alternativa
+viable para repartir la inversión.
+\href{https://javiersaguar.github.io/PIDS-Proyecto3/\#/fase1/t80}{Resultados interactivos}.
+
 \begin{figure}[!htb]
   \centering
   \includegraphics[width=0.9\textwidth]{T39_cierre_movilidad}

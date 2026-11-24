@@ -47,6 +47,7 @@ PASOS = [
     "consumo/modelo_a.py",
     "movilidad/cierre.py",
     "movilidad/T33_T39_cierre.ipynb",
+    "movilidad/T80_T81_capacidad.ipynb",
     # Fase 2. Consumo
     "consumo/T41_T43_modelo_b.ipynb",
     "consumo/T44_T45_agregados.ipynb",

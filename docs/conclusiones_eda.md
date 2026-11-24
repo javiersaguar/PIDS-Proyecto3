@@ -808,6 +808,42 @@ de T31–T32. La fase de Recarga recibe energía de tracción agregada por
 estación y los picos equivalentes, y dimensionará potencia y energía
 del lado de la instalación. [Notebook de reproducción](../movilidad/T33_T39_cierre.ipynb) · [Conclusiones en la web](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase1/decisiones)
 
+## T80–T81. Reparto de anclajes y despliegue por etapas
+
+Con la flota (400) y los anclajes (966) de T32 fijos, se prueban dos formas
+de trasladar diez anclajes. Ninguna estación baja de su stock inicial ni de dos
+plazas. Los traslados se eligen en el ajuste y la semana reservada solo los
+comprueba.
+
+| Estrategia | Ajuste | Semana reservada |
+|---|---:|---:|
+| Hacia las diez estaciones más usadas | +4 viajes | −2 viajes |
+| Búsqueda voraz del mayor beneficio simulado | +28 viajes (2,8 por anclaje) | +2 viajes |
+
+La ganancia de la búsqueda voraz no se transfiere: es ajuste al periodo de
+elección. Las estaciones más usadas no son las que rechazan devoluciones, así
+que llevarles anclajes no ayuda. **Se mantiene el reparto de T32.**
+
+T81 despliega la red por etapas con módulos de cuatro anclajes (hipótesis de
+diseño). La primera etapa da a cada estación los módulos justos para su stock
+inicial más un hueco: 748 anclajes, un 23 % menos. Al final de cada semana del
+ajuste se simula esa semana sola y se añade un módulo a las estaciones
+saturadas (al menos dos devoluciones rechazadas o llena el 10 % del tiempo),
+las más saturadas primero, sin pasar de los 966 anclajes de T32.
+
+| Etapa | Anclajes | Atendidos en la reserva | Sin anclaje |
+|---|---:|---:|---:|
+| Primera etapa | 748 | 4 358 | 423 |
+| Tras tres ampliaciones (54 módulos) | 964 | 4 635 | 113 |
+| Despliegue completo de T32 | 966 | 4 670 | 72 |
+
+Arrancar con la primera etapa cuesta 312 viajes en la semana reservada, casi
+todos por devoluciones sin hueco. Tras tres ampliaciones la diferencia baja a
+35 viajes y cada módulo recupera 5,1 viajes. El despliegue por etapas es una
+alternativa viable para repartir la inversión, pero tres semanas de
+observación no igualan el reparto de T32, que usa todo el ajuste a la vez.
+[Notebook](../movilidad/T80_T81_capacidad.ipynb) · [Web](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase1/t80)
+
 ## Cierre de consumo T40–T46
 
 ### T40. Control del modelo de referencia

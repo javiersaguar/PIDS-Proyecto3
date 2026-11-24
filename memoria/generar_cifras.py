@@ -523,6 +523,25 @@ def cifras() -> dict[str, str]:
         "cierre_kw_est": num(red_r["pico_estacion_kw"], 2),
         "cierre_top10": num(red_r["cuota_top10_pct"], 2),
     }
+    t80 = leer("movilidad/T80_anclajes.csv")
+    t81 = leer("movilidad/T81_etapas.csv")
+    voraz_a = fila(t80, periodo="ajuste", estrategia="beneficio")
+    voraz_r = fila(t80, periodo="reservada", estrategia="beneficio")
+    uso_r = fila(t80, periodo="reservada", estrategia="uso")
+    etapa = {e: fila(t81, periodo="reservada", etapa=e) for e in ("primera etapa", "tras las ampliaciones", "despliegue completo")}
+    primera, ampliada, completa = etapa.values()
+    modulos = (ampliada["anclajes"] - primera["anclajes"]) / 4
+    c |= {
+        "t80_voraz_aj": num(voraz_a["recuperados"]),
+        "t80_voraz_res": num(voraz_r["recuperados"]),
+        "t80_uso_res": num(uso_r["recuperados"]),
+        "t81_anc_inicial": num(primera["anclajes"]),
+        "t81_anc_final": num(ampliada["anclajes"]),
+        "t81_modulos": num(modulos),
+        "t81_perdida_inicial": num(completa["atendidos"] - primera["atendidos"]),
+        "t81_perdida_final": num(completa["atendidos"] - ampliada["atendidos"]),
+        "t81_por_modulo": num((ampliada["atendidos"] - primera["atendidos"]) / modulos, 1),
+    }
     fisica = leer("consumo/T43_calibracion.csv")
     f_a, f_r = (fila(fisica, periodo=p) for p in ("ajuste", "reservada"))
     desnivel = fila(leer("consumo/T42_desnivel.csv"), periodo="ajuste")

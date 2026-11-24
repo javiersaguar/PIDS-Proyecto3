@@ -41,9 +41,7 @@ export const FASES: Fase[] = [
     fechas: "25/11–2/12",
     peso: "10 %",
     tareas: "T40–T46",
-    previsto: [
-      "Sensibilidad por parámetro y efecto sobre el dimensionado (T46).",
-    ],
+    previsto: [],
   },
   {
     id: "fase3",

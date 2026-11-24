@@ -1,0 +1,7 @@
+periodo,estrategia,anclajes_movidos,atendidos,sin_anclaje,sin_patinete,pct_atendidos_cubiertos,recuperados,por_anclaje,perdida_en_las_que_ceden
+ajuste,actual,0,12750,187,472,95.085390409,0,,0
+ajuste,uso,10,12754,182,473,95.115221120,4,0.400000000,3
+ajuste,beneficio,10,12778,160,471,95.294205384,28,2.800000000,0
+reservada,actual,0,4670,72,259,93.381323735,0,,0
+reservada,uso,10,4668,74,259,93.341331734,-2,-0.200000000,5
+reservada,beneficio,10,4672,69,260,93.421315737,2,0.200000000,6

@@ -68,4 +68,17 @@ La regeneración deja también `datos/procesados/T39_llegadas_atendidas.parquet`
 con el destino simulado, la hora de devolución y los Wh de cada viaje
 atendido para la fase de recarga.
 
+## Experimentos de capacidad
+
+[capacidad.py](capacidad.py) y el [notebook T80–T81](T80_T81_capacidad.ipynb)
+usan el mismo simulador con la red, el stock y los anclajes de T32.
+
+| Tarea | Evidencia |
+|---|---|
+| T80 | [Servicio por estrategia](../resultados/tablas/movilidad/T80_anclajes.csv) y [traslados](../resultados/tablas/movilidad/T80_traslados.csv) |
+| T81 | [Servicio por etapa](../resultados/tablas/movilidad/T81_etapas.csv), [ampliaciones](../resultados/tablas/movilidad/T81_ampliaciones.csv) y [capacidades por estación](../resultados/tablas/movilidad/T81_estaciones.csv) |
+
+Los resultados están en las [conclusiones](../docs/conclusiones_eda.md#t80t81-reparto-de-anclajes-y-despliegue-por-etapas)
+y en la [web](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase1/t80).
+
 `python ejecutar_todo.py --desde movilidad/T26_cobertura_parcial.ipynb` regenera estas etapas desde los resultados de T24 y T25 y la cartografía archivada. Las soluciones bajo límite de tiempo registran su cota y procedencia. T30 verifica la huella de las estaciones congeladas antes de usar los resultados peatonales del ajuste. Para auditar cotas sobre las soluciones archivadas, ejecutar `python movilidad/certificados.py` desde la raíz.

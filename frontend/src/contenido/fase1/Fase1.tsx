@@ -1,3 +1,4 @@
+import { Capacidad, TAREA_CAPACIDAD } from "./Capacidad";
 import { CierreMovilidad, TAREAS_CIERRE } from "./CierreMovilidad";
 import { T20 } from "./T20";
 import { T21 } from "./T21";
@@ -23,6 +24,7 @@ const SECCIONES = [
   TAREAS_CIERRE[0],
   { id: "t34", tarea: "T34", titulo: "Curva de flota" },
   ...TAREAS_CIERRE.slice(1),
+  TAREA_CAPACIDAD,
   { id: "decisiones", tarea: "", titulo: "Conclusiones" },
 ];
 
@@ -40,6 +42,8 @@ const DECISIONES = [
   ["Acceso territorial", "Cinco cambios de emplazamiento suben 6,31 puntos la cobertura de las ocho zonas peor servidas sin perder servicio global. Alternativa si se prioriza el acceso.", "T37"],
   ["Cierres", "Una variante con 13 cambios alrededor de las estaciones críticas reduce a la mitad los viajes perdidos por cierres (24 frente a 48 en reserva).", "T38"],
   ["Comparación de redes", "Las redes de 159 estaciones a 300 m empatan en servicio. La elegida sigue como referencia para consumo y recarga; adoptar la redundante queda como decisión de equipo.", "T39"],
+  ["Reparto de anclajes", "Trasladar diez anclajes gana 28 viajes en el ajuste y solo 2 en la semana reservada. Se mantiene el reparto de T32.", "T80"],
+  ["Despliegue por etapas", "Empezar con 748 anclajes pierde 312 viajes en la reserva; tras tres ampliaciones semanales (964 anclajes) la diferencia baja a 35. Alternativa viable para repartir la inversión.", "T81"],
 ];
 
 export function Fase1() {
@@ -64,6 +68,7 @@ export function Fase1() {
       <T32 />
       <T34 />
       <CierreMovilidad />
+      <Capacidad />
       <section id="decisiones" className="seccion">
         <header>
           <div>
