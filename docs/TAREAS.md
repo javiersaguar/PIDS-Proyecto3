@@ -26,7 +26,7 @@ El reparto y la revisión cruzada de cada bloque están en [PLAN.md, sección 10
 | Fase 1 · Candidatos, localización y validación de la red | T24–T30 | Javier |
 | Fase 1 · Asignación, inventario, rebalanceo y flota | T31–T34 | Alejandro (T31, T34) y Javier (T32, T33) |
 | Fase 1 · Operación, incidencias y comparación de redes | T35–T39 | Javier (T36 con Alejandro) |
-| Fase 2 · Consumo | T40–T46 | Javier (T40–T45) |
+| Fase 2 · Consumo | T40–T46 | Javier |
 | Fase 3 · Estación de recarga, PVWatts y balance | T50–T59 | Alejandro |
 | Fase 4 · Conclusiones, memoria y entrega | T60–T66 | Los dos (T62 Javier, T63 Alejandro) |
 | Demo 3D | T70–T75 | Alejandro (T70, T71) |
@@ -94,7 +94,7 @@ responde a una pregunta y deja una tabla o figura que se cita en `docs/conclusio
 | T43 | Calibración del modelo B frente a 13,5 Wh/km | R | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/345db580e817a67f9065f7353a40c64cc774544e) · [Notebook](../consumo/T41_T43_modelo_b.ipynb) · [Web](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase2/t43) |
 | T44 | Consumo por viaje, patinete, flota y estación | R | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/b6087f159facf80c7d68344a515e49c3e7156ed0) · [Notebook](../consumo/T44_T45_agregados.ipynb) · [Web](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase2/t44) |
 | T45 | Estado de carga por patinete a lo largo del mes | E | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/b6087f159facf80c7d68344a515e49c3e7156ed0) · [Notebook](../consumo/T44_T45_agregados.ipynb) · [Web](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase2/t45) |
-| T46 | Sensibilidad (tornado) | E | | pendiente | |
+| T46 | Sensibilidad (tornado) | E | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/02ff1fcde027b98b98b5d535f22ab786c77d9b3a) · [Notebook](../consumo/T46_sensibilidad.ipynb) · [Tornado](../resultados/tablas/consumo/T46_tornado.csv) · [Web](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase2/t46) |
 
 ## Fase 3. Estación de recarga (20 %)
 
@@ -119,7 +119,7 @@ responde a una pregunta y deja una tabla o figura que se cita en `docs/conclusio
 | T61 | Conclusiones y limitaciones | R | | pendiente | |
 | T62 | Memoria `G05-P3.pdf` (LaTeX en `memoria/`) | R | Javier | en curso | |
 | T63 | Presentación en HTML | R | Alejandro | en curso | [Diapositivas](../presentacion/diapositivas/) con las fases 0, 1 y 2 (14 diapositivas, hasta T45); `npm run html` genera [presentacion.html](../presentacion/presentacion.html) · [Versión animada en la web](https://javiersaguar.github.io/PIDS-Proyecto3/presentacion/) |
-| T64 | Reproducción en limpio | R | | pendiente | |
+| T64 | Reproducción en limpio | R | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/01e28fd3a20d38fa3ee1221336b7b4d8e7c7df50) · [Instrucciones](../README.md#cómo-ejecutar) |
 | T65 | Script de empaquetado `G05-P3.zip` | R | | pendiente | |
 | T66 | Ensayo de la defensa | R | | pendiente | |
 
@@ -140,6 +140,6 @@ Las doce mejoras acordadas, sus dependencias y los criterios de cierre están en
 
 | ID | Tarea | Tipo | Responsable | Estado | Entrega |
 |---|---|---|---|---|---|
-| T80 | Redistribuir diez anclajes con flota y capacidad total fijas y medir viajes recuperados | E | | pendiente | |
-| T81 | Simular el despliegue en dos etapas con ampliación modular por saturación | E | | pendiente | |
+| T80 | Redistribuir diez anclajes con flota y capacidad total fijas y medir viajes recuperados | E | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/01e28fd3a20d38fa3ee1221336b7b4d8e7c7df50) · [Notebook](../movilidad/T80_T81_capacidad.ipynb) · [Resultados](../resultados/tablas/movilidad/T80_anclajes.csv) · [Web](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase1/t80) |
+| T81 | Simular el despliegue en dos etapas con ampliación modular por saturación | E | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/01e28fd3a20d38fa3ee1221336b7b4d8e7c7df50) · [Notebook](../movilidad/T80_T81_capacidad.ipynb) · [Etapas](../resultados/tablas/movilidad/T81_etapas.csv) · [Web](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase1/t80) |
 | T82 | Incorporar al plan las doce mejoras acordadas | E | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/e394d6286eebefa7b77ce32c1e5faf5a4a4276c7) |

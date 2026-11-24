@@ -337,7 +337,7 @@ Cada escenario apunta a una sola red y a sus propias series. Guardar en el manif
 | 14/12 · revisión | Sensibilidad a días difíciles, carga inteligente y despliegue por etapas. Figuras y tablas de las doce mejoras, memoria casi final y reproducción en limpio. | Guion ensayado, resultados cotejados con la memoria, compilación sin red y respaldo grabado. |
 | 14–16/12 · cierre | Memoria, código reproducible, presentación en HTML y revisión del paquete. | Pasar la versión congelada al equipo que se usará en la defensa. |
 
-**Estado a 24/11.** Hay 45 de 72 tareas hechas. Las fases 0 y 1 están terminadas, a falta de la revisión cruzada de T19. El consumo se adelantó y T40–T45 están hechas; falta la sensibilidad de T46. Para el seguimiento del 30/11 quedan T46, el arranque de la estación de recarga (T50–T55) y los experimentos de anclajes y despliegue (T80–T81). La memoria (T62), la presentación (T63) y la demo (T70–T71) avanzan en paralelo. El avance de cada bloque se calcula con [TAREAS.md](TAREAS.md) y se publica en la [web](https://javiersaguar.github.io/PIDS-Proyecto3/#/inicio/seguimiento).
+**Estado a 24/11.** Hay 49 de 72 tareas hechas. Las fases 0 y 1 están terminadas, a falta de la revisión cruzada de T19. El consumo se adelantó y T40–T46 están hechas. Los experimentos de anclajes y despliegue (T80–T81) también: se mantiene el reparto de T32 y el despliegue por etapas queda como alternativa. La reproducción en limpio (T64) regenera todo desde un clon nuevo con `requirements.txt`. Para el seguimiento del 30/11 queda el arranque de la estación de recarga (T50–T55). La memoria (T62), la presentación (T63) y la demo (T70–T71) avanzan en paralelo. El avance de cada bloque se calcula con [TAREAS.md](TAREAS.md) y se publica en la [web](https://javiersaguar.github.io/PIDS-Proyecto3/#/inicio/seguimiento).
 
 **Fases de trabajo.** Las fases 1 a 4 coinciden con los apartados del enunciado. El seguimiento de cada tarea está en [TAREAS.md](TAREAS.md).
 
@@ -364,11 +364,11 @@ Cada tarea pertenece a un bloque. La tabla de bloques de [TAREAS.md](TAREAS.md#b
 | Fase 1 · Candidatos, localización y validación de la red | T24–T30 | Javier | Alejandro contrasta hipótesis y recuentos. | 7 de 7 |
 | Fase 1 · Asignación, inventario, rebalanceo y flota | T31–T34 | Alejandro (T31, T34) y Javier (T32, T33) | Cada uno revisa las sumas del otro. | 4 de 4 |
 | Fase 1 · Operación, incidencias y comparación de redes | T35–T39 | Javier (T36 con Alejandro) | Alejandro contrasta con las tablas de movilidad y energía y aprueba T36. | 5 de 5 |
-| Fase 2 · Consumo | T40–T46 | Javier (T40–T45) | Alejandro revisa unidades, hipótesis de `consumo/config.yaml` y la tabla de entrada a recarga. | 6 de 7 |
+| Fase 2 · Consumo | T40–T46 | Javier | Alejandro revisa unidades, hipótesis de `consumo/config.yaml` y la tabla de entrada a recarga. | 7 de 7 |
 | Fase 3 · Estación de recarga, PVWatts y balance | T50–T59 | Alejandro | Javier revisa unidades, capacidad física, trazas e indicadores. | 0 de 10 |
-| Fase 4 · Conclusiones, memoria y entrega | T60–T66 | Los dos (T62 Javier, T63 Alejandro) | Revisar la misma ejecución en la memoria y la demo. | 0 de 7, dos en curso |
+| Fase 4 · Conclusiones, memoria y entrega | T60–T66 | Los dos (T62 Javier, T63 Alejandro) | Revisar la misma ejecución en la memoria y la demo. | 1 de 7, dos en curso |
 | Demo 3D | T70–T75 | Alejandro (T70, T71) | Acordar el esquema antes de integrar; Javier aporta los escenarios del simulador. | 0 de 6, dos en curso |
-| Experimentos integrados | T80–T82 | Javier | Alejandro contrasta con las tablas de movilidad. | 1 de 3 |
+| Experimentos integrados | T80–T82 | Javier | Alejandro contrasta con las tablas de movilidad. | 3 de 3 |
 
 **Líder del proyecto 3.** Javier Saguar coordina el reparto y los seguimientos de los lunes y revisa lo que entra en `main`. En cada seguimiento se cierran las hipótesis del siguiente hito y se comprueban las dependencias de las doce mejoras. [Calendario de la asignatura](enunciado.md#calendario) · [Seguimiento de tareas](TAREAS.md)
 

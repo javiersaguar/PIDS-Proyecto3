@@ -3,3 +3,6 @@
 
 # Los PDF son binarios y se guardan tal como salen de la compilación.
 *.pdf binary
+
+# Los datos externos se validan con su huella SHA-256: se guardan byte a byte.
+datos/externos/** -text
