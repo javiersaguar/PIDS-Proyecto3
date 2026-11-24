@@ -127,9 +127,10 @@
 Esta versión cierra la fase~1 (T20--T39). Incluye localización y validación a
 pie, dimensionado de flota y plazas, comparación del rebalanceo, estado de
 carga, acceso territorial, cierres de estaciones y demanda de recarga
-equivalente. El bloque de consumo (T40--T45) entrega los dos modelos por
+equivalente. El bloque de consumo (T40--T46) entrega los dos modelos por
 viaje, la demanda por destino de devolución y una simulación mensual del
-estado de carga. El detalle de la exploración está en los anexos.
+estado de carga. Incluye una sensibilidad de los parámetros físicos y los
+ensayos de reparto de anclajes y despliegue por etapas (T80--T81).
 
 \newpage
 {\setstretch{1}\setlength{\parskip}{0pt}
@@ -189,19 +190,38 @@ El trabajo se divide en cinco fases: datos (limpieza y exploración), movilidad,
 estación de recarga y conclusiones. Las fases 1 a 4 coinciden con los apartados del
 enunciado; la fase~0 fija sus parámetros (tabla~\ref{tab:decisiones}).
 
-\pendiente{Diagrama de las fases con las entradas y salidas de cada una (tablas, matrices,
-red elegida, series de energía) y el punto en que la semana reservada entra en la validación.}
+\begin{figure}[!htb]
+  \centering\small
+  \begin{tabularx}{0.96\textwidth}{@{}l c Y@{}}
+    \toprule
+    Entrada & & Resultado de cada etapa \\
+    \midrule
+    CSV de Helbiz y fuentes archivadas & $\longrightarrow$ & Viajes elegibles y parámetros de exploración (fase 0) \\
+    Viajes del ajuste y candidatos H3 & $\longrightarrow$ & Matrices OD, localización y flota de referencia (fase 1) \\
+    Red fijada y demanda reservada & $\longrightarrow$ & Validación temporal de cobertura y servicio (T30 y T32) \\
+    Llegadas atendidas y distancias & $\longrightarrow$ & Wh por viaje, perfiles por estación y estado de batería (fase 2) \\
+    Demanda por estación y datos FV & $\longrightarrow$ & Balance horario y dimensionado por completar (fase 3) \\
+    \bottomrule
+  \end{tabularx}
+  \caption{De los viajes originales a la entrada del dimensionado eléctrico. La reserva entra en la evaluación de una red ya fijada.}
+  \label{fig:cadena-datos}
+\end{figure}
 
 \subsection{Reproducibilidad}\label{sec:reproducibilidad}
 El repositorio \cite{codigo} separa los datos originales, que no se modifican nunca, de los
 derivados. El paquete \nb{comun/} carga los viajes limpios y los regenera si cambian los
-umbrales de \nb{config.yaml}, donde están todos los parámetros. Cada tarea es un notebook
-con su objetivo, un bloque por análisis y una tabla de decisiones. \nb{ejecutar_todo.py} los
-ejecuta en orden y guarda tablas, figuras y los datos de la web de resultados \cite{web}.
+umbrales de \nb{config.yaml}. Las hipótesis físicas de T41--T46 se especifican
+en \nb{consumo/config.yaml}. \nb{ejecutar_todo.py} ejecuta los programas y notebooks
+en orden y guarda tablas, figuras y los datos de la web de resultados \cite{web}.
 Las respuestas de servicios externos se guardan con su fecha y su fuente para poder
-reproducir sin conexión. Las cifras de esta memoria no se escriben a mano: las genera
-\nb{memoria/generar_cifras.py} a partir de \nb{resultados/tablas/}. Se han usado pandas
-\cite{pandas}, SciPy \cite{scipy}, Matplotlib \cite{matplotlib} y H3 \cite{h3}.
+reproducir sin conexión. \nb{memoria/generar_cifras.py} toma las cifras de esta memoria
+de \nb{resultados/tablas/}. El análisis usa pandas \cite{pandas}, SciPy \cite{scipy},
+Matplotlib \cite{matplotlib} y H3 \cite{h3}.
+
+Desde la raíz del proyecto, \verb|python ejecutar_todo.py| regenera el análisis
+y \verb|python memoria/compilar.py| construye el PDF. El \nb{README.md} describe
+el entorno requerido. \nb{empaquetar.py} reúne el PDF y el código de la misma
+revisión de Git.
 
 \subsection{Limpieza}
 No hay nulos, duplicados, solapes del mismo patinete ni extremos fuera de Roma, y la
@@ -230,16 +250,24 @@ de viajes y no cambia los indicadores clave.
 
 \subsection{Supuestos que afectan al resultado}
 \begin{itemize}
-  \item Sin trayectorias, la distancia a pie hasta una estación es la distancia en línea recta
-        por el factor de rodeo de los recorridos (\cifra{rodeo}), a \cifra{velocidad_pie}~m/s
-        \cite{bohannon2011}.
+  \item La cobertura del barrido usa distancia geométrica. Para estimar el tiempo
+        de acceso se usa el rodeo \cifra{rodeo} de T15 y una velocidad de
+        \cifra{velocidad_pie}~m/s \cite{bohannon2011}. T29 contrasta los radios con
+        recorridos de la red peatonal en Tíber y Termini.
   \item La demanda con estaciones es la observada sin ellas; no se modela cuántos viajes se
         perderían por tener que andar.
   \item El rebalanceo es nocturno, con \cifra{rebalanceo_base} patinetes al día en el
         escenario base.
+  \item La simulación parte de \cifra{flota_min} patinetes y \cifra{cierre_anc}
+        plazas. Una salida requiere un patinete en origen y una plaza reservada en
+        destino. Si falta alguno, se busca una alternativa dentro del radio.
+  \item La reposición se imputa a la estación de devolución. Con 576~Wh
+        nominales y 7~h de recarga, el cálculo equivalente usa aproximadamente
+        82~W en batería por patinete. T45 supone carga disponible en cada
+        anclaje y reserva del \cifra{consumo_reserva}\pc{}.
 \end{itemize}
-\pendiente{Supuestos de las fases 1 a 3 (capacidad de los anclajes, potencia de carga,
-estrategia de carga) a medida que se fijen.}
+La potencia en la toma, la capacidad de carga simultánea y la estrategia de
+carga son parámetros de la fase de dimensionado eléctrico.
 
 % ------------------------------------------------------------------------------------------
 \section{Exploración orientada a decisiones}\label{sec:exploracion}
@@ -913,9 +941,13 @@ Limitaciones conocidas hasta ahora:
         en línea recta; a pie son más largos (T29). Las solicitudes rechazadas no se repiten
         más tarde ni en otra estación fuera del radio.
 \end{itemize}
-\pendiente{Limitaciones de las fases 1 a 3 y, para cada una, la mejora que más impacto
-tendría (meteorología típica, viabilidad urbana de las ubicaciones, cambios de comportamiento
-con estaciones).}
+Para confirmar la red conviene comprobar sobre el terreno el acceso y el
+espacio de las ubicaciones propuestas. Repetir la validación con varios meses
+permitiría distinguir la variación estacional del efecto de la semana reservada.
+El modelo energético usa velocidad media y desnivel de extremos. Un perfil
+de elevación y mediciones de descarga permitirían evaluar las diferencias por
+viaje y por estación. La estimación de potencia equivalente en batería se
+comprobará con los límites de cargadores y la producción solar en recarga.
 
 \printbibliography[heading=bibintoc,title={Referencias}]
 
@@ -1041,9 +1073,5 @@ por cada día; la semana reservada fue más cálida (\cifra{temp_reservada} fren
   \includegraphics[width=0.80\textwidth]{T30_cobertura_diaria}
   \caption{Cobertura geométrica de la red elegida y viajes elegibles por día de salida. La línea punteada marca el objetivo de ajuste.}\label{fig:cobertura-diaria}
 \end{figure}
-
-\section{Fragmentos de código}\label{anx:codigo}
-\pendiente{Solo si alguna función es imprescindible para entender un resultado. El código
-completo está en el repositorio \cite{codigo}.}
 
 \end{document}

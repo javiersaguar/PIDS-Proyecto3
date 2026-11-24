@@ -330,7 +330,7 @@ mismas reglas y comparar a la vez volumen y cuotas.
 | Decisión para las siguientes fases | Evidencia de la exploración | Aplicación en el diseño |
 |---|---|---|
 | Ajustar sobre **16 756** viajes y reservar **6 614** | T10 deja 23 370 viajes elegibles de 25 186. La limpieza permisiva altera poco las medianas y la concentración. | Mantener la limpieza principal y repetir la sensibilidad con los indicadores de la red elegida. |
-| Modelar cinco franjas y dos tipos de día | T12 muestra perfiles de salida distintos. El máximo simultáneo observado fue de 41 viajes. | Separar perfiles del simulador. Calcular el stock y los anclajes por estación con la secuencia de salidas y llegadas. |
+| Modelar cinco franjas y dos tipos de día | T12 muestra perfiles de salida distintos. El máximo simultáneo fue de 41 viajes en ajuste y 44 en reserva. | Separar perfiles del simulador. Calcular el stock y los anclajes por estación con la secuencia de salidas y llegadas. |
 | Usar H3 de resolución 9 para emplazamientos y 8 para diagnóstico espacial | T13 sitúa la arista media de resolución 9 cerca de 201 m. T15 compara radios de 200, 250 y 300 m y añade 400 m como sensibilidad. | Construir T24 sobre el ajuste. Barrer los rangos de T13 con margen del 20 % y medir acceso en cada extremo del viaje. |
 | Simular rebalanceo nocturno de 100 patinetes por día | T11 detecta recolocaciones y T14 encuentra saldos zonales persistentes. | Comparar 0, 100 y 220 movimientos con la misma red y medir rechazos, distancia y déficit residual. |
 | Conservar los días de tiempo adverso | T17 identifica el 07/02 por lluvia y el 13–14/02 por viento y frío. La semana reservada tuvo un 18,4 % más de viajes diarios. | Marcar esos días al elegir jornadas representativas y mantenerlos en los recuentos. Evaluar la semana reservada con su demanda observada. |
@@ -340,6 +340,19 @@ Los radios describen acceso geométrico. La elección de red exige comprobar rut
 a pie donde haya barreras, además de simular inventario. La comparación de la
 semana reservada se hará después de congelar la localización y los criterios de
 evaluación. [Parámetros](../config.yaml) · [Plan de movilidad](PLAN.md#4-movilidad-y-flota)
+
+### Contraste de Javier sobre T13–T17
+
+| Tarea | Comprobación | Aplicación |
+|---|---|---|
+| T13 | La arista media en H3 de resolución 9 es 200,8 m. El 99,80 % de los extremos de reserva cae en celdas de esa resolución con demanda en ajuste. | Construir candidatos con el ajuste y examinar la cobertura en viajes de reserva. [Resoluciones](../resultados/tablas/exploracion/T13_resoluciones_h3.csv) · [Estabilidad](../resultados/tablas/exploracion/T13_estabilidad.csv) |
+| T14 | Las cotas medias de recolocación son 101,5 y 221,6 patinetes/día en H3 de resoluciones 8 y 9. El saldo que compensa el operador es el 62,1 %. | Usar 100 como referencia y 220 como sensibilidad. La evidencia describe balances entre celdas. T33 mide los traslados de la red simulada. [Saldo y cotas](../resultados/tablas/exploracion/T14_resumen.csv) |
+| T15 | El cociente mediano entre recorrido registrado y recta es 1,329. A 300 m, el tiempo estimado de acceso con la hipótesis de distancia media supera la duración observada del viaje en el 41,31 % del ajuste. | Comparar radios en el diseño y comprobar el acceso por calles en los sectores de T29. [Rodeo](../resultados/tablas/exploracion/T15_resumen.csv) · [Radios](../resultados/tablas/exploracion/T15_radios_acceso.csv) |
+| T16 | A 13,5 Wh/km, la flota observada consume 22,13 kWh/día en ajuste y 27,20 en reserva. | Usar T44 para calcular la recarga de los viajes atendidos por la red. [Energía observada](../resultados/tablas/exploracion/T16_resumen.csv) |
+| T17 | La demanda media pasa de 797,9 a 944,9 viajes/día. El 07/02 registra 24,6 mm de lluvia y 403 viajes. | Conservar las jornadas y documentar que el mes tiene un cambio de volumen y tiempo meteorológico entre periodos. [Comparación temporal](../resultados/tablas/exploracion/T17_resumen.csv) · [Día anómalo](../resultados/tablas/exploracion/T17_dias_anomalos.csv) |
+
+La comprobación de Javier queda documentada con las tablas vigentes. T19
+queda en revisión hasta confirmar el contraste de Alejandro.
 
 ## T20. Primera matriz O-D en H3 (Alejandro)
 
