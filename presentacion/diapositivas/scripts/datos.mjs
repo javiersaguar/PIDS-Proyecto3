@@ -45,6 +45,7 @@ const t34 = json("fase1/t34_flota.json");
 const perfil = json("fase0/t12_perfil_horario.json");
 const cierre = json("fase1/cierre_movilidad.json");
 const consumo = json("fase2/consumo.json");
+const t50 = json("fase3/t50_demanda.json");
 
 const finalistas = pareto.filter((f) => f.rol);
 const recomendada = finalistas.find((f) => f.rol === "recomendada");
@@ -57,6 +58,14 @@ const zonas = (red) => {
 const ind31 = Object.fromEntries(t31.indicadores.map((f) => [f.indicador, f.atendidos]));
 const consumoA = busca(consumo.resumen, { periodo: "reservada", modelo: "a" });
 const consumoB = busca(consumo.resumen, { periodo: "reservada", modelo: "b" });
+const recargaBase = busca(t50.resumen, { periodo: "ajuste", modelo: "a", caso: "cargadores_100" });
+const recargaC25 = busca(t50.resumen, { periodo: "ajuste", modelo: "a", caso: "cargadores_25" });
+const candidata = (papel) => {
+  const c = t50.candidatas.find((f) => f.papel === papel);
+  return { id: c.station_id, kwh: c.pedida_kwh, fuera_sol_pct: c.fuera_sol_pct, puesto_reserva: c.puesto_energia_reservada_a };
+};
+// Tramo de horas de sol del día medio (inicio y fin en horas).
+const conSol = t50.minutos.filter((_, i) => t50.sol[i]);
 
 const datos = {
   consumo: {
@@ -64,6 +73,22 @@ const datos = {
     a_kwh_dia: consumoA.kwh_dia,
     b_kwh_dia: consumoB.kwh_dia,
     cambia_estacion: consumoA.estacion_energia_max !== consumoB.estacion_energia_max,
+  },
+  recarga: {
+    horas: t50.minutos.map((m) => (m + 7.5) / 60),
+    ajuste: t50.perfil_red.ajuste.map((w) => w / 1000),
+    reservada: t50.perfil_red.reservada.map((w) => w / 1000),
+    sol: [conSol[0] / 60, (conSol.at(-1) + 15) / 60],
+    altura_sol: t50.altura_solar_min,
+    eta: t50.eta_cargador,
+    kwh_dia: recargaBase.kwh_dia,
+    pico_kw: recargaBase.pico_red_kw,
+    fuera_sol_pct: recargaBase.fuera_sol_pct,
+    simultaneas: recargaBase.simultaneas_max,
+    espera_c25: recargaC25.sesiones_en_espera,
+    espera_c25_min: recargaC25.espera_media_min,
+    elegida: candidata("elegida"),
+    alternativa: candidata("alternativa"),
   },
   embudo: {
     brutos: embudo[0].quedan,

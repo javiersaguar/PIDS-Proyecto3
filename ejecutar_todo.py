@@ -53,6 +53,9 @@ PASOS = [
     "consumo/T44_T45_agregados.ipynb",
     "consumo/T46_sensibilidad.ipynb",
     "consumo/test_consumo.py",
+    # Fase 3. Estación de recarga
+    "estacion_recarga/T50_demanda_estaciones.ipynb",
+    "estacion_recarga/test_demanda.py",
 ]
 
 

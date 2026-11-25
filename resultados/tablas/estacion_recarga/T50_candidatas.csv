@@ -1,0 +1,3 @@
+station_id,criterios,lon,lat,anclajes,llegadas,pedida_kwh,kwh_dia_media,kwh_dia_p95,pico_w,p95_w,fuera_sol_kwh,fuera_sol_pct,simultaneas_max,puesto_energia,puesto_pico,puesto_fuera_sol,suma_puestos,puesto_energia_reservada_a,puesto_energia_ajuste_b,puesto_energia_reservada_b,papel
+891e8051d07ffff,pico;fuera_sol,12.484269241,41.843996513,8,204,7.075878391,0.336946590,0.632355343,497.859104762,91.428571429,5.848894232,82.659620598,6,2,1,1,4,5,3,6,elegida
+891e8052a6bffff,energia,12.491962944,41.891969936,11,170,7.220058907,0.343812329,0.743103213,482.837706667,91.428571429,4.513177229,62.508869903,6,1,2,2,5,1,2,3,alternativa

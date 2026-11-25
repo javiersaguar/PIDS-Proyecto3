@@ -1,0 +1,20 @@
+# Hipótesis de la estación de recarga (fase 3). La batería y el tiempo de carga del
+# patinete se leen de config.yaml en la raíz; las llegadas con energía, de T44.
+demanda:
+  red: habitual  # Red de diseño (T28/T39), la misma que usa consumo.
+  modelo_base: a  # Modelo A (13,5 Wh/km) como referencia; B calibrado como sensibilidad.
+  # Rendimiento del cargador (red → batería). Hipótesis sin dato del fabricante: los
+  # cargadores de baterías de ion-litio de este tamaño suelen moverse entre 0,85 y 0,95.
+  # La energía y la potencia en el lado AC son las de batería divididas por este valor.
+  eta_cargador: 0.90
+  eta_cargador_sensibilidad: [0.85, 0.95]
+  # Cargadores por anclaje. Caso base: todos los anclajes cargan. Las fracciones menores
+  # se redondean hacia arriba con un mínimo de un cargador por estación.
+  cargadores_por_anclaje: 1.0
+  cargadores_sensibilidad: [0.5, 0.25]
+  paso_min: 15  # Intervalo de las curvas de potencia (plan, sección 6).
+  cuantil: 0.95  # P95 de potencia por intervalo y de energía diaria.
+  # Un intervalo cuenta como hora de sol si el sol está al menos a esta altura en la
+  # estación. Por debajo de 10° la producción de una marquesina es marginal.
+  altura_solar_min_grados: 10
+  candidatas_por_criterio: 1  # Estaciones que pasa cada criterio a la comparación de T51.

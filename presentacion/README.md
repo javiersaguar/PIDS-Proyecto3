@@ -36,7 +36,7 @@ npm run html    # compila y guarda presentacion/presentacion.html
    - **Mover:** cortar el bloque y pegarlo en otra posición.
    - **Añadir:** copiar la plantilla comentada que hay justo encima de la lista. Los números de página y los puntos de navegación se ajustan solos.
    - **Cambiar textos:** editar las frases directamente. Las cifras se escriben como `{num(d.red.k)}` o `{pc(d.inventario.pct)}` para que salgan de los resultados y no queden desfasadas; [src/tipos.ts](diapositivas/src/tipos.ts) dice qué cifras hay.
-3. Piezas disponibles: `Cabecera` (etiqueta, título y entradilla), `Puntos` (lista), `Cifras` (tarjetas con número que cuenta), `Tarjetas`, `Aparece` (cualquier bloque con entrada animada) y los gráficos de [src/graficos.tsx](diapositivas/src/graficos.tsx) (`MapaRed`, `CurvaFlota`, `Pareto`, `Embudo`, `PerfilHorario`, `Conciliacion`). Colores y tamaños, en [src/estilos.css](diapositivas/src/estilos.css).
+3. Piezas disponibles: `Cabecera` (etiqueta, título y entradilla), `Puntos` (lista), `Cifras` (tarjetas con número que cuenta), `Tarjetas`, `Aparece` (cualquier bloque con entrada animada) y los gráficos de [src/graficos.tsx](diapositivas/src/graficos.tsx) (`MapaRed`, `CurvaFlota`, `Pareto`, `Embudo`, `PerfilHorario`, `Conciliacion`, `DemandaRecarga`). Colores y tamaños, en [src/estilos.css](diapositivas/src/estilos.css).
 4. Para una cifra nueva: añadirla en [scripts/datos.mjs](diapositivas/scripts/datos.mjs) (lee `resultados/tablas/` y `frontend/public/datos/`) y su tipo en `src/tipos.ts`.
 5. `npm run html` al terminar, y subir `presentacion.html` junto con los fuentes. La versión de la web se actualiza sola al llegar a `main`.
 

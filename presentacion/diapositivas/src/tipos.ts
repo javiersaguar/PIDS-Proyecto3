@@ -1,6 +1,22 @@
 // Forma de public/datos.json (lo genera scripts/datos.mjs).
 export type Datos = {
   consumo: { a_wh_km: number; a_kwh_dia: number; b_kwh_dia: number; cambia_estacion: boolean };
+  recarga: {
+    horas: number[];
+    ajuste: number[];
+    reservada: number[];
+    sol: [number, number];
+    altura_sol: number;
+    eta: number;
+    kwh_dia: number;
+    pico_kw: number;
+    fuera_sol_pct: number;
+    simultaneas: number;
+    espera_c25: number;
+    espera_c25_min: number;
+    elegida: { id: string; kwh: number; fuera_sol_pct: number; puesto_reserva: number };
+    alternativa: { id: string; kwh: number; fuera_sol_pct: number; puesto_reserva: number };
+  };
   embudo: {
     brutos: number;
     elegibles: number;

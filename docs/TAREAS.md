@@ -100,7 +100,7 @@ responde a una pregunta y deja una tabla o figura que se cita en `docs/conclusio
 
 | ID | Tarea | Tipo | Responsable | Estado | Entrega |
 |---|---|---|---|---|---|
-| T50 | Curvas de potencia y energía de todas las estaciones | R | | pendiente | |
+| T50 | Curvas de potencia y energía de todas las estaciones | R | Alejandro | revisión | [Notebook](../estacion_recarga/T50_demanda_estaciones.ipynb) · [Pruebas](../estacion_recarga/test_demanda.py) · [Por estación](../resultados/tablas/estacion_recarga/T50_estaciones.csv) · [Web](https://javiersaguar.github.io/PIDS-Proyecto3/#/fase3/t50) (estación 891e8051d07ffff y alternativa 891e8052a6bffff, a confirmar con Javier) |
 | T51 | Comparar tres emplazamientos por acceso, superficie y sombra y elegir una estación | R | | pendiente | |
 | T52 | Producción FV con PVWatts (API, guardada) | R | | pendiente | |
 | T53 | Contraste con PVGIS de febrero de 2021 y pvlib | E | | pendiente | |
@@ -118,7 +118,7 @@ responde a una pregunta y deja una tabla o figura que se cita en `docs/conclusio
 | T60 | Probar el diseño con días difíciles, demanda punta adicional y producción solar baja | E | | pendiente | |
 | T61 | Conclusiones y limitaciones | R | | pendiente | |
 | T62 | Memoria `G05-P3.pdf` (LaTeX en `memoria/`) | R | Javier | en curso | |
-| T63 | Presentación en HTML | R | Alejandro | en curso | [Diapositivas](../presentacion/diapositivas/) con las fases 0, 1 y 2 (14 diapositivas, hasta T45); `npm run html` genera [presentacion.html](../presentacion/presentacion.html) · [Versión animada en la web](https://javiersaguar.github.io/PIDS-Proyecto3/presentacion/) |
+| T63 | Presentación en HTML | R | Alejandro | en curso | [Diapositivas](../presentacion/diapositivas/) con las fases 0, 1, 2 y el arranque de la 3 (15 diapositivas, hasta T50); `npm run html` genera [presentacion.html](../presentacion/presentacion.html) · [Versión animada en la web](https://javiersaguar.github.io/PIDS-Proyecto3/presentacion/) |
 | T64 | Reproducción en limpio | R | Javier | hecha | [Commit](https://github.com/javiersaguar/PIDS-Proyecto3/commit/01e28fd3a20d38fa3ee1221336b7b4d8e7c7df50) · [Instrucciones](../README.md#cómo-ejecutar) |
 | T65 | Script de empaquetado `G05-P3.zip` | R | | pendiente | |
 | T66 | Ensayo de la defensa | R | | pendiente | |

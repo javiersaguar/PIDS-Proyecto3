@@ -102,6 +102,41 @@ export function PerfilHorario({ p }: { p: Datos["perfil"] }) {
   );
 }
 
+// Día medio de la potencia que piden todas las estaciones, con la franja de horas de sol detrás.
+export function DemandaRecarga({ r }: { r: Datos["recarga"] }) {
+  const W = 900, H = 520, izq = 80, der = 20, arr = 20, abj = 90;
+  const ymax = Math.ceil(Math.max(...r.ajuste, ...r.reservada) * 2) / 2;
+  const x = escala(0, 24, izq, W - der);
+  const y = escala(0, ymax, H - abj, arr);
+  const sol = useEntrada(0.2, 1);
+  const marcas = Array.from({ length: Math.floor(ymax / 0.5) + 1 }, (_, i) => i * 0.5);
+  return (
+    <div className="figura">
+      <svg viewBox={`0 0 ${W} ${H}`}>
+        <defs>
+          <linearGradient id="degradado-sol" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stopColor="#ffd166" stopOpacity={0.34} />
+            <stop offset="1" stopColor="#ffd166" stopOpacity={0.04} />
+          </linearGradient>
+        </defs>
+        <motion.rect x={x(r.sol[0])} y={arr} width={x(r.sol[1]) - x(r.sol[0])} height={H - abj - arr} fill="url(#degradado-sol)" {...sol({ opacity: 0 }, { opacity: 1 })} />
+        <motion.text className="rotulo-fuerte" style={{ fill: "#ffd166" }} x={(x(r.sol[0]) + x(r.sol[1])) / 2} y={arr + 34} textAnchor="middle" {...sol({ opacity: 0 }, { opacity: 1 })}>
+          Sol a más de {r.altura_sol}°
+        </motion.text>
+        <EjeY y={y} valores={marcas} x0={izq} x1={W - der} fmt={(v) => num(v, 1)} />
+        <EjeX x={x} valores={[0, 6, 12, 18, 24]} y={H - abj} texto="Hora local" fmt={(v) => `${v} h`} />
+        <Linea xs={r.horas.map(x)} ys={r.reservada.map(y)} c="var(--naranja)" ancho={4} retardo={0.6} duracion={1.8} />
+        <Linea xs={r.horas.map(x)} ys={r.ajuste.map(y)} c="var(--azul)" retardo={1} duracion={1.8} base={H - abj} />
+      </svg>
+      <div className="leyenda">
+        <span style={color("var(--azul)")}>1–21 de febrero</span>
+        <span style={color("var(--naranja)")}>22–28 de febrero</span>
+        <span>kW que piden las 159 estaciones, día medio</span>
+      </div>
+    </div>
+  );
+}
+
 // Embudo de la limpieza: barras horizontales con lo que queda tras cada regla.
 export function Embudo({ e }: { e: Datos["embudo"] }) {
   const estatico = useEstatico();

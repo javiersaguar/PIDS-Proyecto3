@@ -2,7 +2,7 @@
 import type { CSSProperties, ReactNode } from "react";
 import { motion } from "motion/react";
 import { Aparece, Contador, Palabras, SUAVE, useEstatico } from "./animacion";
-import { Conciliacion, CurvaFlota, Embudo, MapaRed, Pareto, PerfilHorario } from "./graficos";
+import { Conciliacion, CurvaFlota, DemandaRecarga, Embudo, MapaRed, Pareto, PerfilHorario } from "./graficos";
 import type { Datos } from "./tipos";
 import { num, pc } from "./tipos";
 
@@ -444,6 +444,30 @@ export const DIAPOSITIVAS: Diapositiva[] = [
     ),
   },
   {
+    id: "recarga",
+    titulo: "Demanda de recarga",
+    contenido: (d) => {
+      const r = d.recarga;
+      return (
+        <>
+          <Cabecera etiqueta="Fase 3 · Demanda por estación (T50)" titulo="La recarga llega cuando el sol se va" />
+          <div className="cuerpo dos">
+            <DemandaRecarga r={r} />
+            <Puntos
+              retardo={2.4}
+              items={[
+                <>Reponer lo que gastan los viajes pide <strong>{num(r.kwh_dia, 1)} kWh al día</strong> a la red, con un pico de {num(r.pico_kw, 1)} kW para las 159 estaciones (cargador con η = {num(r.eta, 2)}).</>,
+                <>El <strong>{pc(r.fuera_sol_pct, 0)}</strong> de esa energía llega con el sol bajo: sin batería, más de la mitad no coincidiría con los paneles.</>,
+                <>Con un cargador en cada anclaje nadie espera: como mucho cargan {r.simultaneas} patinetes a la vez. Con uno de cada cuatro esperarían {num(r.espera_c25)} sesiones, {num(r.espera_c25_min, 0)} min de media.</>,
+                <>Se diseña la estación <strong>{r.elegida.id.slice(-9, -4)}</strong>: {num(r.elegida.kwh, 1)} kWh en tres semanas y el {pc(r.elegida.fuera_sol_pct, 0)} sin sol. La {r.alternativa.id.slice(-9, -4)} pide casi lo mismo y se prueba también.</>,
+              ]}
+            />
+          </div>
+        </>
+      );
+    },
+  },
+  {
     id: "siguiente",
     titulo: "Lo que queda",
     contenido: (d) => (
@@ -455,7 +479,7 @@ export const DIAPOSITIVAS: Diapositiva[] = [
             ["Flota decidida", <>{num(d.flota.minima)} patinetes (criterio del {d.flota.objetivo} %). La de {num(d.flota.diseno)} queda como alternativa con más margen si crece la demanda.</>],
             ["Consumo (10 %)", <>En reserva, {num(d.consumo.a_kwh_dia, 2)} kWh/día con A y {num(d.consumo.b_kwh_dia, 2)} con B.
               {d.consumo.cambia_estacion && " La estación de mayor energía cambia por el desnivel."} Recarga parte de A ({num(d.consumo.a_wh_km, 1)} Wh/km), contrasta cada estación con B y prueba un ±20 % de demanda (T46).</>],
-            ["Estación de recarga (20 %)", "Potencia y energía demandadas en cada estación, paneles con PVWatts y baterías para casar la generación con la recarga."],
+            ["Estación de recarga (20 %)", <>Demanda de las 159 estaciones hecha (T50). Falta la estación {d.recarga.elegida.id.slice(-9, -4)}: emplazamiento, paneles con PVWatts y baterías de 4, 8 y 12 kWh para casar la generación con la recarga.</>],
             ["Demo 3D", "Un día de operación sobre el mapa de Roma, con las estaciones, los flujos y la maqueta de una estación."],
           ]}
         />
